@@ -1,0 +1,126 @@
+# Project Context — Momentum Backend (Gov TMS)
+
+> Read every session. Dense project truth for the Laravel API workspace.
+> Business blueprints: `../_blueprints/` (ultimate source of truth).
+> Do NOT put secrets here.
+
+---
+
+## What Is This Project?
+
+**Gov TMS (Momentum)** is a multi-tenant SaaS platform for government and large organizations in the GCC. It replaces manual task follow-up (*متابعة*) with **stage-level accountability**: every task follows a **Blueprint** (workflow template), progresses through **Stages/Sub-stages**, and enforces **SLAs** with escalation.
+
+This repository is the **Laravel REST API** only. The Next.js frontend lives in `../frontend/`.
+
+---
+
+## Project Type
+
+- [x] Multi-tenant SaaS (database-per-tenant)
+- [x] Backend API (serves Next.js SPA via static API domain using `X-Tenant` header)
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Language | PHP 8.5 |
+| Framework | Laravel 13 |
+| Database | PostgreSQL 18+ (central DB + one DB per tenant) |
+| Cache / Queue / Session | Redis (tenant-prefixed keys) |
+| Auth | Laravel Sanctum (cross-origin supported) |
+| API docs | Scramble → OpenAPI (`openapi/openapi.json`) |
+| Testing | Pest (feature tests mandatory) |
+| Object storage | S3-compatible (tenant-prefixed paths) |
+| CI/CD | GitHub Actions → VPS deploy on merge to `main` |
+
+---
+
+## Architecture Summary
+
+- **Central Management DB:** tenant registry, connection routing (`tenants` table only)
+- **Tenant DBs:** all business data; **no `tenant_id` columns** (physical isolation)
+- **Header routing:** Frontend passes `X-Tenant` header → resolve tenant → switch DB connection
+- **Modules:** 15 bounded contexts — see `architecture.md`
+- **Cross-origin:** Next.js lives on separate domain (e.g., `mof.momentum.test`), API is static (`api.momentum.test`)
+
+---
+
+## Key Modules (MVP)
+
+| Module | Responsibility |
+|--------|----------------|
+| **Core** | Tenant context resolution, events, base traits, locale/Hijri helpers |
+| **Platform** | Tenant provisioning, suspension, platform admins, impersonation |
+| **Organization** | Departments, positions, authority grades, working calendar |
+| **IAM** | Users, ABAC policy engine, delegation, monitoring scopes |
+| **Blueprint** | Lifecycle templates, stages, sub-stages, SLA policies, transitions |
+| **Task** | Task instances, stage progression, assignment resolution, comments |
+| **Tracking & SLA** | SLA timers, escalation engine (monitors, does not own task data) |
+| **Notification** | In-app + email alerts |
+| **Analytics** | Read-only dashboards and reports |
+| **Document** | Attachment metadata (files in object storage) |
+| **Audit** | Immutable append-only event log |
+| **Search** | PostgreSQL FTS |
+| **Onboarding** | Access-profile journeys, quizzes |
+| **Help Center** | Article CMS |
+
+---
+
+## Three Core Concepts
+
+1. **Blueprint** — Reusable workflow template (stages, SLAs, assignments). Locked after first task launches.
+2. **Task** — Single work instance from a Blueprint; immutable rules per instance.
+3. **Stage / Sub-stage** — Atomic accountability unit with assignees, SLA, and completion rules.
+
+---
+
+## Critical Rules
+
+1. **Database-per-tenant** — Never add `tenant_id` to tenant DB tables. Resolve tenant from `X-Tenant` header → central registry → switch connection.
+2. **Public IDs** — API routes and responses use `public_id` (UUID v7). Never expose internal `id`.
+3. **ABAC only** — No hardcoded business roles (Minister, Director). Use capabilities + positions + scopes.
+4. **Blueprint lock** — Once a task launches, blueprint stage definitions are immutable.
+5. **Module boundaries** — No cross-module ORM joins. Cross-module via service calls or events.
+6. **Assignment at runtime** — Stage assignees resolved when entered (position, dept head, manual, delegation).
+7. **Tracking monitors** — SLA module owns timers/escalations only; never writes task tables.
+8. **Analytics read-only** — Never writes domain tables.
+9. **Audit is append-only** — All modules emit events; audit never queried at runtime by other modules.
+10. **API Resources required** — Every endpoint returns transformed JSON via API Resources.
+11. **Arabic required** — `*_ar` fields required; `*_en` optional (copy Arabic if empty).
+12. **Dates** — Store Gregorian; Hijri computed at presentation layer.
+13. **Out of scope** — No DMS/correspondence, G2G, digital signatures, ERP/SAP, procurement module.
+
+---
+
+## MVP Scope
+
+~178 features from `_blueprints/02_Feature_Inventory.md` (MVP-tagged). V2/V3 deferred unless spec explicitly pulls forward.
+
+Specs are **domain/module-level** (~20), not one spec per feature.
+
+---
+
+## Paired Frontend
+
+Spec IDs match `../frontend/specs/` where UI exists. Backend establishes API contract first; frontend generates TypeScript types from `openapi/openapi.json`.
+
+---
+
+## Current Focus
+
+**Milestone 1 — Platform & Core Foundation**
+**Active spec:** `specs/001-platform-tenancy/`
+**Branch:** `feat/001-platform-tenancy`
+
+---
+
+## What To Avoid
+
+- Global `tenant_id` scopes on tenant DB models
+- Hardcoded RBAC roles in code or migrations
+- Raw Eloquent models in API responses
+- Business logic in controllers — use module services
+- Modifying locked contracts from completed milestones without roadmap review
+- Scanning `../frontend/` for backend implementation decisions
