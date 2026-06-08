@@ -3,7 +3,6 @@
 namespace App\Services\Platform;
 
 use App\Models\Tenant;
-use Illuminate\Support\Facades\DB;
 
 class TenantProvisioningService
 {
@@ -29,6 +28,8 @@ class TenantProvisioningService
             'is_active' => $data['is_active'] ?? true,
             'settings' => $data['settings'] ?? [],
         ]);
+
+        $tenant->createDomain($data['slug']);
 
         return $tenant;
     }

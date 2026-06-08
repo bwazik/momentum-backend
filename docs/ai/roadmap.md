@@ -9,7 +9,7 @@
 ## Current Focus
 
 **Active Milestone:** M2 — Organization & IAM
-**Active Spec:** `specs/002-organization-structure/` (Next up)
+**Active Spec:** `specs/003-iam-abac/` (Next up)
 **Branch:** `main`
 
 Do not implement specs marked ⬜ Not Started unless explicitly instructed.
@@ -21,7 +21,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | # | Name | Status | Depends On |
 |---|------|--------|------------|
 | M1 | Platform & Core Foundation | ✅ Done | — |
-| M2 | Organization & IAM | ⬜ Not Started | M1 |
+| M2 | Organization & IAM | 🔄 In Progress | M1 |
 | M3 | Blueprint Engine | ⬜ Not Started | M2 |
 | M4 | Task Execution & Lifecycle | ⬜ Not Started | M3 |
 | M5 | SLA, Escalation & Notifications | ⬜ Not Started | M4 |
@@ -37,7 +37,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | Spec | Milestone | Domain | Frontend pair | Status |
 |------|-----------|--------|---------------|--------|
 | `001-platform-tenancy` | M1 | Platform + Core tenant resolution | `009-system-administration` (partial) | ✅ Done |
-| `002-organization-structure` | M2 | Organization | `007-organization-structure` | ⬜ Not Started |
+| `002-organization-structure` | M2 | Organization | `007-organization-structure` | ✅ Done |
 | `003-iam-abac` | M2 | IAM | `009-system-administration` | ⬜ Not Started |
 | `004-blueprint-engine` | M3 | Blueprint | `004-blueprint-builder` | ⬜ Not Started |
 | `005-task-execution` | M4 | Task creation & launch | `002-task-board`, `003-task-details` | ⬜ Not Started |
@@ -83,11 +83,21 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 
 ## M2 — Organization & IAM
 
-**Status:** ⬜ Not Started · **Blocked by:** M1
+**Status:** 🔄 In Progress · **Blocked by:** M1
 
-**Specs:** `002`, `003`, `016`, `017`, `018`
+**Specs:** `002` ✅, `003`, `016`, `017`, `018`
 
-**Will establish:** departments, positions, authority grades, ABAC engine, capabilities, monitoring scopes, delegations, working calendar
+**Established by 002:**
+- `departments` table (nested hierarchy with adjacency list, soft delete, bilingual names)
+- `authority_grades` table (permanent seniority levels, no soft delete)
+- `positions` table (job slots with reporting lines, department head flag, soft delete)
+- `working_calendars` + `public_holidays` tables (working day calculation service)
+- `/api/v1/organization/` endpoints (Department, AuthorityGrade, Position, WorkingCalendar, PublicHoliday CRUD)
+- Domain events emitted for all mutating actions (consumed by Audit module in Spec 015)
+- `TenantModel` updated: UUID v7 for `public_id`, route model binding by `public_id`, SoftDeletes opt-in per model
+- `RequireTenantAdmin` middleware as placeholder until ABAC engine (Spec 003)
+
+**Will establish (remaining):** ABAC engine, capabilities, monitoring scopes, delegations, out-of-office
 
 ---
 

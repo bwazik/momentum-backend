@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Modules\Organization\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreWorkingCalendarRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'name_ar' => ['required', 'string', 'max:255'],
+            'name_en' => ['nullable', 'string', 'max:255'],
+            'working_days' => ['required', 'string', 'max:50', 'regex:/^[0-6](,[0-6])*$/'],
+            'working_hours_start' => ['required', 'date_format:H:i'],
+            'working_hours_end' => ['required', 'date_format:H:i', 'after:working_hours_start'],
+            'timezone' => ['nullable', 'string', 'max:100', 'timezone'],
+            'is_default' => ['boolean'],
+        ];
+    }
+}

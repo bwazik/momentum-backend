@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Middleware\CheckTenantStatus;
-use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\InitializeTenancyByHeader;
 /*
 |--------------------------------------------------------------------------
 | Tenant Routes
@@ -16,31 +16,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-use App\Http\Middleware\InitializeTenancyByHeader;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware([
-    'api',
     InitializeTenancyByHeader::class,
     CheckTenantStatus::class,
-])->prefix('api/v1')->group(function () {
+    'api',
+])->prefix('v1')->group(function () {
 
-    // Temporary test route to verify tenant isolation
-    Route::get('test-tenancy', function () {
+    Route::get('/', function () {
         return response()->json([
-            'message' => 'Successfully connected to tenant database!',
+            'message' => 'This is your multi-tenant application.',
             'tenant' => [
                 'public_id' => tenant('public_id'),
                 'slug' => tenant('slug'),
                 'name' => tenant('name_en'),
             ],
-            'database_name' => \Illuminate\Support\Facades\DB::connection()->getDatabaseName(),
+            'database_name' => DB::connection()->getDatabaseName(),
         ]);
     });
 
-    Route::get('/', function () {
-        return response()->json([
-            'message' => 'This is your multi-tenant application.',
-            'tenant_id' => tenant('public_id'),
-        ]);
-    });
+    require __DIR__.'/api/v1/organization.php';
 });

@@ -43,6 +43,7 @@
 - Relationships, casts, scopes, soft deletes only
 - Tenant DB models: **no** `tenant_id` attribute
 - Route model binding resolves by `public_id`
+- Follow the conventions in `app/Models/User.php` exactly: PHP 8 attributes (`#[Fillable]`, `#[Hidden]`), `casts()` method, `HasFactory` typing — use existing models as the reference for patterns.
 
 ### API Resources
 - **Required** for every response

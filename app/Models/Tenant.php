@@ -61,15 +61,8 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             if (empty($tenant->database_name)) {
                 $tenant->database_name = config('tenancy.database.prefix').$tenant->slug;
             }
+
+            $tenant->tenancy_db_name = $tenant->database_name;
         });
-    }
-
-    public function getInternalKey(string $key): string
-    {
-        if ($key === 'db_name') {
-            return 'database_name';
-        }
-
-        return parent::getInternalKey($key);
     }
 }

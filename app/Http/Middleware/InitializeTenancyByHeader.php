@@ -13,7 +13,7 @@ class InitializeTenancyByHeader
     {
         $header = config('tenancy.identification.header_key', 'X-Tenant');
         $tenantId = $request->header($header);
-        if (!$tenantId) {
+        if (! $tenantId) {
             abort(400, "Header $header is missing.");
         }
 
@@ -22,6 +22,7 @@ class InitializeTenancyByHeader
 
             if ($tenant) {
                 $this->tenancy->initialize($tenant);
+
                 return $next($request);
             }
         }

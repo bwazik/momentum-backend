@@ -1,5 +1,10 @@
 # Implementation Plan: 001 Platform Tenancy & Core Foundation
 
+> **Spec:** `specs/001-platform-tenancy/spec.md`
+> **Status:** `approved`
+> **Branch:** `feat/001-platform-tenancy` from `main`
+
+
 ## Overview
 
 This document outlines the technical design for establishing the foundational multi-tenancy architecture for Gov TMS based on the approved spec 001. We will leverage the popular `stancl/tenancy` package (v3) to handle database, cache, and session isolation.
