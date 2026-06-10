@@ -11,18 +11,24 @@ use App\Modules\Organization\Requests\TransferPositionRequest;
 use App\Modules\Organization\Requests\UpdatePositionRequest;
 use App\Modules\Organization\Resources\PositionResource;
 use App\Modules\Organization\Services\PositionService;
+use App\Support\RateLimits;
+use App\Traits\HasRateLimiting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class PositionController extends Controller
 {
+    use HasRateLimiting;
+
     public function __construct(
         private PositionService $positionService,
     ) {}
 
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->checkRateLimit(RateLimits::LIST, [$request->user()?->public_id ?? 'guest']);
+
         $query = Position::query()->with(['department', 'authorityGrade', 'reportsTo']);
 
         if ($request->has('department_id')) {
@@ -40,12 +46,14 @@ class PositionController extends Controller
         }
 
         return PositionResource::collection(
-            $query->orderBy('title_ar')->paginate($request->integer('per_page', 15))
+            $query->orderBy('title_ar')->cursorPaginate($request->integer('per_page', 15))
         );
     }
 
     public function store(StorePositionRequest $request): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [$request->user()?->public_id ?? 'guest']);
+
         $position = $this->positionService->create($request->validated());
 
         return response()->json(
@@ -56,13 +64,17 @@ class PositionController extends Controller
 
     public function show(Position $position): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::LIST, [request()->user()?->public_id ?? 'guest']);
+
         return response()->json(
-            new PositionResource($position->load(['department', 'authorityGrade', 'reportsTo']))
+            new PositionResource($position->load(['department', 'authorityGrade', 'reportsTo', 'currentOccupant.user']))
         );
     }
 
     public function update(UpdatePositionRequest $request, Position $position): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [$request->user()?->public_id ?? 'guest']);
+
         $position = $this->positionService->update($position, $request->validated());
 
         return response()->json(
@@ -72,6 +84,8 @@ class PositionController extends Controller
 
     public function transfer(TransferPositionRequest $request, Position $position): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [$request->user()?->public_id ?? 'guest']);
+
         $position = $this->positionService->transfer($position, $request->input('department_id'));
 
         return response()->json(
@@ -81,6 +95,8 @@ class PositionController extends Controller
 
     public function deactivate(Position $position): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [request()->user()?->public_id ?? 'guest']);
+
         $position = $this->positionService->deactivate($position);
 
         return response()->json(new PositionResource($position));
@@ -88,6 +104,8 @@ class PositionController extends Controller
 
     public function reactivate(Position $position): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [request()->user()?->public_id ?? 'guest']);
+
         $position = $this->positionService->reactivate($position);
 
         return response()->json(new PositionResource($position));
@@ -95,6 +113,8 @@ class PositionController extends Controller
 
     public function destroy(Position $position): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [request()->user()?->public_id ?? 'guest']);
+
         $this->positionService->delete($position);
 
         return response()->json(null, 204);

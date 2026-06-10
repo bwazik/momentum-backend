@@ -9,18 +9,24 @@ use App\Modules\Organization\Requests\StorePublicHolidayRequest;
 use App\Modules\Organization\Requests\UpdatePublicHolidayRequest;
 use App\Modules\Organization\Resources\PublicHolidayResource;
 use App\Modules\Organization\Services\CalendarService;
+use App\Support\RateLimits;
+use App\Traits\HasRateLimiting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class PublicHolidayController extends Controller
 {
+    use HasRateLimiting;
+
     public function __construct(
         private CalendarService $calendarService,
     ) {}
 
     public function index(Request $request, WorkingCalendar $workingCalendar): AnonymousResourceCollection
     {
+        $this->checkRateLimit(RateLimits::LIST, [$request->user()?->public_id ?? 'guest']);
+
         $query = $workingCalendar->holidays();
 
         if ($request->has('year')) {
@@ -35,6 +41,8 @@ class PublicHolidayController extends Controller
 
     public function store(StorePublicHolidayRequest $request, WorkingCalendar $workingCalendar): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [$request->user()?->public_id ?? 'guest']);
+
         $holiday = $this->calendarService->createHoliday($workingCalendar, $request->validated());
 
         return response()->json(
@@ -45,6 +53,8 @@ class PublicHolidayController extends Controller
 
     public function show(WorkingCalendar $workingCalendar, PublicHoliday $publicHoliday): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::LIST, [request()->user()?->public_id ?? 'guest']);
+
         if ($publicHoliday->working_calendar_id !== $workingCalendar->id) {
             abort(404, 'Holiday does not belong to this calendar.');
         }
@@ -56,6 +66,8 @@ class PublicHolidayController extends Controller
 
     public function update(UpdatePublicHolidayRequest $request, WorkingCalendar $workingCalendar, PublicHoliday $publicHoliday): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [$request->user()?->public_id ?? 'guest']);
+
         if ($publicHoliday->working_calendar_id !== $workingCalendar->id) {
             abort(404, 'Holiday does not belong to this calendar.');
         }
@@ -67,6 +79,8 @@ class PublicHolidayController extends Controller
 
     public function destroy(WorkingCalendar $workingCalendar, PublicHoliday $publicHoliday): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [request()->user()?->public_id ?? 'guest']);
+
         if ($publicHoliday->working_calendar_id !== $workingCalendar->id) {
             abort(404, 'Holiday does not belong to this calendar.');
         }

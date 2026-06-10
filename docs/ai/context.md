@@ -6,6 +6,24 @@
 
 ---
 
+## Required Reading Chain
+
+Every agent working on this codebase **must** read these files in order before writing any code:
+
+1. **`docs/ai/context.md`** — You are here. Project identity and critical rules.
+2. **`docs/ai/roadmap.md`** — Milestone status, active spec, completed contracts.
+3. **`docs/ai/architecture.md`** — Module boundaries, data flows, request flow.
+4. **`docs/ai/coding-standards.md`** — Pagination, caching, transactions, logging, enums, rate limiting. **Must read before ANY implementation.**
+5. **`docs/ai/security-policy.md`** — Auth, ABAC, tenancy, PII, impersonation. Must read when touching auth, permissions, or tenant isolation.
+6. **`docs/ai/testing-policy.md`** — Test structure, coverage rules, factory usage.
+7. **`docs/ai/release-policy.md`** — Deployment, migrations, API versioning.
+8. **`docs/ai/glossary.md`** — Domain terms and naming conventions.
+9. **`docs/ai/spec-creation-guide.md`** — Prompt templates for creating new specs and plans.
+
+**Rule:** If you are writing code, you MUST have read `coding-standards.md` and `security-policy.md`. No exceptions.
+
+---
+
 ## What Is This Project?
 
 **Gov TMS (Momentum)** is a multi-tenant SaaS platform for government and large organizations in the GCC. It replaces manual task follow-up (*متابعة*) with **stage-level accountability**: every task follows a **Blueprint** (workflow template), progresses through **Stages/Sub-stages**, and enforces **SLAs** with escalation.
@@ -110,11 +128,12 @@ Spec IDs match `../frontend/specs/` where UI exists. Backend establishes API con
 
 ## Current Focus
 
-**Milestone 1 — Platform & Core Foundation**
-**Active spec:** `specs/001-platform-tenancy/`
-**Branch:** `feat/001-platform-tenancy`
+**Milestone 2 — Organization & IAM: ✅ Done**
+**Next:** M3 Blueprint Engine (spec 004) or 001-platform-admin supplement
 
 ---
+
+→ **Next:** [roadmap.md](roadmap.md)
 
 ## What To Avoid
 

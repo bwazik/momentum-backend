@@ -14,15 +14,21 @@ Read relevant blueprint files when `docs/ai/` is insufficient or when resolving 
 
 ---
 
-## Always Read First
+## Mandatory Reading Chain — Read ALL Before Coding
 
-docs/ai/context.md
+Every agent MUST read these files in order. Do not skip any.
 
----
+1. **`docs/ai/context.md`** — Project identity, tech stack, critical rules.
+2. **`docs/ai/roadmap.md`** — Milestone status, active spec, completed contracts.
+3. **`docs/ai/architecture.md`** — Module boundaries, data flows, infrastructure.
+4. **`docs/ai/coding-standards.md`** — **NON-NEGOTIABLE.** Pagination, caching, transactions, logging, enums, rate limiting, API envelope. Read before ANY implementation.
+5. **`docs/ai/security-policy.md`** — Auth, ABAC, tenancy, PII, impersonation. Read when touching auth, permissions, tenant isolation, or sensitive data.
+6. **`docs/ai/testing-policy.md`** — Test structure, coverage rules, factories.
+7. **`docs/ai/release-policy.md`** — Deployment, migrations, API versioning.
+8. **`docs/ai/glossary.md`** — Domain terms and naming conventions.
+9. **`docs/ai/spec-creation-guide.md`** — Prompt templates for creating specs and plans.
 
-## Milestones
-
-Read `docs/ai/roadmap.md` immediately after `context.md`.
+**If you are writing code, you MUST have read `coding-standards.md` and `security-policy.md`. No exceptions.**
 
 ---
 
@@ -30,10 +36,12 @@ Read `docs/ai/roadmap.md` immediately after `context.md`.
 
 If the task references a spec number or feature name:
 
+- Read all files in the Mandatory Reading Chain first
 - Read `specs/{number}-{name}/spec.md`
 - Read `specs/{number}-{name}/plan.md` (if it exists)
 - Honor `Depends on:` — read dependency `plan.md` files for stable contracts
 - Check `Provides APIs:` and `Contract status:` before changing public endpoints
+- Every spec's **Non-Functional Requirements** section MUST reference `coding-standards.md`
 
 ---
 
@@ -42,19 +50,7 @@ If the task references a spec number or feature name:
 - REST only, versioned at `/api/v1/`
 - All responses via Laravel API Resources — never expose internal `id`; use `public_id` (UUID v7)
 - Scramble generates OpenAPI — committed snapshot at `openapi/openapi.json`
-
----
-
-## Read Conditionally
-
-| When the task involves...               | Read                          |
-| --------------------------------------- | ----------------------------- |
-| Module structure, services, data flow   | `docs/ai/architecture.md`     |
-| Auth, ABAC, tenancy, PII, impersonation | `docs/ai/security-policy.md`  |
-| Patterns, conventions                   | `docs/ai/coding-standards.md` |
-| Tests                                   | `docs/ai/testing-policy.md`   |
-| Deploy, CI, migrations                  | `docs/ai/release-policy.md`   |
-| Domain terms                            | `docs/ai/glossary.md`         |
+- Cursor pagination on all list endpoints except stable small tables (< 100 rows, return full list)
 
 ---
 
@@ -74,6 +70,13 @@ If the task references a spec number or feature name:
 - Do not bypass ABAC, audit logs, or permission gates
 - Do not implement out-of-scope systems (DMS, G2G, ERP, e-signatures)
 - If a change breaks a locked contract — stop and ask first
+- All multi-write operations MUST use `DB::transaction()`
+- All domain events MUST implement `ShouldDispatchAfterCommit`
+- All service methods MUST use try/catch with module-specific logging channels
+- All enums MUST be PHP enum classes — no magic numbers in business logic or form requests
+- All list endpoints on tables > 1000 rows MUST use cursor pagination
+- All Redis cache keys MUST be tenant-prefixed
+- All rate limiting MUST use `App\Support\RateLimits` constants + `App\Traits\HasRateLimiting` trait — never inline numbers or manual `RateLimiter::hit()` calls
 
 ---
 

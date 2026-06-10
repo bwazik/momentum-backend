@@ -24,12 +24,13 @@ it('isolates data between two tenants', function () {
 
     tenancy()->initialize($tenant1);
     User::create([
-        'name' => 'User One',
+        'name_ar' => 'المستخدم الأول',
+        'name_en' => 'User One',
         'email' => 'user1@example.com',
         'password' => bcrypt('password'),
     ]);
     expect(User::count())->toBe(1);
-    expect(User::first()->name)->toBe('User One');
+    expect(User::first()->name_ar)->toBe('المستخدم الأول');
     tenancy()->end();
 
     tenancy()->initialize($tenant2);
@@ -37,12 +38,13 @@ it('isolates data between two tenants', function () {
     expect(User::count())->toBe(0);
 
     User::create([
-        'name' => 'User Two',
+        'name_ar' => 'المستخدم الثاني',
+        'name_en' => 'User Two',
         'email' => 'user2@example.com',
         'password' => bcrypt('password'),
     ]);
     expect(User::count())->toBe(1);
-    expect(User::first()->name)->toBe('User Two');
+    expect(User::first()->name_en)->toBe('User Two');
     tenancy()->end();
 
     cleanupTenantDatabase($tenant1->database_name);

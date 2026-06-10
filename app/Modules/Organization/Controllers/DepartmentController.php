@@ -9,18 +9,24 @@ use App\Modules\Organization\Requests\UpdateDepartmentRequest;
 use App\Modules\Organization\Resources\DepartmentResource;
 use App\Modules\Organization\Resources\DepartmentTreeResource;
 use App\Modules\Organization\Services\DepartmentService;
+use App\Support\RateLimits;
+use App\Traits\HasRateLimiting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class DepartmentController extends Controller
 {
+    use HasRateLimiting;
+
     public function __construct(
         private DepartmentService $departmentService,
     ) {}
 
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->checkRateLimit(RateLimits::LIST, [$request->user()?->public_id ?? 'guest']);
+
         $query = Department::query()->with('parent');
 
         if ($request->has('is_active')) {
@@ -35,17 +41,21 @@ class DepartmentController extends Controller
         }
 
         return DepartmentResource::collection(
-            $query->orderBy('name_ar')->paginate($request->integer('per_page', 15))
+            $query->orderBy('name_ar')->cursorPaginate($request->integer('per_page', 15))
         );
     }
 
     public function tree(): AnonymousResourceCollection
     {
+        $this->checkRateLimit(RateLimits::LIST, [request()->user()?->public_id ?? 'guest']);
+
         return DepartmentTreeResource::collection($this->departmentService->getTree());
     }
 
     public function store(StoreDepartmentRequest $request): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [$request->user()?->public_id ?? 'guest']);
+
         $department = $this->departmentService->create($request->validated());
 
         return response()->json(
@@ -56,6 +66,8 @@ class DepartmentController extends Controller
 
     public function show(Department $department): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::LIST, [request()->user()?->public_id ?? 'guest']);
+
         return response()->json(
             new DepartmentResource($department->load('parent', 'children'))
         );
@@ -63,6 +75,8 @@ class DepartmentController extends Controller
 
     public function update(UpdateDepartmentRequest $request, Department $department): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [$request->user()?->public_id ?? 'guest']);
+
         $department = $this->departmentService->update($department, $request->validated());
 
         return response()->json(new DepartmentResource($department->load('parent')));
@@ -70,6 +84,8 @@ class DepartmentController extends Controller
 
     public function deactivate(Request $request, Department $department): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [$request->user()?->public_id ?? 'guest']);
+
         $department = $this->departmentService->deactivate(
             $department,
             $request->boolean('cascade_to_children', false)
@@ -80,6 +96,8 @@ class DepartmentController extends Controller
 
     public function reactivate(Department $department): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [request()->user()?->public_id ?? 'guest']);
+
         $department = $this->departmentService->reactivate($department);
 
         return response()->json(new DepartmentResource($department));
@@ -87,6 +105,8 @@ class DepartmentController extends Controller
 
     public function destroy(Department $department): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [request()->user()?->public_id ?? 'guest']);
+
         $this->departmentService->delete($department);
 
         return response()->json(null, 204);

@@ -25,7 +25,19 @@ class PositionResource extends JsonResource
             ],
             'is_department_head' => $this->is_department_head,
             'is_active' => $this->is_active,
-            'current_occupant' => null, // TODO: Populate from IAM module (Spec 003)
+            'current_occupant' => $this->whenLoaded('currentOccupant', function () {
+                $assignment = $this->currentOccupant;
+
+                if ($assignment && $assignment->user) {
+                    return [
+                        'public_id' => $assignment->user->public_id,
+                        'name_ar' => $assignment->user->name_ar,
+                        'name_en' => $assignment->user->name_en ?? $assignment->user->name_ar,
+                    ];
+                }
+
+                return null;
+            }),
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];

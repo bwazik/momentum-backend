@@ -1,5 +1,13 @@
 <?php
 
+use App\Exceptions\ThrottleException;
+use App\Http\Middleware\RequireCapability;
+use App\Modules\Iam\Exceptions\CannotDelegateToSelfException;
+use App\Modules\Iam\Exceptions\CannotRevokeSystemCapabilityKeyException;
+use App\Modules\Iam\Exceptions\DuplicateGrantException;
+use App\Modules\Iam\Exceptions\PrimaryPositionAlreadyAssignedException;
+use App\Modules\Iam\Exceptions\UserAlreadyActiveException;
+use App\Modules\Iam\Exceptions\UserAlreadyDeactivatedException;
 use App\Modules\Organization\Exceptions\AuthorityGradeHasActivePositionsException;
 use App\Modules\Organization\Exceptions\CannotDeleteDefaultCalendarException;
 use App\Modules\Organization\Exceptions\CircularDepartmentReferenceException;
@@ -20,29 +28,28 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias(['capability' => RequireCapability::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*') || $request->is('v1*'),
-        );
+        // Api exceptions
+        $exceptions->shouldRenderJsonWhen(fn (Request $request) => $request->is('api/*') || $request->is('v1*'));
 
-        $exceptions->renderable(
-            fn (CircularDepartmentReferenceException $e) => response()->json(['message' => $e->getMessage()], 422)
-        );
-        $exceptions->renderable(
-            fn (CircularReportingLineException $e) => response()->json(['message' => $e->getMessage()], 422)
-        );
-        $exceptions->renderable(
-            fn (DepartmentHasActivePositionsException $e) => response()->json(['message' => $e->getMessage()], 422)
-        );
-        $exceptions->renderable(
-            fn (AuthorityGradeHasActivePositionsException $e) => response()->json(['message' => $e->getMessage()], 422)
-        );
-        $exceptions->renderable(
-            fn (CannotDeleteDefaultCalendarException $e) => response()->json(['message' => $e->getMessage()], 422)
-        );
-        $exceptions->renderable(
-            fn (DepartmentHasChildrenException $e) => response()->json(['message' => $e->getMessage()], 422)
-        );
+        // Organization exceptions
+        $exceptions->renderable(fn (CircularDepartmentReferenceException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (CircularReportingLineException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (DepartmentHasActivePositionsException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (AuthorityGradeHasActivePositionsException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (CannotDeleteDefaultCalendarException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (DepartmentHasChildrenException $e) => response()->json(['message' => $e->getMessage()], 422));
+
+        // App exceptions
+        $exceptions->renderable(fn (ThrottleException $e) => $e->render());
+
+        // IAM exceptions
+        $exceptions->renderable(fn (CannotDelegateToSelfException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (CannotRevokeSystemCapabilityKeyException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (DuplicateGrantException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (PrimaryPositionAlreadyAssignedException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (UserAlreadyActiveException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (UserAlreadyDeactivatedException $e) => response()->json(['message' => $e->getMessage()], 422));
     })->create();

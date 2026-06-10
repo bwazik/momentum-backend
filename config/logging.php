@@ -123,6 +123,31 @@ return [
             'handler' => NullHandler::class,
         ],
 
+        // Module-specific channels
+        'organization' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/organization.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 14,
+            'replace_placeholders' => true,
+        ],
+
+        'iam' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/iam.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 14,
+            'replace_placeholders' => true,
+        ],
+
+        'platform' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/platform.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 14,
+            'replace_placeholders' => true,
+        ],
+
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],

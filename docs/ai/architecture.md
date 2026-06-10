@@ -149,3 +149,7 @@ Background jobs carry `tenant_id` / slug in payload; worker switches connection 
 | Redis | Cache, sessions, queues |
 
 No G2G, ERP, or digital identity integrations in MVP.
+
+---
+
+→ **Next:** [coding-standards.md](coding-standards.md)

@@ -113,3 +113,7 @@ Classification: `public`, `internal`, `confidential`
 - Disabling or bypassing ABAC checks
 - New platform admin capabilities
 - Third-party integrations receiving user data
+
+---
+
+→ **Next:** [testing-policy.md](testing-policy.md)

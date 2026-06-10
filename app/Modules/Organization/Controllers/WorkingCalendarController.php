@@ -9,6 +9,8 @@ use App\Modules\Organization\Requests\UpdateWorkingCalendarRequest;
 use App\Modules\Organization\Resources\WorkingCalendarResource;
 use App\Modules\Organization\Services\CalendarService;
 use App\Modules\Organization\Services\WorkingDayCalculator;
+use App\Support\RateLimits;
+use App\Traits\HasRateLimiting;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,6 +18,8 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class WorkingCalendarController extends Controller
 {
+    use HasRateLimiting;
+
     public function __construct(
         private CalendarService $calendarService,
         private WorkingDayCalculator $workingDayCalculator,
@@ -23,6 +27,8 @@ class WorkingCalendarController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
+        $this->checkRateLimit(RateLimits::LIST, [request()->user()?->public_id ?? 'guest']);
+
         return WorkingCalendarResource::collection(
             $this->calendarService->listCalendars()
         );
@@ -30,6 +36,8 @@ class WorkingCalendarController extends Controller
 
     public function store(StoreWorkingCalendarRequest $request): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [$request->user()?->public_id ?? 'guest']);
+
         $calendar = $this->calendarService->createCalendar($request->validated());
 
         return response()->json(
@@ -40,6 +48,8 @@ class WorkingCalendarController extends Controller
 
     public function show(WorkingCalendar $workingCalendar): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::LIST, [request()->user()?->public_id ?? 'guest']);
+
         return response()->json(
             new WorkingCalendarResource($workingCalendar)
         );
@@ -47,6 +57,8 @@ class WorkingCalendarController extends Controller
 
     public function update(UpdateWorkingCalendarRequest $request, WorkingCalendar $workingCalendar): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [$request->user()?->public_id ?? 'guest']);
+
         $calendar = $this->calendarService->updateCalendar($workingCalendar, $request->validated());
 
         return response()->json(new WorkingCalendarResource($calendar));
@@ -54,6 +66,8 @@ class WorkingCalendarController extends Controller
 
     public function destroy(WorkingCalendar $workingCalendar): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::MUTATE, [request()->user()?->public_id ?? 'guest']);
+
         $this->calendarService->deleteCalendar($workingCalendar);
 
         return response()->json(null, 204);
@@ -61,6 +75,8 @@ class WorkingCalendarController extends Controller
 
     public function isWorkingDay(Request $request, WorkingCalendar $workingCalendar): JsonResponse
     {
+        $this->checkRateLimit(RateLimits::LIST, [$request->user()?->public_id ?? 'guest']);
+
         $request->validate([
             'date' => ['required', 'date'],
         ]);

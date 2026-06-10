@@ -82,3 +82,7 @@ Backend and frontend deploy independently from their repos after respective CI p
 - Auth flow changes
 - Tenant provisioning / connection logic changes
 - Multi-tenant batch migration execution
+
+---
+
+→ **Next:** [glossary.md](glossary.md)

@@ -70,3 +70,7 @@ php artisan test tests/Feature/Api/V1/Platform
 - All tests pass before merge to `main`
 - CI runs Pest on every PR and before VPS deploy
 - Failing tests block deployment
+
+---
+
+→ **Next:** [release-policy.md](release-policy.md)

@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Organization\Exceptions\CannotDeleteDefaultCalendarException;
 use App\Modules\Organization\Models\PublicHoliday;
 use App\Modules\Organization\Models\WorkingCalendar;
 use App\Modules\Organization\Services\CalendarService;
@@ -7,7 +8,6 @@ use App\Modules\Organization\Services\WorkingDayCalculator;
 use App\Services\Platform\TenantProvisioningService;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
-use App\Modules\Organization\Exceptions\CannotDeleteDefaultCalendarException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

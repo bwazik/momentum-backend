@@ -12,14 +12,14 @@ it('resolves tenant by subdomain and blocks inactive tenants', function () {
     $tenant = $service->provision([
         'name_en' => 'Active',
         'name_ar' => 'نشط',
-        'slug' => 'active-' . uniqid(),
+        'slug' => 'active-'.uniqid(),
         'is_active' => true,
     ]);
 
     $inactiveTenant = $service->provision([
         'name_en' => 'Inactive',
         'name_ar' => 'غير نشط',
-        'slug' => 'inactive-' . uniqid(),
+        'slug' => 'inactive-'.uniqid(),
         'is_active' => false,
     ]);
 

@@ -14,8 +14,6 @@ class TenantProvisioningService
     {
         $data['database_name'] = $data['database_name'] ?? config('tenancy.database.prefix').$data['slug'];
 
-        // Create the tenant in the central database.
-        // stancl/tenancy will automatically fire CreatingDatabase and MigratingDatabase jobs
         $tenant = Tenant::create([
             'name_en' => $data['name_en'],
             'name_ar' => $data['name_ar'],

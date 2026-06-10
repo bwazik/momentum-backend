@@ -38,4 +38,5 @@ Route::middleware([
     });
 
     require __DIR__.'/api/v1/organization.php';
+    require __DIR__.'/api/v1/iam.php';
 });

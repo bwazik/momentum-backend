@@ -88,3 +88,7 @@ Full catalog: `../_blueprints/04_Visibility_Access_Rules.md` Section 5.
 | Capability | Permission (in DB table names) |
 | Stage | Step, Phase (in API — prefer `stage`) |
 | `public_id` | `id`, `uuid` (in external API) |
+
+---
+
+→ **Next:** [spec-creation-guide.md](spec-creation-guide.md)
