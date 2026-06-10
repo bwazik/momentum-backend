@@ -2,6 +2,7 @@
 
 use App\Exceptions\ThrottleException;
 use App\Http\Middleware\RequireCapability;
+use App\Http\Middleware\RequirePlatformAdmin;
 use App\Modules\Iam\Exceptions\CannotDelegateToSelfException;
 use App\Modules\Iam\Exceptions\CannotRevokeSystemCapabilityKeyException;
 use App\Modules\Iam\Exceptions\DuplicateGrantException;
@@ -14,6 +15,11 @@ use App\Modules\Organization\Exceptions\CircularDepartmentReferenceException;
 use App\Modules\Organization\Exceptions\CircularReportingLineException;
 use App\Modules\Organization\Exceptions\DepartmentHasActivePositionsException;
 use App\Modules\Organization\Exceptions\DepartmentHasChildrenException;
+use App\Modules\Platform\Exceptions\CannotImpersonatePlatformAdminException;
+use App\Modules\Platform\Exceptions\CannotImpersonateSelfException;
+use App\Modules\Platform\Exceptions\PlatformAdminCannotDeactivateSelfException;
+use App\Modules\Platform\Exceptions\TenantAlreadyActiveException;
+use App\Modules\Platform\Exceptions\TenantAlreadySuspendedException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -27,8 +33,14 @@ return Application::configure(basePath: dirname(__DIR__))
         apiPrefix: '',
         health: '/up',
     )
+    ->withEvents(discover: [
+        __DIR__.'/../app/Modules/*/Listeners',
+    ])
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->alias(['capability' => RequireCapability::class]);
+        $middleware->alias([
+            'capability' => RequireCapability::class,
+            'platform.admin' => RequirePlatformAdmin::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Api exceptions
@@ -52,4 +64,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->renderable(fn (PrimaryPositionAlreadyAssignedException $e) => response()->json(['message' => $e->getMessage()], 422));
         $exceptions->renderable(fn (UserAlreadyActiveException $e) => response()->json(['message' => $e->getMessage()], 422));
         $exceptions->renderable(fn (UserAlreadyDeactivatedException $e) => response()->json(['message' => $e->getMessage()], 422));
+
+        // Platform exceptions
+        $exceptions->renderable(fn (TenantAlreadySuspendedException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (TenantAlreadyActiveException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (CannotImpersonateSelfException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (CannotImpersonatePlatformAdminException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (PlatformAdminCannotDeactivateSelfException $e) => response()->json(['message' => $e->getMessage()], 422));
     })->create();

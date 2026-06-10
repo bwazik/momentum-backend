@@ -27,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
             return User::withTrashed()->where('public_id', $value)->firstOrFail();
         });
 
+        Route::bind('admin', function (string $value): User {
+            return User::withTrashed()->where('public_id', $value)->firstOrFail();
+        });
+
         Factory::guessFactoryNamesUsing(function (string $modelName): string {
             $appNamespace = app()->getNamespace();
 

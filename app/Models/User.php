@@ -120,4 +120,9 @@ class User extends Authenticatable
     {
         return $this->account_type === AccountType::EXTERNAL_AUDITOR;
     }
+
+    public function isPlatformAdmin(): bool
+    {
+        return $this->account_type === AccountType::PLATFORM_ADMIN;
+    }
 }

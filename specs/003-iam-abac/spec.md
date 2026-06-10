@@ -101,125 +101,125 @@ All data lives in the tenant DB (no `tenant_id` columns). All mutating endpoints
 
 ### Users Table & Model
 
-- [ ] `users` table in tenant DB is migrated to include: `public_id` (UUID v7, unique), `account_type` (TINYINT, default 1), `name_en`, `name_ar` (required), `mobile` (nullable), `employee_id` (nullable, unique), `preferred_language` (TINYINT, default 1), `is_active` (boolean, default true), `deleted_at` (soft delete), and existing columns (`email` unique, `password`, `remember_token`, `email_verified_at`, timestamps)
-- [ ] `User` model extends `Authenticatable` (not `TenantModel`) but has `public_id` auto-generated via `Str::uuid7()` on create, `getRouteKeyName()` returning `'public_id'`
-- [ ] `User` model includes `HasApiTokens` (Sanctum) trait
-- [ ] `User` model casts: `account_type` → SmallInteger, `is_active` → boolean, `preferred_language` → SmallInteger, `password` → hashed, `email_verified_at` → datetime
-- [ ] All API responses expose `public_id` only — never internal `id` or `password`
-- [ ] Bilingual: `name_ar` required, `name_en` optional (falls back to `name_ar`)
+- [x] `users` table in tenant DB is migrated to include: `public_id` (UUID v7, unique), `account_type` (TINYINT, default 1), `name_en`, `name_ar` (required), `mobile` (nullable), `employee_id` (nullable, unique), `preferred_language` (TINYINT, default 1), `is_active` (boolean, default true), `deleted_at` (soft delete), and existing columns (`email` unique, `password`, `remember_token`, `email_verified_at`, timestamps)
+- [x] `User` model extends `Authenticatable` (not `TenantModel`) but has `public_id` auto-generated via `Str::uuid7()` on create, `getRouteKeyName()` returning `'public_id'`
+- [x] `User` model includes `HasApiTokens` (Sanctum) trait
+- [x] `User` model casts: `account_type` → SmallInteger, `is_active` → boolean, `preferred_language` → SmallInteger, `password` → hashed, `email_verified_at` → datetime
+- [x] All API responses expose `public_id` only — never internal `id` or `password`
+- [x] Bilingual: `name_ar` required, `name_en` optional (falls back to `name_ar`)
 
 ### Authentication
 
-- [ ] `POST /api/v1/iam/auth/login` — authenticates user by email + password; returns Sanctum token; validates `is_active = true` and `account_type !== 4` (platform admins log in via central, not tenant)
-- [ ] `POST /api/v1/iam/auth/logout` — invalidates current Sanctum token; requires authentication
-- [ ] Login rate-limited to 5 attempts per minute per email + IP combination
-- [ ] Failed login returns generic "Invalid credentials" message (no user enumeration)
-- [ ] Account soft-deletion (`deleted_at`) prevents login; deactivated accounts (`is_active = false`) also cannot log in
+- [x] `POST /api/v1/iam/auth/login` — authenticates user by email + password; returns Sanctum token; validates `is_active = true` and `account_type !== 4` (platform admins log in via central, not tenant)
+- [x] `POST /api/v1/iam/auth/logout` — invalidates current Sanctum token; requires authentication
+- [x] Login rate-limited to 5 attempts per minute per email + IP combination
+- [x] Failed login returns generic "Invalid credentials" message (no user enumeration)
+- [x] Account soft-deletion (`deleted_at`) prevents login; deactivated accounts (`is_active = false`) also cannot log in
 
 ### User CRUD
 
-- [ ] `GET /api/v1/iam/users` — list users with pagination and filters: `is_active`, `account_type`, `department_id` (via current primary position), `search` (name, email, employee_id). Requires `iam.manage_users` capability.
-- [ ] `POST /api/v1/iam/users` — create user; `name_ar` required, `email` required and unique within tenant, `password` required (min 8 chars), `account_type` required (1=internal_user, 2=tenant_admin, 3=external_auditor). Requires `iam.manage_users`.
-- [ ] `GET /api/v1/iam/users/{user}` — show user profile with current position assignment and effective capabilities. Authenticated users can view own profile; `iam.manage_users` required for others.
-- [ ] `PUT /api/v1/iam/users/{user}` — update user profile (name, mobile, preferred_language, account_type). `iam.manage_users` required; users can update own name/mobile/language.
-- [ ] `POST /api/v1/iam/users/{user}/deactivate` — soft-delete user; sets `is_active = false` and `deleted_at`. Requires `iam.manage_users`.
-- [ ] `POST /api/v1/iam/users/{user}/reactivate` — restore deactivated user; sets `is_active = true` and clears `deleted_at`. Requires `iam.manage_users`.
+- [x] `GET /api/v1/iam/users` — list users with pagination and filters: `is_active`, `account_type`, `department_id` (via current primary position), `search` (name, email, employee_id). Requires `iam.manage_users` capability.
+- [x] `POST /api/v1/iam/users` — create user; `name_ar` required, `email` required and unique within tenant, `password` required (min 8 chars), `account_type` required (1=internal_user, 2=tenant_admin, 3=external_auditor). Requires `iam.manage_users`.
+- [x] `GET /api/v1/iam/users/{user}` — show user profile with current position assignment and effective capabilities. Authenticated users can view own profile; `iam.manage_users` required for others.
+- [x] `PUT /api/v1/iam/users/{user}` — update user profile (name, mobile, preferred_language, account_type). `iam.manage_users` required; users can update own name/mobile/language.
+- [x] `POST /api/v1/iam/users/{user}/deactivate` — soft-delete user; sets `is_active = false` and `deleted_at`. Requires `iam.manage_users`.
+- [x] `POST /api/v1/iam/users/{user}/reactivate` — restore deactivated user; sets `is_active = true` and clears `deleted_at`. Requires `iam.manage_users`.
 
 ### Position Assignments
 
-- [ ] `user_position_assignments` table in tenant DB with columns: `id`, `user_id` (FK users), `position_id` (FK positions), `started_at` (timestamp), `ended_at` (nullable timestamp), `is_primary` (boolean, default true), `created_at`
-- [ ] `POST /api/v1/iam/users/{user}/positions` — assign a position to a user with `started_at`. `position_id` (by public_id) must reference an active position. Requires `iam.manage_positions`.
-- [ ] `POST /api/v1/iam/users/{user}/positions/{assignment}/end` — end an assignment; sets `ended_at = now()`. If it was the primary assignment, the user has no primary position until a new one is assigned. Requires `iam.manage_positions`.
-- [ ] `POST /api/v1/iam/users/{user}/positions/{assignment}/set-primary` — marks an active assignment as primary; unsets any other primary for the same user. Requires `iam.manage_positions`.
-- [ ] MVP enforces: one active primary position per user. Attempting to assign a second primary must either auto-end the previous primary or reject the request.
-- [ ] The `Position.currentOccupant()` relationship (commented out in Spec 002) is uncommented and activated, referencing `UserPositionAssignment` where `ended_at IS NULL` and `is_primary = true`.
-- [ ] `UserResource` includes `current_position` with position details and department context.
+- [x] `user_position_assignments` table in tenant DB with columns: `id`, `user_id` (FK users), `position_id` (FK positions), `started_at` (timestamp), `ended_at` (nullable timestamp), `is_primary` (boolean, default true), `created_at`
+- [x] `POST /api/v1/iam/users/{user}/positions` — assign a position to a user with `started_at`. `position_id` (by public_id) must reference an active position. Requires `iam.manage_positions`.
+- [x] `POST /api/v1/iam/users/{user}/positions/{assignment}/end` — end an assignment; sets `ended_at = now()`. If it was the primary assignment, the user has no primary position until a new one is assigned. Requires `iam.manage_positions`.
+- [x] `POST /api/v1/iam/users/{user}/positions/{assignment}/set-primary` — marks an active assignment as primary; unsets any other primary for the same user. Requires `iam.manage_positions`.
+- [x] MVP enforces: one active primary position per user. Attempting to assign a second primary must either auto-end the previous primary or reject the request.
+- [x] The `Position.currentOccupant()` relationship (commented out in Spec 002) is uncommented and activated, referencing `UserPositionAssignment` where `ended_at IS NULL` and `is_primary = true`.
+- [x] `UserResource` includes `current_position` with position details and department context.
 
 ### Capabilities
 
-- [ ] `capabilities` table in tenant DB with columns: `id`, `key` (varchar, unique), `name_en`, `name_ar` (required), `description` (nullable), `is_system_defined` (boolean, default true), `created_at`, `updated_at`
-- [ ] System-defined capabilities (25 MVP capabilities from `04_Visibility_Access_Rules.md` Section 5) are seeded on tenant provisioning. These cannot be deleted; `name_ar`/`name_en`/`description` can be updated by `iam.manage_capabilities`.
-- [ ] `GET /api/v1/iam/capabilities` — list all capabilities (unpaginated, expected < 50). Authenticated users can view the catalog.
-- [ ] `PUT /api/v1/iam/capabilities/{capability}` — update name/description of a capability. System-defined keys cannot be changed. Requires `iam.manage_capabilities`.
+- [x] `capabilities` table in tenant DB with columns: `id`, `key` (varchar, unique), `name_en`, `name_ar` (required), `description` (nullable), `is_system_defined` (boolean, default true), `created_at`, `updated_at`
+- [x] System-defined capabilities (25 MVP capabilities from `04_Visibility_Access_Rules.md` Section 5) are seeded on tenant provisioning. These cannot be deleted; `name_ar`/`name_en`/`description` can be updated by `iam.manage_capabilities`.
+- [x] `GET /api/v1/iam/capabilities` — list all capabilities (unpaginated, expected < 50). Authenticated users can view the catalog.
+- [x] `PUT /api/v1/iam/capabilities/{capability}` — update name/description of a capability. System-defined keys cannot be changed. Requires `iam.manage_capabilities`.
 
 ### Position Capability Grants
 
-- [ ] `position_capability_grants` table in tenant DB with columns: `id`, `position_id` (FK positions), `capability_id` (FK capabilities), `scope_type` (TINYINT: 1=tenant, 2=own_department, 3=specific_department, 4=department_tree, 5=own_tasks), `scope_department_id` (nullable FK departments, required when scope_type is 3 or 4), `granted_by_user_id` (FK users), `granted_at` (timestamp), `revoked_at` (nullable timestamp)
-- [ ] `POST /api/v1/iam/positions/{position}/capabilities` — grant a capability to a position with a scope. `revoked_at` is null (active grant). Requires `iam.manage_capabilities`.
-- [ ] `GET /api/v1/iam/positions/{position}/capabilities` — list active (non-revoked) capability grants for a position. Requires `iam.manage_capabilities` or `iam.manage_positions`.
-- [ ] `POST /api/v1/iam/position-capability-grants/{grant}/revoke` — set `revoked_at = now()` to deactivate a grant. Does not delete the row (full audit trail). Requires `iam.manage_capabilities`.
-- [ ] When a position is deactivated, all its active capability grants remain active (they may become inert because no user holds the position, but they are not auto-revoked).
+- [x] `position_capability_grants` table in tenant DB with columns: `id`, `position_id` (FK positions), `capability_id` (FK capabilities), `scope_type` (TINYINT: 1=tenant, 2=own_department, 3=specific_department, 4=department_tree, 5=own_tasks), `scope_department_id` (nullable FK departments, required when scope_type is 3 or 4), `granted_by_user_id` (FK users), `granted_at` (timestamp), `revoked_at` (nullable timestamp)
+- [x] `POST /api/v1/iam/positions/{position}/capabilities` — grant a capability to a position with a scope. `revoked_at` is null (active grant). Requires `iam.manage_capabilities`.
+- [x] `GET /api/v1/iam/positions/{position}/capabilities` — list active (non-revoked) capability grants for a position. Requires `iam.manage_capabilities` or `iam.manage_positions`.
+- [x] `POST /api/v1/iam/position-capability-grants/{grant}/revoke` — set `revoked_at = now()` to deactivate a grant. Does not delete the row (full audit trail). Requires `iam.manage_capabilities`.
+- [x] When a position is deactivated, all its active capability grants remain active (they may become inert because no user holds the position, but they are not auto-revoked).
 
 ### User Capability Grants
 
-- [ ] `user_capability_grants` table in tenant DB with columns: `id`, `user_id` (FK users), `capability_id` (FK capabilities), `scope_type` (TINYINT, same values as position grants), `scope_department_id` (nullable FK departments), `granted_by_user_id` (FK users), `granted_at` (timestamp), `revoked_at` (nullable), `reason` (required TEXT — mandatory justification for user-level exception grants)
-- [ ] `POST /api/v1/iam/users/{user}/capabilities` — grant a capability directly to a user with a scope and mandatory `reason`. Requires `iam.manage_capabilities`.
-- [ ] `GET /api/v1/iam/users/{user}/capabilities` — list active capability grants for a user (both position-derived and direct). Requires `iam.manage_capabilities` or self-view.
-- [ ] `POST /api/v1/iam/user-capability-grants/{grant}/revoke` — set `revoked_at = now()`. Does not delete the row. Requires `iam.manage_capabilities`.
+- [x] `user_capability_grants` table in tenant DB with columns: `id`, `user_id` (FK users), `capability_id` (FK capabilities), `scope_type` (TINYINT, same values as position grants), `scope_department_id` (nullable FK departments), `granted_by_user_id` (FK users), `granted_at` (timestamp), `revoked_at` (nullable), `reason` (required TEXT — mandatory justification for user-level exception grants)
+- [x] `POST /api/v1/iam/users/{user}/capabilities` — grant a capability directly to a user with a scope and mandatory `reason`. Requires `iam.manage_capabilities`.
+- [x] `GET /api/v1/iam/users/{user}/capabilities` — list active capability grants for a user (both position-derived and direct). Requires `iam.manage_capabilities` or self-view.
+- [x] `POST /api/v1/iam/user-capability-grants/{grant}/revoke` — set `revoked_at = now()`. Does not delete the row. Requires `iam.manage_capabilities`.
 
 ### ABAC Policy Engine
 
-- [ ] `IamPolicy` service class in `App\Modules\Iam\Services\` with a `check(User $user, string $capability, ?string $scopeType = null, ?int $departmentId = null): bool` method
-- [ ] `IamPolicy::check` resolves effective capabilities by union of: (a) all active position capability grants for the user's current primary position, (b) all active user-level capability grants
-- [ ] If `scopeType` and `departmentId` are provided, the check also verifies the grant's scope covers the given department
-- [ ] Scope resolution logic:
+- [x] `IamPolicy` service class in `App\Modules\Iam\Services\` with a `check(User $user, string $capability, ?string $scopeType = null, ?int $departmentId = null): bool` method
+- [x] `IamPolicy::check` resolves effective capabilities by union of: (a) all active position capability grants for the user's current primary position, (b) all active user-level capability grants
+- [x] If `scopeType` and `departmentId` are provided, the check also verifies the grant's scope covers the given department
+- [x] Scope resolution logic:
   - `tenant` → always allows (no department restriction)
   - `own_department` → allows for the user's current primary department
   - `specific_department` → allows only if `scope_department_id === $departmentId`
   - `department_tree` → allows if `$departmentId` is the scope department or any descendant in the department tree
   - `own_tasks` → allows only for tasks where user is initiator, current/past assignee, or named participant; no department restriction (task-level check done by caller)
-- [ ] `IamPolicy::getEffectiveCapabilities(User $user): Collection` — returns all active capability keys merged from position grants and user grants, with scope info
-- [ ] Platform admin (`account_type = 4`) cannot access tenant APIs; tenant admin (`account_type = 2`) implicitly has all capabilities within their tenant for admin functions (but this is a separate check from ABAC — tenant admin access is technical, not capability-based, and is audit-logged)
+- [x] `IamPolicy::getEffectiveCapabilities(User $user): Collection` — returns all active capability keys merged from position grants and user grants, with scope info
+- [x] Platform admin (`account_type = 4`) cannot access tenant APIs; tenant admin (`account_type = 2`) implicitly has all capabilities within their tenant for admin functions (but this is a separate check from ABAC — tenant admin access is technical, not capability-based, and is audit-logged)
 
 ### Monitoring Scopes
 
-- [ ] `monitoring_scope_grants` table in tenant DB with columns: `id`, `user_id` (FK users), `scope_type` (TINYINT: 1=tenant, 2=own_department, 3=specific_department, 4=department_tree), `scope_department_id` (nullable FK departments), `blueprint_category_id` (nullable, FK to blueprint_categories — deferred until Spec 004), `granted_by_user_id` (FK users), `granted_at` (timestamp), `revoked_at` (nullable)
-- [ ] `POST /api/v1/iam/users/{user}/monitoring-scopes` — grant a monitoring scope to a user. Requires `iam.manage_capabilities`.
-- [ ] `GET /api/v1/iam/users/{user}/monitoring-scopes` — list active monitoring scope grants for a user. Authenticated view or `iam.manage_capabilities`.
-- [ ] `POST /api/v1/iam/monitoring-scope-grants/{grant}/revoke` — revoke a monitoring scope grant. Requires `iam.manage_capabilities`.
+- [x] `monitoring_scope_grants` table in tenant DB with columns: `id`, `user_id` (FK users), `scope_type` (TINYINT: 1=tenant, 2=own_department, 3=specific_department, 4=department_tree), `scope_department_id` (nullable FK departments), `blueprint_category_id` (nullable, FK to blueprint_categories — deferred until Spec 004), `granted_by_user_id` (FK users), `granted_at` (timestamp), `revoked_at` (nullable)
+- [x] `POST /api/v1/iam/users/{user}/monitoring-scopes` — grant a monitoring scope to a user. Requires `iam.manage_capabilities`.
+- [x] `GET /api/v1/iam/users/{user}/monitoring-scopes` — list active monitoring scope grants for a user. Authenticated view or `iam.manage_capabilities`.
+- [x] `POST /api/v1/iam/monitoring-scope-grants/{grant}/revoke` — revoke a monitoring scope grant. Requires `iam.manage_capabilities`.
 
 ### Audit Grants
 
-- [ ] `audit_grants` table in tenant DB with columns: `id`, `external_auditor_user_id` (FK users, must be `external_auditor` account), `granted_by_user_id` (FK users), `date_range_start` (date), `date_range_end` (date), `department_id` (nullable FK departments), `granted_at` (timestamp), `revoked_at` (nullable)
-- [ ] `POST /api/v1/iam/users/{user}/audit-grants` — grant an audit scope to an external auditor with `date_range_start`, `date_range_end`, and optional `department_id`. Requires `iam.manage_capabilities`.
-- [ ] `GET /api/v1/iam/users/{user}/audit-grants` — list active audit grants for a user. Requires `iam.manage_capabilities`.
-- [ ] `POST /api/v1/iam/audit-grants/{grant}/revoke` — revoke an audit grant. Requires `iam.manage_capabilities`.
-- [ ] `IamPolicy::checkAuditGrant(User $auditor, ?int $departmentId): bool` — returns true if the auditor has an active, non-revoked grant whose date range covers today and whose department scope (if set) covers the given department.
-- [ ] `User` model has `auditGrants()` relationship — `$this->hasMany(AuditGrant::class, 'external_auditor_user_id')`.
+- [x] `audit_grants` table in tenant DB with columns: `id`, `external_auditor_user_id` (FK users, must be `external_auditor` account), `granted_by_user_id` (FK users), `date_range_start` (date), `date_range_end` (date), `department_id` (nullable FK departments), `granted_at` (timestamp), `revoked_at` (nullable)
+- [x] `POST /api/v1/iam/users/{user}/audit-grants` — grant an audit scope to an external auditor with `date_range_start`, `date_range_end`, and optional `department_id`. Requires `iam.manage_capabilities`.
+- [x] `GET /api/v1/iam/users/{user}/audit-grants` — list active audit grants for a user. Requires `iam.manage_capabilities`.
+- [x] `POST /api/v1/iam/audit-grants/{grant}/revoke` — revoke an audit grant. Requires `iam.manage_capabilities`.
+- [x] `IamPolicy::checkAuditGrant(User $auditor, ?int $departmentId): bool` — returns true if the auditor has an active, non-revoked grant whose date range covers today and whose department scope (if set) covers the given department.
+- [x] `User` model has `auditGrants()` relationship — `$this->hasMany(AuditGrant::class, 'external_auditor_user_id')`.
 
 ### Delegations
 
-- [ ] `delegations` table in tenant DB with columns: `id`, `public_id` (UUID v7), `delegator_user_id` (FK users), `delegate_user_id` (FK users), `starts_at` (timestamp), `ends_at` (timestamp), `scope_type` (TINYINT: 1=all, 2=blueprint_category, 3=stage_type, 4=blueprint_category_and_stage_type), `blueprint_category_id` (nullable), `stage_type_id` (nullable), `is_active` (boolean, default true), `created_at`, `updated_at`
-- [ ] `POST /api/v1/iam/delegations` — create a delegation. Delegator must be the authenticated user or `iam.manage_users`. `delegate_user_id` cannot be the same as `delegator_user_id`. `ends_at` must be after `starts_at`. Requires `iam.manage_users`.
-- [ ] `GET /api/v1/iam/delegations` — list delegations. Filters: `is_active`, `delegator_user_id`, `delegate_user_id`. Requires `iam.manage_users` or self-view.
-- [ ] `POST /api/v1/iam/delegations/{delegation}/revoke` — set `is_active = false`. Requires `iam.manage_users` or delegation's `delegator_user_id` matching auth user.
-- [ ] `IamPolicy::getActiveDelegate(User $user): ?User` — returns the delegate user if the given user has an active delegation (where `now()` is between `starts_at` and `ends_at`, `is_active = true`). If multiple active delegations exist, the most recently created one wins.
-- [ ] Delegation scope references (`blueprint_category_id`, `stage_type_id`) are FK placeholders that will be validated when their respective modules (Specs 004, 006) are built. For MVP, `scope_type = 1` (all) is the primary use case.
+- [x] `delegations` table in tenant DB with columns: `id`, `public_id` (UUID v7), `delegator_user_id` (FK users), `delegate_user_id` (FK users), `starts_at` (timestamp), `ends_at` (timestamp), `scope_type` (TINYINT: 1=all, 2=blueprint_category, 3=stage_type, 4=blueprint_category_and_stage_type), `blueprint_category_id` (nullable), `stage_type_id` (nullable), `is_active` (boolean, default true), `created_at`, `updated_at`
+- [x] `POST /api/v1/iam/delegations` — create a delegation. Delegator must be the authenticated user or `iam.manage_users`. `delegate_user_id` cannot be the same as `delegator_user_id`. `ends_at` must be after `starts_at`. Requires `iam.manage_users`.
+- [x] `GET /api/v1/iam/delegations` — list delegations. Filters: `is_active`, `delegator_user_id`, `delegate_user_id`. Requires `iam.manage_users` or self-view.
+- [x] `POST /api/v1/iam/delegations/{delegation}/revoke` — set `is_active = false`. Requires `iam.manage_users` or delegation's `delegator_user_id` matching auth user.
+- [x] `IamPolicy::getActiveDelegate(User $user): ?User` — returns the delegate user if the given user has an active delegation (where `now()` is between `starts_at` and `ends_at`, `is_active = true`). If multiple active delegations exist, the most recently created one wins.
+- [x] Delegation scope references (`blueprint_category_id`, `stage_type_id`) are FK placeholders that will be validated when their respective modules (Specs 004, 006) are built. For MVP, `scope_type = 1` (all) is the primary use case.
 
 ### Out-of-Office
 
-- [ ] `users` table gains `is_out_of_office` (boolean, default false) and `out_of_office_delegate_user_id` (nullable FK users) columns via migration.
-- [ ] `POST /api/v1/iam/users/{user}/out-of-office` — set `is_out_of_office = true` and optionally set `out_of_office_delegate_user_id`. Authenticated user can set own; `iam.manage_users` can set for others.
-- [ ] `POST /api/v1/iam/users/{user}/back-in-office` — set `is_out_of_office = false` and clear `out_of_office_delegate_user_id`.
-- [ ] `IamPolicy::isOutOfOffice(User $user): bool` — quick check if user is marked OOO.
-- [ ] `IamPolicy::resolveAssignee(User $user): User` — if user is OOO, returns their designated delegate; otherwise returns the user. Used by task stage assignment resolution.
+- [x] `users` table gains `is_out_of_office` (boolean, default false) and `out_of_office_delegate_user_id` (nullable FK users) columns via migration.
+- [x] `POST /api/v1/iam/users/{user}/out-of-office` — set `is_out_of_office = true` and optionally set `out_of_office_delegate_user_id`. Authenticated user can set own; `iam.manage_users` can set for others.
+- [x] `POST /api/v1/iam/users/{user}/back-in-office` — set `is_out_of_office = false` and clear `out_of_office_delegate_user_id`.
+- [x] `IamPolicy::isOutOfOffice(User $user): bool` — quick check if user is marked OOO.
+- [x] `IamPolicy::resolveAssignee(User $user): User` — if user is OOO, returns their designated delegate; otherwise returns the user. Used by task stage assignment resolution.
 
 ### Replace RequireTenantAdmin Middleware
 
-- [ ] `RequireTenantAdmin` middleware is removed from all routes.
-- [ ] New `RequireCapability` middleware is created: `RequireCapability::class` takes a capability key (e.g., `iam.manage_users`) and uses `IamPolicy::check()` to authorize.
-- [ ] Tenant admins (`account_type = 2`) are seeded with all `iam.manage_*` capabilities via position grant in tenant provisioning.
-- [ ] All Organization module mutating routes updated from `RequireTenantAdmin` to `RequireCapability:organization.manage`.
-- [ ] All IAM module mutating routes use appropriate `RequireCapability` middleware.
+- [x] `RequireTenantAdmin` middleware is removed from all routes.
+- [x] New `RequireCapability` middleware is created: `RequireCapability::class` takes a capability key (e.g., `iam.manage_users`) and uses `IamPolicy::check()` to authorize.
+- [x] Tenant admins (`account_type = 2`) are seeded with all `iam.manage_*` capabilities via position grant in tenant provisioning.
+- [x] All Organization module mutating routes updated from `RequireTenantAdmin` to `RequireCapability:organization.manage`.
+- [x] All IAM module mutating routes use appropriate `RequireCapability` middleware.
 
 ### General
 
-- [ ] All endpoints follow `/api/v1/iam/` prefix
-- [ ] All responses use API Resources with `public_id` only — never expose internal `id`
-- [ ] Bilingual fields: `name_ar` always required; `name_en` optional, falls back to `name_ar`
-- [ ] Domain events emitted for all mutating actions (user created, logged in/out, position assigned/ended/primary-changed, capability granted/revoked, delegation created/revoked, OOO toggled)
-- [ ] Custom exceptions: `UserAlreadyActiveException`, `UserAlreadyDeactivatedException`, `CannotDelegateToSelfException`, `DelegationConflictException`, `PrimaryPositionAlreadyAssignedException`, `CannotRevokeSystemCapabilityKeyException`
-- [ ] Feature tests cover: user CRUD, login/logout, position assignment (single primary), capability grant/revoke cycle, ABAC policy check (position grant, user grant, scope resolution), delegation creation/revoke, OOO toggle, scope tree resolution
+- [x] All endpoints follow `/api/v1/iam/` prefix
+- [x] All responses use API Resources with `public_id` only — never expose internal `id`
+- [x] Bilingual fields: `name_ar` always required; `name_en` optional, falls back to `name_ar`
+- [x] Domain events emitted for all mutating actions (user created, logged in/out, position assigned/ended/primary-changed, capability granted/revoked, delegation created/revoked, OOO toggled)
+- [x] Custom exceptions: `UserAlreadyActiveException`, `UserAlreadyDeactivatedException`, `CannotDelegateToSelfException`, `DelegationConflictException`, `PrimaryPositionAlreadyAssignedException`, `CannotRevokeSystemCapabilityKeyException`
+- [x] Feature tests cover: user CRUD, login/logout, position assignment (single primary), capability grant/revoke cycle, ABAC policy check (position grant, user grant, scope resolution), delegation creation/revoke, OOO toggle, scope tree resolution
 
 ---
 
@@ -242,11 +242,11 @@ All data lives in the tenant DB (no `tenant_id` columns). All mutating endpoints
 
 ## Open Questions
 
-- [ ] Should login use Sanctum SPA cookies (session-based) or token-based API tokens? **Recommendation:** SPA cookies with CSRF for frontend-only consumption; API tokens for programmatic access. MVP: SPA cookies only.
-- [ ] Should `user_capability_grants.reason` be a required field even for re-grants? **Recommendation:** Yes — every direct user grant must have a reason for audit.
-- [ ] Should revoking a capability grant delete the row or set `revoked_at`? **Recommendation:** Set `revoked_at` (soft revoke). Existing grants are never hard-deleted; re-granting creates a new row with a new `granted_at`. This preserves the full audit trail.
-- [ ] Should position deactivation cascade-revoke all grants referencing that position? **Recommendation:** No — grants remain active but become inert (no user holds the position, so no one inherits the capability). Manual revocation by admin.
-- [ ] Should there be a "grant all capabilities" shortcut for tenant admin setup during provisioning? **Recommendation:** Yes — provisioning seed script assigns all `iam.manage_*` capabilities to the initial tenant admin's position as 
-- [ ] Should `monitoring_scope_grants.blueprint_category_id` be validated now or left as a nullable FK placeholder? **Recommendation:** Nullable FK placeholder. Blueprint categories don't exist yet (Spec 004). Add the FK constraint in a later migration when `blueprint_categories` table exists.
-- [ ] Should out-of-office be a simple boolean toggle on the user, or should it be modeled as a special type of delegation? **Recommendation:** Simple boolean + `out_of_office_delegate_user_id` on the `users` table. It's the most common use case and doesn't need a separate table. The `delegations` table handles explicit scoped delegations.
-- [ ] Should `IamPolicy::check()` cache capability lookups? **Recommendation:** Yes, per-request cache using a memory singleton. Clear at request end. Avoid N+1 on multi-check endpoints.
+- [x] Should login use Sanctum SPA cookies (session-based) or token-based API tokens? **Decision:** Token-based API tokens for MVP (Sanctum plain text tokens). SPA cookies deferred.
+- [x] Should `user_capability_grants.reason` be a required field even for re-grants? **Decision:** Yes — every direct user grant must have a reason for audit.
+- [x] Should revoking a capability grant delete the row or set `revoked_at`? **Decision:** Set `revoked_at` (soft revoke). Re-granting creates a new row. Preserves audit trail.
+- [x] Should position deactivation cascade-revoke all grants referencing that position? **Decision:** No — grants remain active but inert. Manual revocation by admin.
+- [x] Should there be a "grant all capabilities" shortcut for tenant admin setup during provisioning? **Decision:** Yes — provisioning seed script assigns all `iam.manage_*` capabilities to the initial tenant admin's position.
+- [x] Should `monitoring_scope_grants.blueprint_category_id` be validated now or left as a nullable FK placeholder? **Decision:** Nullable FK placeholder. Add FK constraint in a later migration when `blueprint_categories` table exists.
+- [x] Should out-of-office be a simple boolean toggle on the user, or should it be modeled as a special type of delegation? **Decision:** Simple boolean + `out_of_office_delegate_user_id` on the `users` table.
+- [x] Should `IamPolicy::check()` cache capability lookups? **Decision:** Yes, per-request cache using a memory singleton. Clear at request end.

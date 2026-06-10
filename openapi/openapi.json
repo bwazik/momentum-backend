@@ -140,7 +140,7 @@
                         "required": true,
                         "description": "The user public id",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -187,7 +187,7 @@
                         "required": true,
                         "description": "The user public id",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -1049,47 +1049,6 @@
                                         "meta": {
                                             "type": "object",
                                             "properties": {
-                                                "current_page": {
-                                                    "type": "integer",
-                                                    "minimum": 1
-                                                },
-                                                "from": {
-                                                    "type": [
-                                                        "integer",
-                                                        "null"
-                                                    ],
-                                                    "minimum": 1
-                                                },
-                                                "last_page": {
-                                                    "type": "integer",
-                                                    "minimum": 1
-                                                },
-                                                "links": {
-                                                    "type": "array",
-                                                    "description": "Generated paginator links.",
-                                                    "items": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "url": {
-                                                                "type": [
-                                                                    "string",
-                                                                    "null"
-                                                                ]
-                                                            },
-                                                            "label": {
-                                                                "type": "string"
-                                                            },
-                                                            "active": {
-                                                                "type": "boolean"
-                                                            }
-                                                        },
-                                                        "required": [
-                                                            "url",
-                                                            "label",
-                                                            "active"
-                                                        ]
-                                                    }
-                                                },
                                                 "path": {
                                                     "type": [
                                                         "string",
@@ -1102,29 +1061,26 @@
                                                     "description": "Number of items shown per page.",
                                                     "minimum": 0
                                                 },
-                                                "to": {
+                                                "next_cursor": {
                                                     "type": [
-                                                        "integer",
+                                                        "string",
                                                         "null"
                                                     ],
-                                                    "description": "Number of the last item in the slice.",
-                                                    "minimum": 1
+                                                    "description": "The \"cursor\" that points to the next set of items."
                                                 },
-                                                "total": {
-                                                    "type": "integer",
-                                                    "description": "Total number of items being paginated.",
-                                                    "minimum": 0
+                                                "prev_cursor": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "The \"cursor\" that points to the previous set of items."
                                                 }
                                             },
                                             "required": [
-                                                "current_page",
-                                                "from",
-                                                "last_page",
-                                                "links",
                                                 "path",
                                                 "per_page",
-                                                "to",
-                                                "total"
+                                                "next_cursor",
+                                                "prev_cursor"
                                             ]
                                         }
                                     },
@@ -1484,7 +1440,7 @@
                         "required": true,
                         "description": "The user public id",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -1531,7 +1487,7 @@
                         "required": true,
                         "description": "The user public id",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -1610,6 +1566,1088 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/MonitoringScopeGrantResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/platform/admins": {
+            "get": {
+                "operationId": "platformAdmin.index",
+                "tags": [
+                    "PlatformAdmin"
+                ],
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {}
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "platformAdmin.store",
+                "tags": [
+                    "PlatformAdmin"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StorePlatformAdminRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "`PlatformAdminResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlatformAdminResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/platform/admins/{admin}": {
+            "get": {
+                "operationId": "platformAdmin.show",
+                "tags": [
+                    "PlatformAdmin"
+                ],
+                "parameters": [
+                    {
+                        "name": "admin",
+                        "in": "path",
+                        "required": true,
+                        "description": "The admin public id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`PlatformAdminResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlatformAdminResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "put": {
+                "operationId": "platformAdmin.update",
+                "tags": [
+                    "PlatformAdmin"
+                ],
+                "parameters": [
+                    {
+                        "name": "admin",
+                        "in": "path",
+                        "required": true,
+                        "description": "The admin public id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdatePlatformAdminRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`PlatformAdminResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlatformAdminResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/platform/admins/{admin}/deactivate": {
+            "post": {
+                "operationId": "platformAdmin.deactivate",
+                "tags": [
+                    "PlatformAdmin"
+                ],
+                "parameters": [
+                    {
+                        "name": "admin",
+                        "in": "path",
+                        "required": true,
+                        "description": "The admin public id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`PlatformAdminResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlatformAdminResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/platform/admins/{admin}/reactivate": {
+            "post": {
+                "operationId": "platformAdmin.reactivate",
+                "tags": [
+                    "PlatformAdmin"
+                ],
+                "parameters": [
+                    {
+                        "name": "admin",
+                        "in": "path",
+                        "required": true,
+                        "description": "The admin public id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`PlatformAdminResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlatformAdminResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/platform/audit-events": {
+            "get": {
+                "operationId": "platformAuditEvent.index",
+                "tags": [
+                    "PlatformAuditEvent"
+                ],
+                "parameters": [
+                    {
+                        "name": "action",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "entity_type",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {}
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/platform/auth/login": {
+            "post": {
+                "operationId": "platformAuth.login",
+                "tags": [
+                    "PlatformAuth"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PlatformLoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`PlatformAuthResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlatformAuthResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                },
+                "security": []
+            }
+        },
+        "/platform/auth/logout": {
+            "post": {
+                "operationId": "platformAuth.logout",
+                "tags": [
+                    "PlatformAuth"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Logged out successfully."
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/platform/auth/me": {
+            "get": {
+                "operationId": "platformAuth.me",
+                "tags": [
+                    "PlatformAuth"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`PlatformAdminResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlatformAdminResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/platform/tenants/{tenant}/impersonate": {
+            "post": {
+                "operationId": "platformImpersonation.start",
+                "tags": [
+                    "PlatformImpersonation"
+                ],
+                "parameters": [
+                    {
+                        "name": "tenant",
+                        "in": "path",
+                        "required": true,
+                        "description": "The tenant public id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ImpersonateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "token": {
+                                            "type": "string"
+                                        },
+                                        "user": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "public_id": {
+                                                    "type": "string"
+                                                },
+                                                "name_ar": {
+                                                    "type": "string"
+                                                },
+                                                "name_en": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "email": {
+                                                    "type": "string"
+                                                },
+                                                "email_verified_at": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "format": "date-time"
+                                                },
+                                                "mobile": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "employee_id": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "account_type": {
+                                                    "$ref": "#/components/schemas/AccountType"
+                                                },
+                                                "preferred_language": {
+                                                    "$ref": "#/components/schemas/PreferredLanguage"
+                                                },
+                                                "is_active": {
+                                                    "type": "boolean"
+                                                },
+                                                "deleted_at": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "format": "date-time"
+                                                },
+                                                "created_at": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "format": "date-time"
+                                                },
+                                                "is_out_of_office": {
+                                                    "type": "boolean"
+                                                },
+                                                "out_of_office_delegate_user_id": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "public_id",
+                                                "name_ar",
+                                                "name_en",
+                                                "email",
+                                                "email_verified_at",
+                                                "mobile",
+                                                "employee_id",
+                                                "account_type",
+                                                "preferred_language",
+                                                "is_active",
+                                                "deleted_at",
+                                                "created_at",
+                                                "updated_at",
+                                                "is_out_of_office",
+                                                "out_of_office_delegate_user_id"
+                                            ]
+                                        },
+                                        "tenant": {
+                                            "$ref": "#/components/schemas/Tenant"
+                                        },
+                                        "expires_at": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "token",
+                                        "user",
+                                        "tenant",
+                                        "expires_at"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/platform/tenants/{tenant}/leave-impersonation": {
+            "post": {
+                "operationId": "platformImpersonation.leave",
+                "tags": [
+                    "PlatformImpersonation"
+                ],
+                "parameters": [
+                    {
+                        "name": "tenant",
+                        "in": "path",
+                        "required": true,
+                        "description": "The tenant public id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Impersonation session ended."
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/platform/impersonation-sessions": {
+            "get": {
+                "operationId": "platformImpersonation.activeSessions",
+                "tags": [
+                    "PlatformImpersonation"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {}
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/platform/tenants": {
+            "get": {
+                "operationId": "platformTenant.index",
+                "tags": [
+                    "PlatformTenant"
+                ],
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {}
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "platformTenant.store",
+                "tags": [
+                    "PlatformTenant"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreTenantRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "`PlatformTenantResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlatformTenantResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/platform/tenants/{tenant}": {
+            "get": {
+                "operationId": "platformTenant.show",
+                "tags": [
+                    "PlatformTenant"
+                ],
+                "parameters": [
+                    {
+                        "name": "tenant",
+                        "in": "path",
+                        "required": true,
+                        "description": "The tenant public id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`PlatformTenantResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlatformTenantResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "put": {
+                "operationId": "platformTenant.update",
+                "tags": [
+                    "PlatformTenant"
+                ],
+                "parameters": [
+                    {
+                        "name": "tenant",
+                        "in": "path",
+                        "required": true,
+                        "description": "The tenant public id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateTenantRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`PlatformTenantResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlatformTenantResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/platform/tenants/{tenant}/suspend": {
+            "post": {
+                "operationId": "platformTenant.suspend",
+                "tags": [
+                    "PlatformTenant"
+                ],
+                "parameters": [
+                    {
+                        "name": "tenant",
+                        "in": "path",
+                        "required": true,
+                        "description": "The tenant public id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`PlatformTenantResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlatformTenantResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/platform/tenants/{tenant}/reactivate": {
+            "post": {
+                "operationId": "platformTenant.reactivate",
+                "tags": [
+                    "PlatformTenant"
+                ],
+                "parameters": [
+                    {
+                        "name": "tenant",
+                        "in": "path",
+                        "required": true,
+                        "description": "The tenant public id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`PlatformTenantResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlatformTenantResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/platform/tenants/{tenant}/run-migrations": {
+            "post": {
+                "operationId": "platformTenant.runMigrations",
+                "tags": [
+                    "PlatformTenant"
+                ],
+                "parameters": [
+                    {
+                        "name": "tenant",
+                        "in": "path",
+                        "required": true,
+                        "description": "The tenant public id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Migrations dispatched. Check audit events for status."
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
                                 }
                             }
                         }
@@ -1722,47 +2760,6 @@
                                         "meta": {
                                             "type": "object",
                                             "properties": {
-                                                "current_page": {
-                                                    "type": "integer",
-                                                    "minimum": 1
-                                                },
-                                                "from": {
-                                                    "type": [
-                                                        "integer",
-                                                        "null"
-                                                    ],
-                                                    "minimum": 1
-                                                },
-                                                "last_page": {
-                                                    "type": "integer",
-                                                    "minimum": 1
-                                                },
-                                                "links": {
-                                                    "type": "array",
-                                                    "description": "Generated paginator links.",
-                                                    "items": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "url": {
-                                                                "type": [
-                                                                    "string",
-                                                                    "null"
-                                                                ]
-                                                            },
-                                                            "label": {
-                                                                "type": "string"
-                                                            },
-                                                            "active": {
-                                                                "type": "boolean"
-                                                            }
-                                                        },
-                                                        "required": [
-                                                            "url",
-                                                            "label",
-                                                            "active"
-                                                        ]
-                                                    }
-                                                },
                                                 "path": {
                                                     "type": [
                                                         "string",
@@ -1775,29 +2772,26 @@
                                                     "description": "Number of items shown per page.",
                                                     "minimum": 0
                                                 },
-                                                "to": {
+                                                "next_cursor": {
                                                     "type": [
-                                                        "integer",
+                                                        "string",
                                                         "null"
                                                     ],
-                                                    "description": "Number of the last item in the slice.",
-                                                    "minimum": 1
+                                                    "description": "The \"cursor\" that points to the next set of items."
                                                 },
-                                                "total": {
-                                                    "type": "integer",
-                                                    "description": "Total number of items being paginated.",
-                                                    "minimum": 0
+                                                "prev_cursor": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "The \"cursor\" that points to the previous set of items."
                                                 }
                                             },
                                             "required": [
-                                                "current_page",
-                                                "from",
-                                                "last_page",
-                                                "links",
                                                 "path",
                                                 "per_page",
-                                                "to",
-                                                "total"
+                                                "next_cursor",
+                                                "prev_cursor"
                                             ]
                                         }
                                     },
@@ -2164,7 +3158,7 @@
                         "required": true,
                         "description": "The user public id",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -2223,7 +3217,7 @@
                         "required": true,
                         "description": "The user public id",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -2290,7 +3284,7 @@
                         "required": true,
                         "description": "The user public id",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -2833,47 +3827,6 @@
                                         "meta": {
                                             "type": "object",
                                             "properties": {
-                                                "current_page": {
-                                                    "type": "integer",
-                                                    "minimum": 1
-                                                },
-                                                "from": {
-                                                    "type": [
-                                                        "integer",
-                                                        "null"
-                                                    ],
-                                                    "minimum": 1
-                                                },
-                                                "last_page": {
-                                                    "type": "integer",
-                                                    "minimum": 1
-                                                },
-                                                "links": {
-                                                    "type": "array",
-                                                    "description": "Generated paginator links.",
-                                                    "items": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "url": {
-                                                                "type": [
-                                                                    "string",
-                                                                    "null"
-                                                                ]
-                                                            },
-                                                            "label": {
-                                                                "type": "string"
-                                                            },
-                                                            "active": {
-                                                                "type": "boolean"
-                                                            }
-                                                        },
-                                                        "required": [
-                                                            "url",
-                                                            "label",
-                                                            "active"
-                                                        ]
-                                                    }
-                                                },
                                                 "path": {
                                                     "type": [
                                                         "string",
@@ -2886,29 +3839,26 @@
                                                     "description": "Number of items shown per page.",
                                                     "minimum": 0
                                                 },
-                                                "to": {
+                                                "next_cursor": {
                                                     "type": [
-                                                        "integer",
+                                                        "string",
                                                         "null"
                                                     ],
-                                                    "description": "Number of the last item in the slice.",
-                                                    "minimum": 1
+                                                    "description": "The \"cursor\" that points to the next set of items."
                                                 },
-                                                "total": {
-                                                    "type": "integer",
-                                                    "description": "Total number of items being paginated.",
-                                                    "minimum": 0
+                                                "prev_cursor": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "The \"cursor\" that points to the previous set of items."
                                                 }
                                             },
                                             "required": [
-                                                "current_page",
-                                                "from",
-                                                "last_page",
-                                                "links",
                                                 "path",
                                                 "per_page",
-                                                "to",
-                                                "total"
+                                                "next_cursor",
+                                                "prev_cursor"
                                             ]
                                         }
                                     },
@@ -2985,7 +3935,7 @@
                         "required": true,
                         "description": "The user public id",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -3029,7 +3979,7 @@
                         "required": true,
                         "description": "The user public id",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -3087,7 +4037,7 @@
                         "required": true,
                         "description": "The user public id",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -3133,7 +4083,7 @@
                         "required": true,
                         "description": "The user public id",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -3257,7 +4207,7 @@
                         "required": true,
                         "description": "The user public id",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -3317,7 +4267,7 @@
                         "required": true,
                         "description": "The user public id",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -3363,7 +4313,7 @@
                         "required": true,
                         "description": "The user public id",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -3410,7 +4360,7 @@
                         "required": true,
                         "description": "The user public id",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -3802,6 +4752,16 @@
             }
         },
         "schemas": {
+            "AccountType": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2,
+                    3,
+                    4
+                ],
+                "title": "AccountType"
+            },
             "AssignPositionRequest": {
                 "type": "object",
                 "properties": {
@@ -4082,6 +5042,16 @@
                 ],
                 "title": "DelegationResource"
             },
+            "DelegationScopeType": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2,
+                    3,
+                    4
+                ],
+                "title": "DelegationScopeType"
+            },
             "DepartmentResource": {
                 "type": "object",
                 "properties": {
@@ -4195,7 +5165,7 @@
                 "type": "object",
                 "properties": {
                     "external_auditor_user_id": {
-                        "type": "integer"
+                        "type": "string"
                     },
                     "date_range_start": {
                         "type": "string",
@@ -4225,10 +5195,10 @@
                     "scope_type": {
                         "type": "integer",
                         "enum": [
-                            "1",
-                            "2",
-                            "3",
-                            "4"
+                            1,
+                            2,
+                            3,
+                            4
                         ]
                     },
                     "scope_department_id": {
@@ -4258,11 +5228,11 @@
                     "scope_type": {
                         "type": "integer",
                         "enum": [
-                            "1",
-                            "2",
-                            "3",
-                            "4",
-                            "5"
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
                         ]
                     },
                     "scope_department_id": {
@@ -4285,15 +5255,7 @@
                         "type": "integer"
                     },
                     "scope_type": {
-                        "type": "integer",
-                        "enum": [
-                            "1",
-                            "2",
-                            "3",
-                            "4",
-                            "5",
-                            "6"
-                        ]
+                        "$ref": "#/components/schemas/ScopeType"
                     },
                     "scope_department_id": {
                         "type": [
@@ -4312,6 +5274,19 @@
                     "reason"
                 ],
                 "title": "GrantUserCapabilityRequest"
+            },
+            "ImpersonateRequest": {
+                "type": "object",
+                "properties": {
+                    "user_public_id": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "user_public_id"
+                ],
+                "title": "ImpersonateRequest"
             },
             "LoginRequest": {
                 "type": "object",
@@ -4379,6 +5354,139 @@
                     "revoked_at"
                 ],
                 "title": "MonitoringScopeGrantResource"
+            },
+            "PlatformAdminResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "name_ar": {
+                        "type": "string"
+                    },
+                    "name_en": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "account_type": {
+                        "type": "string"
+                    },
+                    "is_active": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "name_ar",
+                    "name_en",
+                    "email",
+                    "account_type",
+                    "is_active",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "PlatformAdminResource"
+            },
+            "PlatformAuthResource": {
+                "type": "object",
+                "properties": {
+                    "user": {
+                        "$ref": "#/components/schemas/PlatformAdminResource"
+                    },
+                    "token": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "user",
+                    "token"
+                ],
+                "title": "PlatformAuthResource"
+            },
+            "PlatformLoginRequest": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "title": "PlatformLoginRequest"
+            },
+            "PlatformTenantResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "name_ar": {
+                        "type": "string"
+                    },
+                    "name_en": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "domain": {
+                        "type": "string"
+                    },
+                    "database_name": {
+                        "type": "string"
+                    },
+                    "logo_path": {
+                        "type": "string"
+                    },
+                    "default_language": {
+                        "type": "string"
+                    },
+                    "timezone": {
+                        "type": "string"
+                    },
+                    "is_active": {
+                        "type": "string"
+                    },
+                    "settings": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "name_ar",
+                    "name_en",
+                    "slug",
+                    "domain",
+                    "database_name",
+                    "logo_path",
+                    "default_language",
+                    "timezone",
+                    "is_active",
+                    "settings",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "PlatformTenantResource"
             },
             "PositionAssignmentResource": {
                 "type": "object",
@@ -4623,6 +5731,14 @@
                 ],
                 "title": "PositionResource"
             },
+            "PreferredLanguage": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2
+                ],
+                "title": "PreferredLanguage"
+            },
             "PublicHolidayResource": {
                 "type": "object",
                 "properties": {
@@ -4654,6 +5770,18 @@
                     "created_at"
                 ],
                 "title": "PublicHolidayResource"
+            },
+            "ScopeType": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                ],
+                "title": "ScopeType"
             },
             "StoreAuthorityGradeRequest": {
                 "type": "object",
@@ -4692,12 +5820,12 @@
                 "properties": {
                     "delegator_user_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
                     "delegate_user_id": {
-                        "type": "integer"
+                        "type": "string"
                     },
                     "starts_at": {
                         "type": "string",
@@ -4708,13 +5836,7 @@
                         "format": "date-time"
                     },
                     "scope_type": {
-                        "type": "integer",
-                        "enum": [
-                            "1",
-                            "2",
-                            "3",
-                            "4"
-                        ]
+                        "$ref": "#/components/schemas/DelegationScopeType"
                     },
                     "blueprint_category_id": {
                         "type": [
@@ -4763,6 +5885,37 @@
                     "name_ar"
                 ],
                 "title": "StoreDepartmentRequest"
+            },
+            "StorePlatformAdminRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 255
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 8
+                    }
+                },
+                "required": [
+                    "name_ar",
+                    "email",
+                    "password"
+                ],
+                "title": "StorePlatformAdminRequest"
             },
             "StorePositionRequest": {
                 "type": "object",
@@ -4830,6 +5983,71 @@
                 ],
                 "title": "StorePublicHolidayRequest"
             },
+            "StoreTenantRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "slug": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "domain": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "timezone": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 100
+                    },
+                    "default_language": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "enum": [
+                            "1",
+                            "2"
+                        ]
+                    },
+                    "logo_path": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 500
+                    },
+                    "settings": {
+                        "type": [
+                            "array",
+                            "null"
+                        ],
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "name_ar",
+                    "slug"
+                ],
+                "title": "StoreTenantRequest"
+            },
             "StoreUserRequest": {
                 "type": "object",
                 "properties": {
@@ -4870,20 +6088,13 @@
                     "account_type": {
                         "type": "integer",
                         "enum": [
-                            "1",
-                            "2",
-                            "3"
+                            1,
+                            2,
+                            3
                         ]
                     },
                     "preferred_language": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ],
-                        "enum": [
-                            "1",
-                            "2"
-                        ]
+                        "$ref": "#/components/schemas/PreferredLanguage"
                     }
                 },
                 "required": [
@@ -4937,6 +6148,96 @@
                     "working_hours_end"
                 ],
                 "title": "StoreWorkingCalendarRequest"
+            },
+            "Tenant": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "name_en": {
+                        "type": "string"
+                    },
+                    "name_ar": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "domain": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "database_name": {
+                        "type": "string"
+                    },
+                    "logo_path": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "default_language": {
+                        "type": "integer"
+                    },
+                    "timezone": {
+                        "type": "string"
+                    },
+                    "is_active": {
+                        "type": "boolean"
+                    },
+                    "settings": {
+                        "type": [
+                            "array",
+                            "null"
+                        ],
+                        "items": {}
+                    },
+                    "data": {
+                        "type": [
+                            "array",
+                            "null"
+                        ],
+                        "items": {}
+                    },
+                    "created_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "id",
+                    "public_id",
+                    "name_en",
+                    "name_ar",
+                    "slug",
+                    "domain",
+                    "database_name",
+                    "logo_path",
+                    "default_language",
+                    "timezone",
+                    "is_active",
+                    "settings",
+                    "data",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "Tenant"
             },
             "TransferPositionRequest": {
                 "type": "object",
@@ -5030,6 +6331,28 @@
                 },
                 "title": "UpdateDepartmentRequest"
             },
+            "UpdatePlatformAdminRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 255
+                    }
+                },
+                "title": "UpdatePlatformAdminRequest"
+            },
             "UpdatePositionRequest": {
                 "type": "object",
                 "properties": {
@@ -5084,6 +6407,63 @@
                 },
                 "title": "UpdatePublicHolidayRequest"
             },
+            "UpdateTenantRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "domain": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "timezone": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 100
+                    },
+                    "default_language": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "enum": [
+                            "1",
+                            "2"
+                        ]
+                    },
+                    "logo_path": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 500
+                    },
+                    "settings": {
+                        "type": [
+                            "array",
+                            "null"
+                        ],
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "title": "UpdateTenantRequest"
+            },
             "UpdateUserRequest": {
                 "type": "object",
                 "properties": {
@@ -5106,21 +6486,14 @@
                         "maxLength": 30
                     },
                     "preferred_language": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ],
-                        "enum": [
-                            "1",
-                            "2"
-                        ]
+                        "$ref": "#/components/schemas/PreferredLanguage"
                     },
                     "account_type": {
                         "type": "integer",
                         "enum": [
-                            "1",
-                            "2",
-                            "3"
+                            1,
+                            2,
+                            3
                         ]
                     },
                     "password": {
@@ -5322,22 +6695,28 @@
                         "type": "string"
                     },
                     "mobile": {
-                        "type": "string"
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "employee_id": {
-                        "type": "string"
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "account_type": {
-                        "type": "string"
+                        "type": "integer"
                     },
                     "preferred_language": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/PreferredLanguage"
                     },
                     "is_active": {
-                        "type": "string"
+                        "type": "boolean"
                     },
                     "is_out_of_office": {
-                        "type": "string"
+                        "type": "boolean"
                     },
                     "created_at": {
                         "type": "string"
@@ -5412,6 +6791,36 @@
             }
         },
         "responses": {
+            "ValidationException": {
+                "description": "Validation error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Errors overview."
+                                },
+                                "errors": {
+                                    "type": "object",
+                                    "description": "A detailed description of each field that failed validation.",
+                                    "additionalProperties": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "required": [
+                                "message",
+                                "errors"
+                            ]
+                        }
+                    }
+                }
+            },
             "AuthenticationException": {
                 "description": "Unauthenticated",
                 "content": {
@@ -5445,36 +6854,6 @@
                             },
                             "required": [
                                 "message"
-                            ]
-                        }
-                    }
-                }
-            },
-            "ValidationException": {
-                "description": "Validation error",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "message": {
-                                    "type": "string",
-                                    "description": "Errors overview."
-                                },
-                                "errors": {
-                                    "type": "object",
-                                    "description": "A detailed description of each field that failed validation.",
-                                    "additionalProperties": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            },
-                            "required": [
-                                "message",
-                                "errors"
                             ]
                         }
                     }

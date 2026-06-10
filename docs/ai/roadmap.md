@@ -8,8 +8,8 @@
 
 ## Current Focus
 
-**Active Milestone:** M2 — Organization & IAM
-**Active Spec:** — (all M2 complete, next: M3 or 001-platform-admin supplement)
+**Active Milestone:** M3 — Blueprint Engine
+**Active Spec:** `004-blueprint-engine`
 **Branch:** `main`
 
 Do not implement specs marked ⬜ Not Started unless explicitly instructed.
@@ -37,6 +37,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | Spec | Milestone | Domain | Frontend pair | Status |
 |------|-----------|--------|---------------|--------|
 | `001-platform-tenancy` | M1 | Platform + Core tenant resolution | `009-system-administration` (partial) | ✅ Done |
+| `001-platform-admin` | M1 | Platform admin auth, tenant CRUD, impersonation, audit events | `009-system-administration` (partial) | ✅ Done |
 | `002-organization-structure` | M2 | Organization | `007-organization-structure` | ✅ Done |
 | `003-iam-abac` | M2 | IAM | `009-system-administration` | ✅ Done |
 | `004-blueprint-engine` | M3 | Blueprint | `004-blueprint-builder` | ⬜ Not Started |
@@ -61,19 +62,28 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 
 ## M1 — Platform & Core Foundation
 
-**Status:** ✅ Done
+**Status:** ✅ Done (including 001-platform-admin supplement)
 
 **Specs:**
-- `001-platform-tenancy` — Central tenant registry, DB provisioning, connection switching, platform admin, impersonation audit — `main` — ✅ Done
+- `001-platform-tenancy` — Central tenant registry, DB provisioning, connection switching — ✅ Done
+- `001-platform-admin` — Platform admin auth, tenant CRUD, impersonation, audit events — ✅ Done
 
-**M1 will establish:**
+**M1 established:**
 - `tenants` table and central DB connection config
 - Tenant resolution middleware (Header → DB switch)
 - Template database provisioning workflow
 - Redis key prefixing convention (`{slug}:`)
 - Base model traits (soft delete, `public_id` generation, timestamps)
-- Platform admin authentication context (central)
-- Impersonation session initiation + audit hook
+- Platform admin authentication (central DB, Sanctum tokens, `RequirePlatformAdmin` middleware)
+- Tenant lifecycle API (provision, suspend, reactivate, update, run-migrations)
+- Impersonation flow (tenant-scoped Sanctum token with `impersonated-by` ability)
+- Central `audit_events` table (append-only, `AuditAction` enum)
+- Platform admin CRUD API (create, list, show, update, deactivate, reactivate)
+- `PlatformAuthService`, `PlatformTenantService`, `PlatformAdminService`, `PlatformImpersonationService`
+- `RunTenantMigrationsJob` (queued, 3 retries with exponential backoff)
+- Domain events with `ShouldDispatchAfterCommit`
+- `HasRateLimiting` trait on all Platform controllers (matching Organization/IAM pattern)
+- `RequireCapability` middleware updated for impersonation detection
 
 **Constraints for later milestones:**
 - All tenant business modules use tenant connection only — never central DB for business data

@@ -5,11 +5,13 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Services\Platform\TenantProvisioningService;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DevTenantsSeeder extends Seeder
 {
     public function run(): void
     {
+        $prefix = config('tenancy.database.prefix');
         $provisioner = app(TenantProvisioningService::class);
 
         $tenants = [
@@ -34,6 +36,16 @@ class DevTenantsSeeder extends Seeder
                 'slug' => 'moi',
             ],
         ];
+
+        $this->command->info('Dropping existing tenant databases...');
+
+        foreach ($tenants as $data) {
+            $dbName = $prefix.$data['slug'];
+
+            DB::statement("DROP DATABASE IF EXISTS \"{$dbName}\"");
+
+            $this->command->info("  Dropped database: {$dbName}");
+        }
 
         foreach ($tenants as $data) {
             $tenant = $provisioner->provision($data);

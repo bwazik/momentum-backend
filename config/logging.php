@@ -126,7 +126,7 @@ return [
         // Module-specific channels
         'organization' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/organization.log'),
+            'path' => storage_path('logs/organization/organization.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 14,
             'replace_placeholders' => true,
@@ -134,7 +134,7 @@ return [
 
         'iam' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/iam.log'),
+            'path' => storage_path('logs/iam/iam.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 14,
             'replace_placeholders' => true,
@@ -142,7 +142,7 @@ return [
 
         'platform' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/platform.log'),
+            'path' => storage_path('logs/platform/platform.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 14,
             'replace_placeholders' => true,

@@ -12,6 +12,11 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 {
     use HasDatabase, HasDomains;
 
+    public function getRouteKeyName(): string
+    {
+        return 'public_id';
+    }
+
     protected $fillable = [
         'public_id',
         'name_en',
@@ -55,7 +60,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 
         static::creating(function ($tenant) {
             if (empty($tenant->public_id)) {
-                $tenant->public_id = Str::uuid()->toString();
+                $tenant->public_id = (string) Str::uuid7();
             }
 
             if (empty($tenant->database_name)) {

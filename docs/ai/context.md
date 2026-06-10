@@ -128,8 +128,9 @@ Spec IDs match `../frontend/specs/` where UI exists. Backend establishes API con
 
 ## Current Focus
 
+**Milestone 1 — Platform & Core Foundation: ✅ Done** (including 001-platform-admin supplement)
 **Milestone 2 — Organization & IAM: ✅ Done**
-**Next:** M3 Blueprint Engine (spec 004) or 001-platform-admin supplement
+**Next:** M3 Blueprint Engine (spec 004)
 
 ---
 
