@@ -2,11 +2,11 @@
 
 > **Number:** 004
 > **Date:** 2026-06-10
-> **Status:** `draft`
+> **Status:** `completed`
 > **Milestone:** M3 — Blueprint Engine
 > **Depends on:** `001-platform-tenancy` (tenant DB, base models, `public_id`), `002-organization-structure` (departments, positions, authority grades, working calendars), `003-iam-abac` (users, capabilities, ABAC policy engine, position assignments)
 > **Provides APIs:** Blueprint Category CRUD, Stage Type CRUD, SLA Policy CRUD, Blueprint CRUD with stages/sub-stages/transitions, Blueprint lock, Blueprint duplicate, Blueprint activation/deactivation
-> **Contract status:** `draft`
+> **Contract status:** `stable`
 > **Frontend spec:** `../frontend/specs/004-blueprint-builder`
 > **Author:** Momentum init
 > **Branch:** `feat/004-blueprint-engine`
@@ -106,94 +106,94 @@ All data lives in the tenant DB. All endpoints use `public_id`. All mutating end
 
 ### Blueprint Categories
 
-- [ ] `blueprint_categories` table in tenant DB with columns: `id`, `public_id`, `name_en`, `name_ar`, `display_order` (smallint, default 0), `is_active`, `created_at`, `updated_at`, `deleted_at`
-- [ ] `name_ar` required; `name_en` optional (system copies `name_ar` if empty)
-- [ ] `GET /api/v1/blueprints/categories` — list all active categories ordered by `display_order` (full list, expected < 100). Requires authentication.
-- [ ] `POST /api/v1/blueprints/categories` — create category. Requires `blueprint.manage` capability.
-- [ ] `PUT /api/v1/blueprints/categories/{category}` — update name, order, or active status. Requires `blueprint.manage`.
-- [ ] `POST /api/v1/blueprints/categories/{category}/deactivate` — set `is_active = false`. Requires `blueprint.manage`.
-- [ ] `POST /api/v1/blueprints/categories/{category}/reactivate` — set `is_active = true`. Requires `blueprint.manage`.
-- [ ] Deleting a category is not allowed if it is referenced by active blueprints.
+- [x] `blueprint_categories` table in tenant DB with columns: `id`, `public_id`, `name_en`, `name_ar`, `display_order` (smallint, default 0), `is_active`, `created_at`, `updated_at`, `deleted_at`
+- [x] `name_ar` required; `name_en` optional (system copies `name_ar` if empty)
+- [x] `GET /api/v1/blueprints/categories` — list all active categories ordered by `display_order` (full list, expected < 100). Requires authentication.
+- [x] `POST /api/v1/blueprints/categories` — create category. Requires `blueprint.manage` capability.
+- [x] `PUT /api/v1/blueprints/categories/{category}` — update name, order, or active status. Requires `blueprint.manage`.
+- [x] `POST /api/v1/blueprints/categories/{category}/deactivate` — set `is_active = false`. Requires `blueprint.manage`.
+- [x] `POST /api/v1/blueprints/categories/{category}/reactivate` — set `is_active = true`. Requires `blueprint.manage`.
+- [x] Deleting a category is not allowed if it is referenced by active blueprints.
 
 ### Stage Types
 
-- [ ] `stage_types` table in tenant DB with columns: `id`, `public_id`, `name_en`, `name_ar`, `is_system_default`, `is_active`, `display_order`, `created_at`, `updated_at`, `deleted_at`
-- [ ] System ships with 5 defaults: Action, Review, Approval, Decision, Information Gathering (`is_system_default = true`, `is_active = true`)
-- [ ] `GET /api/v1/blueprints/stage-types` — list all active stage types ordered by `display_order` (full list). Requires authentication.
-- [ ] `POST /api/v1/blueprints/stage-types` — create custom stage type. Requires `blueprint.manage`.
-- [ ] `PUT /api/v1/blueprints/stage-types/{stage_type}` — update custom stage type name or order. System defaults (`is_system_default = true`) cannot be renamed or deactivated. Requires `blueprint.manage`.
-- [ ] `DELETE /api/v1/blueprints/stage-types/{stage_type}` — delete custom stage type. Rejected if referenced by any blueprint stage. Requires `blueprint.manage`.
+- [x] `stage_types` table in tenant DB with columns: `id`, `public_id`, `name_en`, `name_ar`, `is_system_default`, `is_active`, `display_order`, `created_at`, `updated_at`, `deleted_at`
+- [x] System ships with 5 defaults: Action, Review, Approval, Decision, Information Gathering (`is_system_default = true`, `is_active = true`)
+- [x] `GET /api/v1/blueprints/stage-types` — list all active stage types ordered by `display_order` (full list). Requires authentication.
+- [x] `POST /api/v1/blueprints/stage-types` — create custom stage type. Requires `blueprint.manage`.
+- [x] `PUT /api/v1/blueprints/stage-types/{stage_type}` — update custom stage type name or order. System defaults (`is_system_default = true`) cannot be renamed or deactivated. Requires `blueprint.manage`.
+- [x] `DELETE /api/v1/blueprints/stage-types/{stage_type}` — delete custom stage type. Rejected if referenced by any blueprint stage. Requires `blueprint.manage`.
 
 ### SLA Policies
 
-- [ ] `sla_policies` table in tenant DB with columns: `id`, `public_id`, `name_en`, `name_ar`, `sla_value` (smallint), `sla_unit` (TINYINT: 1=hours, 2=days), `warning_threshold_percentage` (smallint, default 75), `is_active`, `created_at`, `updated_at`, `deleted_at`
-- [ ] `name_ar` required; `name_en` optional (system copies `name_ar` if empty)
-- [ ] `GET /api/v1/blueprints/sla-policies` — list active SLA policies (full list, expected < 100). Requires `blueprint.view` or `blueprint.manage`.
-- [ ] `POST /api/v1/blueprints/sla-policies` — create SLA policy. Requires `blueprint.manage`.
-- [ ] `PUT /api/v1/blueprints/sla-policies/{sla_policy}` — update SLA policy. Requires `blueprint.manage`.
-- [ ] `DELETE /api/v1/blueprints/sla-policies/{sla_policy}` — delete SLA policy. Rejected if referenced by any blueprint stage. Requires `blueprint.manage`.
+- [x] `sla_policies` table in tenant DB with columns: `id`, `public_id`, `name_en`, `name_ar`, `sla_value` (smallint), `sla_unit` (TINYINT: 1=hours, 2=days), `warning_threshold_percentage` (smallint, default 75), `is_active`, `created_at`, `updated_at`, `deleted_at`
+- [x] `name_ar` required; `name_en` optional (system copies `name_ar` if empty)
+- [x] `GET /api/v1/blueprints/sla-policies` — list active SLA policies (full list, expected < 100). Requires `blueprint.view` or `blueprint.manage`.
+- [x] `POST /api/v1/blueprints/sla-policies` — create SLA policy. Requires `blueprint.manage`.
+- [x] `PUT /api/v1/blueprints/sla-policies/{sla_policy}` — update SLA policy. Requires `blueprint.manage`.
+- [x] `DELETE /api/v1/blueprints/sla-policies/{sla_policy}` — delete SLA policy. Rejected if referenced by any blueprint stage. Requires `blueprint.manage`.
 
 ### Blueprints
 
-- [ ] `blueprints` table in tenant DB with columns: `id`, `public_id`, `category_id` (FK blueprint_categories), `name_en`, `name_ar`, `description_en`, `description_ar`, `scope` (TINYINT: 1=organization, 2=department), `department_id` (nullable FK departments, required when `scope = 2`), `is_locked` (boolean, default false), `is_active` (boolean, default true), `created_by_user_id` (FK users), `created_at`, `updated_at`, `deleted_at`
-- [ ] `name_ar` required; `name_en` optional (system copies `name_ar` if empty)
-- [ ] `description_ar` optional; `description_en` optional (system copies `description_ar` if empty)
-- [ ] `is_locked` is set to `true` automatically when the first task is launched from this blueprint.
-- [ ] `GET /api/v1/blueprints` — list blueprints with cursor pagination. Filters: `is_active`, `category_id`, `is_locked`, `scope`, `department_id`, `search` (name). Requires `blueprint.view_library` or `blueprint.manage`.
-- [ ] `GET /api/v1/blueprints/{blueprint}` — show blueprint with full structure (stages, sub-stages, SLA policies, transitions). Requires `blueprint.view_library` or `blueprint.manage`.
-- [ ] `POST /api/v1/blueprints` — create blueprint. `name_ar` required, `category_id` required, `scope` required. `department_id` required when `scope = 2`. Requires `blueprint.create.organization` (when `scope = 1`) or `blueprint.create.department` (when `scope = 2`).
-- [ ] `PUT /api/v1/blueprints/{blueprint}` — update blueprint metadata. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
-- [ ] `POST /api/v1/blueprints/{blueprint}/activate` — set `is_active = true`. Only allowed if `is_locked = false` and at least one stage exists. Requires `blueprint.manage`.
-- [ ] `POST /api/v1/blueprints/{blueprint}/deactivate` — set `is_active = false`. Allowed even if locked. Requires `blueprint.manage`.
-- [ ] `POST /api/v1/blueprints/{blueprint}/duplicate` — creates a new blueprint with the same stages, sub-stages, SLA refs, and transitions, but with `is_active = false`, `is_locked = false`, and a new `public_id`. The new blueprint's name is prefixed with "Copy of ". Requires `blueprint.manage`.
-- [ ] Locked blueprints reject all mutating operations (update, activate, add stage, etc.) with a 422 error: "Blueprint is locked and cannot be modified."
-- [ ] Deleting a blueprint is soft-delete only. If tasks exist, the blueprint is kept but marked inactive; hard delete is rejected.
+- [x] `blueprints` table in tenant DB with columns: `id`, `public_id`, `category_id` (FK blueprint_categories), `name_en`, `name_ar`, `description_en`, `description_ar`, `scope` (TINYINT: 1=organization, 2=department), `department_id` (nullable FK departments, required when `scope = 2`), `is_locked` (boolean, default false), `is_active` (boolean, default true), `created_by_user_id` (FK users), `created_at`, `updated_at`, `deleted_at`
+- [x] `name_ar` required; `name_en` optional (system copies `name_ar` if empty)
+- [x] `description_ar` optional; `description_en` optional (system copies `description_ar` if empty)
+- [x] `is_locked` is set to `true` automatically when the first task is launched from this blueprint.
+- [x] `GET /api/v1/blueprints` — list blueprints with cursor pagination. Filters: `is_active`, `category_id`, `is_locked`, `scope`, `department_id`, `search` (name). Requires `blueprint.view_library` or `blueprint.manage`.
+- [x] `GET /api/v1/blueprints/{blueprint}` — show blueprint with full structure (stages, sub-stages, SLA policies, transitions). Requires `blueprint.view_library` or `blueprint.manage`.
+- [x] `POST /api/v1/blueprints` — create blueprint. `name_ar` required, `category_id` required, `scope` required. `department_id` required when `scope = 2`. Requires `blueprint.create.organization` (when `scope = 1`) or `blueprint.create.department` (when `scope = 2`).
+- [x] `PUT /api/v1/blueprints/{blueprint}` — update blueprint metadata. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
+- [x] `POST /api/v1/blueprints/{blueprint}/activate` — set `is_active = true`. Only allowed if `is_locked = false` and at least one stage exists. Requires `blueprint.manage`.
+- [x] `POST /api/v1/blueprints/{blueprint}/deactivate` — set `is_active = false`. Allowed even if locked. Requires `blueprint.manage`.
+- [x] `POST /api/v1/blueprints/{blueprint}/duplicate` — creates a new blueprint with the same stages, sub-stages, SLA refs, and transitions, but with `is_active = false`, `is_locked = false`, and a new `public_id`. The new blueprint's name is prefixed with "Copy of ". Requires `blueprint.manage`.
+- [x] Locked blueprints reject all mutating operations (update, activate, add stage, etc.) with a 422 error: "Blueprint is locked and cannot be modified."
+- [x] Deleting a blueprint is soft-delete only. If tasks exist, the blueprint is kept but marked inactive; hard delete is rejected.
 
 ### Stages
 
-- [ ] `blueprint_stages` table in tenant DB with columns: `id`, `public_id`, `blueprint_id` (FK blueprints), `stage_type_id` (FK stage_types), `sla_policy_id` (nullable FK sla_policies), `name_en`, `name_ar`, `description_en`, `description_ar`, `sequence_order` (smallint), `assignment_type` (TINYINT: 1=specific_position, 2=department_head, 3=manual_at_launch), `assigned_position_id` (nullable FK positions), `assigned_department_id` (nullable FK departments), `assignment_cardinality` (TINYINT: 1=single, 2=multiple, default 1), `completion_rule` (TINYINT: 1=any_assignee, 2=all_assignees, 3=lead_assignee, default 1), `escalation_position_id` (nullable FK positions), `created_at`, `updated_at`
-- [ ] `sequence_order` must be unique per blueprint.
-- [ ] `assigned_position_id` required when `assignment_type = 1`; `assigned_department_id` required when `assignment_type = 2`; both null when `assignment_type = 3`.
-- [ ] `escalation_position_id` overrides the default escalation chain (reports_to). If null, escalation follows the assigned position's reporting line.
-- [ ] `GET /api/v1/blueprints/{blueprint}/stages` — list stages in sequence order. Full list (expected < 50 per blueprint). Requires `blueprint.view_library` or `blueprint.manage`.
-- [ ] `POST /api/v1/blueprints/{blueprint}/stages` — add stage. Only allowed if `is_locked = false`. `sequence_order` is auto-assigned (last + 1) unless explicitly provided. Requires `blueprint.manage`.
-- [ ] `PUT /api/v1/blueprints/{blueprint}/stages/{stage}` — update stage. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
-- [ ] `DELETE /api/v1/blueprints/{blueprint}/stages/{stage}` — remove stage. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
-- [ ] `POST /api/v1/blueprints/{blueprint}/stages/reorder` — bulk reorder. Accepts array of `{public_id, sequence_order}`. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
-- [ ] Stage assignment rules reference Organization module entities via `public_id` in API but internal FK in DB. Validation ensures referenced entities exist and are active.
+- [x] `blueprint_stages` table in tenant DB with columns: `id`, `public_id`, `blueprint_id` (FK blueprints), `stage_type_id` (FK stage_types), `sla_policy_id` (nullable FK sla_policies), `name_en`, `name_ar`, `description_en`, `description_ar`, `sequence_order` (smallint), `assignment_type` (TINYINT: 1=specific_position, 2=department_head, 3=manual_at_launch), `assigned_position_id` (nullable FK positions), `assigned_department_id` (nullable FK departments), `assignment_cardinality` (TINYINT: 1=single, 2=multiple, default 1), `completion_rule` (TINYINT: 1=any_assignee, 2=all_assignees, 3=lead_assignee, default 1), `escalation_position_id` (nullable FK positions), `created_at`, `updated_at`
+- [x] `sequence_order` must be unique per blueprint.
+- [x] `assigned_position_id` required when `assignment_type = 1`; `assigned_department_id` required when `assignment_type = 2`; both null when `assignment_type = 3`.
+- [x] `escalation_position_id` overrides the default escalation chain (reports_to). If null, escalation follows the assigned position's reporting line.
+- [x] `GET /api/v1/blueprints/{blueprint}/stages` — list stages in sequence order. Full list (expected < 50 per blueprint). Requires `blueprint.view_library` or `blueprint.manage`.
+- [x] `POST /api/v1/blueprints/{blueprint}/stages` — add stage. Only allowed if `is_locked = false`. `sequence_order` is auto-assigned (last + 1) unless explicitly provided. Requires `blueprint.manage`.
+- [x] `PUT /api/v1/blueprints/{blueprint}/stages/{stage}` — update stage. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
+- [x] `DELETE /api/v1/blueprints/{blueprint}/stages/{stage}` — remove stage. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
+- [x] `POST /api/v1/blueprints/{blueprint}/stages/reorder` — bulk reorder. Accepts array of `{public_id, sequence_order}`. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
+- [x] Stage assignment rules reference Organization module entities via `public_id` in API but internal FK in DB. Validation ensures referenced entities exist and are active.
 
 ### Sub-stages
 
-- [ ] `blueprint_sub_stages` table in tenant DB with columns: `id`, `public_id`, `blueprint_stage_id` (FK blueprint_stages), `sla_policy_id` (nullable FK sla_policies), `name_en`, `name_ar`, `description_en`, `description_ar`, `sequence_order` (smallint), `is_required` (boolean, default true), `assignment_type` (TINYINT: 1=specific_position, 2=department_head, 3=manual_at_launch), `assigned_position_id` (nullable FK positions), `assigned_department_id` (nullable FK departments), `assignment_cardinality` (TINYINT: 1=single, 2=multiple, default 1), `completion_rule` (TINYINT: 1=any_assignee, 2=all_assignees, 3=lead_assignee, default 1), `created_at`, `updated_at`
-- [ ] `sequence_order` must be unique per stage.
-- [ ] `GET /api/v1/blueprints/{blueprint}/stages/{stage}/sub-stages` — list sub-stages in order. Full list (expected < 20 per stage). Requires `blueprint.view_library` or `blueprint.manage`.
-- [ ] `POST /api/v1/blueprints/{blueprint}/stages/{stage}/sub-stages` — add sub-stage. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
-- [ ] `PUT /api/v1/blueprints/{blueprint}/stages/{stage}/sub-stages/{sub_stage}` — update sub-stage. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
-- [ ] `DELETE /api/v1/blueprints/{blueprint}/stages/{stage}/sub-stages/{sub_stage}` — remove sub-stage. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
-- [ ] `POST /api/v1/blueprints/{blueprint}/stages/{stage}/sub-stages/reorder` — bulk reorder. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
+- [x] `blueprint_sub_stages` table in tenant DB with columns: `id`, `public_id`, `blueprint_stage_id` (FK blueprint_stages), `sla_policy_id` (nullable FK sla_policies), `name_en`, `name_ar`, `description_en`, `description_ar`, `sequence_order` (smallint), `is_required` (boolean, default true), `assignment_type` (TINYINT: 1=specific_position, 2=department_head, 3=manual_at_launch), `assigned_position_id` (nullable FK positions), `assigned_department_id` (nullable FK departments), `assignment_cardinality` (TINYINT: 1=single, 2=multiple, default 1), `completion_rule` (TINYINT: 1=any_assignee, 2=all_assignees, 3=lead_assignee, default 1), `created_at`, `updated_at`
+- [x] `sequence_order` must be unique per stage.
+- [x] `GET /api/v1/blueprints/{blueprint}/stages/{stage}/sub-stages` — list sub-stages in order. Full list (expected < 20 per stage). Requires `blueprint.view_library` or `blueprint.manage`.
+- [x] `POST /api/v1/blueprints/{blueprint}/stages/{stage}/sub-stages` — add sub-stage. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
+- [x] `PUT /api/v1/blueprints/{blueprint}/stages/{stage}/sub-stages/{sub_stage}` — update sub-stage. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
+- [x] `DELETE /api/v1/blueprints/{blueprint}/stages/{stage}/sub-stages/{sub_stage}` — remove sub-stage. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
+- [x] `POST /api/v1/blueprints/{blueprint}/stages/{stage}/sub-stages/reorder` — bulk reorder. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
 
 ### Transitions
 
-- [ ] `blueprint_transitions` table in tenant DB with columns: `id`, `blueprint_id` (FK blueprints), `from_stage_id` (FK blueprint_stages), `to_stage_id` (FK blueprint_stages), `transition_type` (TINYINT: 1=advance, 2=return), `return_reason_required` (boolean, default false), `created_at`
-- [ ] `from_stage_id` and `to_stage_id` must belong to the same blueprint.
-- [ ] `transition_type = 1` (advance): `to_stage_id` must have a higher `sequence_order` than `from_stage_id`.
-- [ ] `transition_type = 2` (return): `to_stage_id` must have a lower `sequence_order` than `from_stage_id`; `return_reason_required` defaults to `true`.
-- [ ] `GET /api/v1/blueprints/{blueprint}/transitions` — list transitions. Full list (expected < 100 per blueprint). Requires `blueprint.view_library` or `blueprint.manage`.
-- [ ] `POST /api/v1/blueprints/{blueprint}/transitions` — create transition. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
-- [ ] `PUT /api/v1/blueprints/{blueprint}/transitions/{transition}` — update transition. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
-- [ ] `DELETE /api/v1/blueprints/{blueprint}/transitions/{transition}` — delete transition. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
-- [ ] A stage cannot transition to itself.
+- [x] `blueprint_transitions` table in tenant DB with columns: `id`, `blueprint_id` (FK blueprints), `from_stage_id` (FK blueprint_stages), `to_stage_id` (FK blueprint_stages), `transition_type` (TINYINT: 1=advance, 2=return), `return_reason_required` (boolean, default false), `created_at`
+- [x] `from_stage_id` and `to_stage_id` must belong to the same blueprint.
+- [x] `transition_type = 1` (advance): `to_stage_id` must have a higher `sequence_order` than `from_stage_id`.
+- [x] `transition_type = 2` (return): `to_stage_id` must have a lower `sequence_order` than `from_stage_id`; `return_reason_required` defaults to `true`.
+- [x] `GET /api/v1/blueprints/{blueprint}/transitions` — list transitions. Full list (expected < 100 per blueprint). Requires `blueprint.view_library` or `blueprint.manage`.
+- [x] `POST /api/v1/blueprints/{blueprint}/transitions` — create transition. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
+- [x] `PUT /api/v1/blueprints/{blueprint}/transitions/{transition}` — update transition. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
+- [x] `DELETE /api/v1/blueprints/{blueprint}/transitions/{transition}` — delete transition. Only allowed if `is_locked = false`. Requires `blueprint.manage`.
+- [x] A stage cannot transition to itself.
 
 ### General
 
-- [ ] All endpoints follow `/api/v1/blueprints/` prefix.
-- [ ] All responses use API Resources with `public_id` only — never expose internal `id`.
-- [ ] All mutating endpoints require `blueprint.manage` capability via `RequireCapability` middleware.
-- [ ] Blueprint creation requires `blueprint.create.organization` (for org-wide) or `blueprint.create.department` (for department-scoped) via `RequireCapability`.
-- [ ] All list endpoints use `blueprint.view_library` or `blueprint.manage` capability.
-- [ ] Bilingual fields: `name_ar` / `title_ar` / `description_ar` required; `name_en` / `title_en` / `description_en` optional, system copies Arabic if empty.
-- [ ] Domain events emitted for all mutating actions: `BlueprintCreated`, `BlueprintActivated`, `BlueprintDeactivated`, `BlueprintLocked`, `BlueprintDuplicated`, `StageCreated`, `StageUpdated`, `StageDeleted`, `StageReordered`, `SubStageCreated`, `SubStageUpdated`, `SubStageDeleted`, `SubStageReordered`, `SlaPolicyCreated`, `SlaPolicyUpdated`, `SlaPolicyDeleted`, `TransitionCreated`, `TransitionUpdated`, `TransitionDeleted`, `BlueprintCategoryCreated`, `BlueprintCategoryUpdated`, `StageTypeCreated`, `StageTypeUpdated`.
-- [ ] Feature tests cover: blueprint CRUD, activation, lock behavior, duplicate, stage CRUD with reorder, sub-stage CRUD, SLA policy CRUD, transition CRUD, category CRUD, stage type CRUD, assignment rule validation, department-scoped blueprint creation, blueprint lock rejection on mutation.
+- [x] All endpoints follow `/api/v1/blueprints/` prefix.
+- [x] All responses use API Resources with `public_id` only — never expose internal `id`.
+- [x] All mutating endpoints require `blueprint.manage` capability via `RequireCapability` middleware.
+- [x] Blueprint creation requires `blueprint.create.organization` (for org-wide) or `blueprint.create.department` (for department-scoped) via `RequireCapability`.
+- [x] All list endpoints use `blueprint.view_library` or `blueprint.manage` capability.
+- [x] Bilingual fields: `name_ar` / `title_ar` / `description_ar` required; `name_en` / `title_en` / `description_en` optional, system copies Arabic if empty.
+- [x] Domain events emitted for all mutating actions: `BlueprintCreated`, `BlueprintActivated`, `BlueprintDeactivated`, `BlueprintLocked`, `BlueprintDuplicated`, `StageCreated`, `StageUpdated`, `StageDeleted`, `StageReordered`, `SubStageCreated`, `SubStageUpdated`, `SubStageDeleted`, `SubStageReordered`, `SlaPolicyCreated`, `SlaPolicyUpdated`, `SlaPolicyDeleted`, `TransitionCreated`, `TransitionUpdated`, `TransitionDeleted`, `BlueprintCategoryCreated`, `BlueprintCategoryUpdated`, `StageTypeCreated`, `StageTypeUpdated`.
+- [x] Feature tests cover: blueprint CRUD, activation, lock behavior, duplicate, stage CRUD with reorder, sub-stage CRUD, SLA policy CRUD, transition CRUD, category CRUD, stage type CRUD, assignment rule validation, department-scoped blueprint creation, blueprint lock rejection on mutation.
 
 ---
 
@@ -296,16 +296,16 @@ All data lives in the tenant DB. All endpoints use `public_id`. All mutating end
 
 ## Open Questions
 
-- [ ] Should blueprint duplication copy the `category_id` or leave it unset? (Recommended: copy it, since the category is a grouping mechanism.)
-- [ ] Should blueprint lock be a database column (`is_locked`) or a computed property (`exists tasks`)? (Recommended: database column for performance and to support explicit lock without tasks for governance.)
-- [ ] Should `sla_policies` live in the Blueprint module or a shared SLA module? (Recommended: Blueprint module for MVP — they are template definitions, not runtime timers. Spec 007 may create a separate runtime SLA table if needed.)
-- [ ] Should `blueprint_transitions` allow multiple transitions from the same `from_stage` to different `to_stage`s (branching)? (Recommended: yes, branching is allowed — task module will choose based on conditions.)
-- [ ] Should deleting a blueprint stage cascade-delete its sub-stages and transitions? (Recommended: yes, cascade delete sub-stages and transitions referencing the stage.)
-- [ ] Should `sequence_order` be an integer or a float (to allow insertion between stages without reordering)? (Recommended: integer for MVP; reorder endpoint handles insertions.)
-- [ ] Should blueprint categories support nesting/hierarchy? (Recommended: no — flat list for MVP.)
-- [ ] Should `assignment_type` support "authority grade" resolution? (Recommended: no — ERD only supports specific_position, department_head, manual_at_launch. Authority grade is used for escalation and analytics, not direct assignment.)
-- [ ] Should `escalation_position_id` be validated to ensure it exists and is active? (Recommended: yes, with soft validation — warn if position is inactive but allow for flexibility.)
-- [ ] Should system-defined stage types be seeded per tenant or shared globally? (Recommended: seeded per tenant on provisioning so tenants can customize display order and deactivate unused ones.)
+- [x] Should blueprint duplication copy the `category_id` or leave it unset? **Resolved:** Yes, `category_id` is copied on duplication to maintain the blueprint grouping. The duplicated blueprint is prefixed with "Copy of ".
+- [x] Should blueprint lock be a database column (`is_locked`) or a computed property (`exists tasks`)? **Resolved:** DB column `is_locked` (boolean, default false). Enforced at the service layer for all mutations. The Task module (Spec 005) will set this to `true` when the first task is launched.
+- [x] Should `sla_policies` live in the Blueprint module or a shared SLA module? **Resolved:** Blueprint module for MVP. They are template definitions, not runtime timers. Spec 007 may create a separate runtime SLA tracking table later.
+- [x] Should `blueprint_transitions` allow multiple transitions from the same `from_stage` to different `to_stage`s (branching)? **Resolved:** Yes, multiple transitions allowed from the same `from_stage`. The Task module (Spec 005) chooses the correct path at runtime based on conditions. Sequence order validation is enforced.
+- [x] Should deleting a blueprint stage cascade-delete its sub-stages and transitions? **Resolved:** Yes, sub-stages are cascade-deleted via `blueprint_id` FK on `blueprint_sub_stages`. Transitions are also cascade-deleted via FK constraints. The `blueprint_stage_id` and `blueprint_id` columns both have `cascadeOnDelete()`.
+- [x] Should `sequence_order` be an integer or a float (to allow insertion between stages without reordering)? **Resolved:** `smallint` integer. Reorder is handled via a bulk update endpoint that accepts `{public_id, sequence_order}` pairs and updates atomically within a `DB::transaction()`.
+- [x] Should blueprint categories support nesting/hierarchy? **Resolved:** No — flat list only. Display order controlled by `display_order` (smallint). Hierarchy deferred to V2.
+- [x] Should `assignment_type` support "authority grade" resolution? **Resolved:** No — `assignment_type` enum has only three cases: `SpecificPosition`, `DepartmentHead`, `ManualAtLaunch`. Authority grade is used for escalation and analytics, not direct assignment. Spec 005 resolves the actual assignee at runtime.
+- [x] Should `escalation_position_id` be validated to ensure it exists and is active? **Resolved:** Soft validation only. The service layer resolves `public_id` → `id` and stores the FK. If the position is inactive, the stored FK still works. No strict DB constraint on active status.
+- [x] Should system-defined stage types be seeded per tenant or shared globally? **Resolved:** Per tenant via `TenantDatabaseSeeder`. Each tenant gets 5 defaults (Action, Review, Approval, Decision, Information Gathering) with `is_system_default = true`. Tenants can add custom types and deactivate unused defaults.
 
 ---
 

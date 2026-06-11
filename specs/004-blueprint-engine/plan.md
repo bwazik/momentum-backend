@@ -2,7 +2,7 @@
 
 > **Spec:** 004-blueprint-engine
 > **Date:** 2026-06-10
-> **Status:** draft
+> **Status:** approved
 
 ---
 

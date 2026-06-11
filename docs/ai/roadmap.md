@@ -8,8 +8,8 @@
 
 ## Current Focus
 
-**Active Milestone:** M3 — Blueprint Engine
-**Active Spec:** `004-blueprint-engine`
+**Active Milestone:** M4 — Task Execution & Lifecycle
+**Active Spec:** `005-task-execution`
 **Branch:** `main`
 
 Do not implement specs marked ⬜ Not Started unless explicitly instructed.
@@ -22,7 +22,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 |---|------|--------|------------|
 | M1 | Platform & Core Foundation | ✅ Done | — |
 | M2 | Organization & IAM | ✅ Done | M1 |
-| M3 | Blueprint Engine | ⬜ Not Started | M2 |
+| M3 | Blueprint Engine | ✅ Done | M2 |
 | M4 | Task Execution & Lifecycle | ⬜ Not Started | M3 |
 | M5 | SLA, Escalation & Notifications | ⬜ Not Started | M4 |
 | M6 | Analytics, Follow-up & Search | ⬜ Not Started | M5 |
@@ -40,7 +40,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | `001-platform-admin` | M1 | Platform admin auth, tenant CRUD, impersonation, audit events | `009-system-administration` (partial) | ✅ Done |
 | `002-organization-structure` | M2 | Organization | `007-organization-structure` | ✅ Done |
 | `003-iam-abac` | M2 | IAM | `009-system-administration` | ✅ Done |
-| `004-blueprint-engine` | M3 | Blueprint | `004-blueprint-builder` | ⬜ Not Started |
+| `004-blueprint-engine` | M3 | Blueprint | `004-blueprint-builder` | ✅ Done |
 | `005-task-execution` | M4 | Task creation & launch | `002-task-board`, `003-task-details` | ⬜ Not Started |
 | `006-stage-lifecycle` | M4 | Stage/sub-stage progression | `003-task-details`, `005-workflow-visualization` | ⬜ Not Started |
 | `007-sla-escalation` | M5 | Tracking & SLA | `006-follow-up-center` | ⬜ Not Started |
@@ -130,11 +130,34 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 
 ## M3 — Blueprint Engine
 
-**Status:** ⬜ Not Started · **Blocked by:** M2
+**Status:** ✅ Done
 
-**Specs:** `004`
+**Specs:** `004` ✅
 
-**Will establish:** blueprints, stages, sub-stages, SLA policies, transitions, blueprint lock on first task
+**Established by 004:**
+- `blueprint_categories` table (tenant-defined classification, display order, bilingual)
+- `stage_types` table (5 system defaults: Action, Review, Approval, Decision, Information Gathering)
+- `sla_policies` table (reusable named SLA templates with duration, unit, warning threshold)
+- `blueprints` table (reusable workflow templates with scope org/dept, lock on first task, duplication)
+- `blueprint_stages` table (stage definitions with sequence, assignment rules, cardinality, completion rule, escalation override)
+- `blueprint_sub_stages` table (optional internal steps with required flag, independent SLA)
+- `blueprint_transitions` table (advance/return transitions between stages, with sequence order validation)
+- Blueprint lock mechanism (`is_locked` boolean, enforced at service layer for all mutations)
+- 6 Blueprint enums: `BlueprintScope`, `AssignmentType`, `AssignmentCardinality`, `CompletionRule`, `SlaUnit`, `TransitionType`
+- `/api/v1/blueprints/` endpoints (Category, Stage Type, SLA Policy, Blueprint, Stage, Sub-stage, Transition CRUD)
+- `BlueprintService` with duplicate, activate, deactivate, lock-aware update
+- `BlueprintCategoryService`, `StageTypeService`, `SlaPolicyService`, `BlueprintStageService`, `BlueprintSubStageService`, `BlueprintTransitionService`
+- Caching strategy: tenant-prefixed warm cache (300s) for categories, stage types, SLA policies, active blueprints, blueprint structure
+- `blueprint` logging channel
+- 8 Blueprint domain exceptions registered in `bootstrap/app.php`
+- 20+ domain events implementing `ShouldDispatchAfterCommit`
+- Feature tests for all CRUD endpoints, lock behavior, duplicate, reorder, and department-scoped creation
+
+**Constraints for later milestones:**
+- Blueprints are immutable after first task launch (locked)
+- All task instances store blueprint snapshot at creation time
+- SLA policies are template definitions only; runtime timers belong to Spec 007
+- Assignment resolution at runtime is Spec 005's responsibility
 
 ---
 
