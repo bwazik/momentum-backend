@@ -3,6 +3,14 @@
 use App\Exceptions\ThrottleException;
 use App\Http\Middleware\RequireCapability;
 use App\Http\Middleware\RequirePlatformAdmin;
+use App\Modules\Blueprint\Exceptions\BlueprintCategoryInUseException;
+use App\Modules\Blueprint\Exceptions\BlueprintLockedException;
+use App\Modules\Blueprint\Exceptions\InvalidBlueprintScopeException;
+use App\Modules\Blueprint\Exceptions\InvalidStageSequenceException;
+use App\Modules\Blueprint\Exceptions\InvalidTransitionException;
+use App\Modules\Blueprint\Exceptions\SlaPolicyInUseException;
+use App\Modules\Blueprint\Exceptions\StageTypeInUseException;
+use App\Modules\Blueprint\Exceptions\UnauthorizedBlueprintScopeException;
 use App\Modules\Iam\Exceptions\CannotDelegateToSelfException;
 use App\Modules\Iam\Exceptions\CannotRevokeSystemCapabilityKeyException;
 use App\Modules\Iam\Exceptions\DuplicateGrantException;
@@ -56,6 +64,16 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // App exceptions
         $exceptions->renderable(fn (ThrottleException $e) => $e->render());
+
+        // Blueprint exceptions
+        $exceptions->renderable(fn (BlueprintLockedException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (InvalidStageSequenceException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (InvalidTransitionException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (SlaPolicyInUseException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (StageTypeInUseException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (BlueprintCategoryInUseException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (InvalidBlueprintScopeException $e) => response()->json(['message' => $e->getMessage()], 422));
+        $exceptions->renderable(fn (UnauthorizedBlueprintScopeException $e) => response()->json(['message' => $e->getMessage()], 422));
 
         // IAM exceptions
         $exceptions->renderable(fn (CannotDelegateToSelfException $e) => response()->json(['message' => $e->getMessage()], 422));

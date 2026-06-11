@@ -53,6 +53,7 @@ class DevTenantsSeeder extends Seeder
             tenancy()->initialize($tenant);
 
             $this->call(CapabilitySeeder::class, false, []);
+            $this->call(TenantDatabaseSeeder::class, false, []);
 
             User::create([
                 'name_ar' => 'مدير النظام',
