@@ -133,7 +133,7 @@ Spec IDs match `../frontend/specs/` where UI exists. Backend establishes API con
 **Milestone 3 — Blueprint Engine: ✅ Done**
 **Milestone 4 — Task Execution & Lifecycle: 🔄 In Progress**
 - ✅ `005-task-execution` — Task creation, launch, assignment resolution, lifecycle
-- ⬜ `006-stage-lifecycle` — Stage/sub-stage progression (next)
+- ✅ `006-stage-lifecycle` — Stage/sub-stage progression, return, override, history
 - ⬜ `013-comments-collaboration`
 - ⬜ `014-external-references`
 

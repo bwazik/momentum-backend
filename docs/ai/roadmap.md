@@ -8,8 +8,8 @@
 
 ## Current Focus
 
-**Active Milestone:** M4 — Task Execution & Lifecycle
-**Active Spec:** `006-stage-lifecycle`
+**Active Milestone:** M5 — SLA, Escalation & Notifications
+**Active Spec:** `007-sla-escalation`
 **Branch:** `main`
 
 Do not implement specs marked ⬜ Not Started unless explicitly instructed.
@@ -21,7 +21,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | # | Name | Status | Depends On |
 |---|------|--------|------------|
 | M1 | Platform & Core Foundation | ✅ Done | — |
-| M2 | Organization & IAM | ✅ Done | M1 |
+| M2 | Organization & IAM | 🔄 In Progress | M1 |
 | M3 | Blueprint Engine | ✅ Done | M2 |
 | M4 | Task Execution & Lifecycle | 🔄 In Progress | M3 |
 | M5 | SLA, Escalation & Notifications | ⬜ Not Started | M4 |
@@ -42,7 +42,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | `003-iam-abac` | M2 | IAM | `009-system-administration` | ✅ Done |
 | `004-blueprint-engine` | M3 | Blueprint | `004-blueprint-builder` | ✅ Done |
 | `005-task-execution` | M4 | Task creation & launch | `002-task-board`, `003-task-details` | ✅ Done |
-| `006-stage-lifecycle` | M4 | Stage/sub-stage progression | `003-task-details`, `005-workflow-visualization` | ⬜ Not Started |
+| `006-stage-lifecycle` | M4 | Stage/sub-stage progression | `003-task-details`, `005-workflow-visualization` | ✅ Done |
 | `007-sla-escalation` | M5 | Tracking & SLA | `006-follow-up-center` | ⬜ Not Started |
 | `008-notifications` | M5 | Notification | — (backend-only delivery) | ⬜ Not Started |
 | `009-analytics-reporting` | M6 | Analytics | `001-executive-dashboard`, `008-analytics-reporting`, `011-department-manager-dashboard` | ⬜ Not Started |
@@ -93,7 +93,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 
 ## M2 — Organization & IAM
 
-**Status:** ✅ Done
+**Status:** 🔄 In Progress
 
 **Specs:** `002` ✅, `003` ✅, `016`, `017`, `018`
 
@@ -165,7 +165,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 
 **Status:** 🔄 In Progress · **Blocked by:** M3
 
-**Specs:** `005` ✅, `006` ⬜, `013` ⬜, `014` ⬜
+**Specs:** `005` ✅, `006` ✅, `013` ⬜, `014` ⬜
 
 **Established by 005:**
 - `task_priorities`, `tasks`, `task_stage_instances`, `task_sub_stage_instances`, `task_stage_assignments` tables
@@ -188,7 +188,32 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 - 3 default priorities seeded: Critical, Urgent, Routine
 - `DomainException` base class (refactored 33 exceptions across all modules)
 
-**Will establish (remaining):** Stage progression (006), comments (013), external references (014)
+**Established by 006:**
+- `StageLifecycleService` — stage/sub-stage complete, return, assignment override, history, timeline
+- `StageLifecycleController` — 10 endpoints for stage lifecycle operations
+- 9 domain events: `StageAssignmentCompleted`, `StageInstanceCompleted`, `StageInstanceAdvanced`, `StageInstanceReturned`, `SubStageAssignmentCompleted`, `SubStageInstanceCompleted`, `SubStageInstanceReturned`, `StageAssignmentOverridden`, `TaskCompleted`
+- 7 domain exceptions: `StageNotActiveException`, `SubStageNotActiveException`, `UserNotAssigneeException`, `InvalidReturnTargetException`, `RequiredSubStagesIncompleteException`, `InvalidSubStageReturnTargetException`, `AssigneeNotFoundForOverrideException`
+- 4 form requests: `CompleteStageRequest`, `ReturnStageRequest`, `ReturnSubStageRequest`, `OverrideAssignmentRequest`
+- 2 API resources: `StageReturnResource`, `TaskTimelineResource`
+- Additive migration: `completion_note` column on `task_stage_assignments`
+- Completion rule evaluation: `AnyAssignee`, `AllAssignees`, `LeadAssignee` — all 3 tested
+- Stage advance via `blueprint_stage_transitions` with fallback to `sequence_order`
+- Stage return creates new instance (history preserved), cancels active sub-stages
+- Sub-stage completion auto-activates next sequential sub-stage
+- Sub-stage return via `sequence_order` comparison (no explicit transition table)
+- Required sub-stages block stage completion (422)
+- Assignment override with `task.override_assignment` capability check (403 without)
+- `StageAssignmentCreated` event emitted on override (added during implementation review)
+- Manual-at-launch re-entry reuses original assignees via historical lookup
+- Task auto-completed on final stage completion (`status=completed`, `completed_at`)
+- Timeline endpoint aggregates stage entries, exits, assignments, overrides chronologically
+- 5 feature test files, 21 tests (87 assertions) covering all scenarios
+- `authorizeTaskVisibility` on all mutating endpoints (ABAC consistency)
+- ABAC visibility enforced on all read endpoints (`stages`, `showStage`, `returns`, `timeline`)
+- `completion_note` per-assignment stored on `task_stage_assignments` + last-writer copy on stage instance
+- Routes: all 10 lifecycle routes appended to `routes/api/v1/tasks.php`
+
+**Will establish (remaining):** comments (013), external references (014)
 
 ---
 

@@ -19,6 +19,10 @@ class TaskStageAssignmentResource extends JsonResource
             'is_completed' => $this->is_completed,
             'assigned_at' => $this->assigned_at?->toIso8601String(),
             'completed_at' => $this->completed_at?->toIso8601String(),
+            'completion_note' => $this->completion_note,
+            'reassigned_at' => $this->reassigned_at?->toIso8601String(),
+            'reassigned_by_user_id' => $this->reassignedByUser?->public_id,
+            'reassignment_reason' => $this->reassignment_reason,
         ];
     }
 }
