@@ -68,6 +68,9 @@ Create a new feature spec for the following feature:
 8. After creating the file, show me its contents for review.
 
 **Do not start implementing.** This prompt is spec creation only.
+**You can know the next spec from the roadmap.md**
+**You can access any files you need outside the projects from the blueprint folder**
+**You can access any plan.md or spec.md from older spec as a reference if you needed to**
 ```
 
 ---
@@ -129,9 +132,22 @@ Keep these items concise and avoid long prose; mark uncertain details with `<!--
    - Which enums to create and where
    - Which rate limiting tiers apply to which endpoints
    - What to dispatch to queues vs handle synchronously
-8. After creating the file, show me its contents for review.
+8. After generating the plan, include a short Implementation Prompt that can be given directly to another coding LLM to implement the feature according to the approved spec and generated plan.
+9. After implementation is completed, perform a full review of the implementation against the approved spec and plan.
+
+   Generate a concise issues report containing:
+   - Missing files
+   - Missing functionality
+   - Incorrect logic
+   - Security issues
+   - Architecture or standards violations
+
+   Include file paths and recommended fixes so the report can be given directly to another coding LLM for remediation.
+10. After creating the file, show me its contents for review.
 
 **Do not start implementing.** This prompt is plan creation only.
+**You can access any files in the current codebase to know about the existing code (ONLY IF NEEDED)**
+**You can access any plan.md from older spec as a reference if you needed to**
 ```
 
 ---

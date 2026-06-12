@@ -2,9 +2,9 @@
 
 namespace App\Modules\Blueprint\Exceptions;
 
-use Exception;
+use App\Exceptions\DomainException;
 
-class InvalidStageSequenceException extends Exception
+class InvalidStageSequenceException extends DomainException
 {
     public function __construct()
     {

@@ -2,9 +2,9 @@
 
 namespace App\Modules\Iam\Exceptions;
 
-use Exception;
+use App\Exceptions\DomainException;
 
-class CannotDelegateToSelfException extends Exception
+class CannotDelegateToSelfException extends DomainException
 {
     public function __construct()
     {

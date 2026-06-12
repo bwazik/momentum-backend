@@ -2,9 +2,9 @@
 
 namespace App\Modules\Platform\Exceptions;
 
-use Exception;
+use App\Exceptions\DomainException;
 
-class PlatformAdminCannotDeactivateSelfException extends Exception
+class PlatformAdminCannotDeactivateSelfException extends DomainException
 {
     public function __construct()
     {

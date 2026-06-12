@@ -2,9 +2,9 @@
 
 namespace App\Modules\Organization\Exceptions;
 
-use Exception;
+use App\Exceptions\DomainException;
 
-class DepartmentHasChildrenException extends Exception
+class DepartmentHasChildrenException extends DomainException
 {
     public function __construct()
     {

@@ -2,9 +2,9 @@
 
 namespace App\Modules\Organization\Exceptions;
 
-use Exception;
+use App\Exceptions\DomainException;
 
-class AuthorityGradeHasActivePositionsException extends Exception
+class AuthorityGradeHasActivePositionsException extends DomainException
 {
     public function __construct()
     {

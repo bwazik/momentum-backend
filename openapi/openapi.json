@@ -622,6 +622,1553 @@
                 }
             }
         },
+        "/blueprints": {
+            "get": {
+                "operationId": "blueprint.index",
+                "tags": [
+                    "Blueprint"
+                ],
+                "parameters": [
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    {
+                        "name": "scope",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated set of `BlueprintResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/BlueprintResource"
+                                            }
+                                        },
+                                        "links": {
+                                            "type": "object",
+                                            "properties": {
+                                                "first": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "last": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "prev": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "next": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "first",
+                                                "last",
+                                                "prev",
+                                                "next"
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "object",
+                                            "properties": {
+                                                "path": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "Base path for paginator generated URLs."
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "description": "Number of items shown per page.",
+                                                    "minimum": 0
+                                                },
+                                                "next_cursor": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "The \"cursor\" that points to the next set of items."
+                                                },
+                                                "prev_cursor": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "The \"cursor\" that points to the previous set of items."
+                                                }
+                                            },
+                                            "required": [
+                                                "path",
+                                                "per_page",
+                                                "next_cursor",
+                                                "prev_cursor"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "links",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "blueprint.store",
+                "tags": [
+                    "Blueprint"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreBlueprintRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`BlueprintResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlueprintResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/{blueprint}": {
+            "get": {
+                "operationId": "blueprint.show",
+                "tags": [
+                    "Blueprint"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`BlueprintResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlueprintResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "put": {
+                "operationId": "blueprint.update",
+                "tags": [
+                    "Blueprint"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateBlueprintRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`BlueprintResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlueprintResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "blueprint.destroy",
+                "tags": [
+                    "Blueprint"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/{blueprint}/activate": {
+            "post": {
+                "operationId": "blueprint.activate",
+                "tags": [
+                    "Blueprint"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`BlueprintResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlueprintResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/{blueprint}/deactivate": {
+            "post": {
+                "operationId": "blueprint.deactivate",
+                "tags": [
+                    "Blueprint"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`BlueprintResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlueprintResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/{blueprint}/duplicate": {
+            "post": {
+                "operationId": "blueprint.duplicate",
+                "tags": [
+                    "Blueprint"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`BlueprintResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlueprintResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/categories": {
+            "get": {
+                "operationId": "blueprintCategory.index",
+                "tags": [
+                    "BlueprintCategory"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `BlueprintCategoryResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/BlueprintCategoryResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "blueprintCategory.store",
+                "tags": [
+                    "BlueprintCategory"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreBlueprintCategoryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`BlueprintCategoryResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlueprintCategoryResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/categories/{category}": {
+            "put": {
+                "operationId": "blueprintCategory.update",
+                "tags": [
+                    "BlueprintCategory"
+                ],
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "required": true,
+                        "description": "The category public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateBlueprintCategoryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`BlueprintCategoryResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlueprintCategoryResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "blueprintCategory.destroy",
+                "tags": [
+                    "BlueprintCategory"
+                ],
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "required": true,
+                        "description": "The category public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/categories/{category}/deactivate": {
+            "post": {
+                "operationId": "blueprintCategory.deactivate",
+                "tags": [
+                    "BlueprintCategory"
+                ],
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "required": true,
+                        "description": "The category public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`BlueprintCategoryResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlueprintCategoryResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/categories/{category}/reactivate": {
+            "post": {
+                "operationId": "blueprintCategory.reactivate",
+                "tags": [
+                    "BlueprintCategory"
+                ],
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "required": true,
+                        "description": "The category public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`BlueprintCategoryResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlueprintCategoryResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/{blueprint}/stages": {
+            "get": {
+                "operationId": "blueprintStage.index",
+                "tags": [
+                    "BlueprintStage"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `BlueprintStageResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/BlueprintStageResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "blueprintStage.store",
+                "tags": [
+                    "BlueprintStage"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreBlueprintStageRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`BlueprintStageResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlueprintStageResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/{blueprint}/stages/{stage}": {
+            "put": {
+                "operationId": "blueprintStage.update",
+                "tags": [
+                    "BlueprintStage"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "stage",
+                        "in": "path",
+                        "required": true,
+                        "description": "The stage public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateBlueprintStageRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`BlueprintStageResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlueprintStageResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "blueprintStage.destroy",
+                "tags": [
+                    "BlueprintStage"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "stage",
+                        "in": "path",
+                        "required": true,
+                        "description": "The stage public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/{blueprint}/stages/reorder": {
+            "post": {
+                "operationId": "blueprintStage.reorder",
+                "tags": [
+                    "BlueprintStage"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReorderStagesRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/{blueprint}/stages/{stage}/sub-stages": {
+            "get": {
+                "operationId": "blueprintSubStage.index",
+                "tags": [
+                    "BlueprintSubStage"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "stage",
+                        "in": "path",
+                        "required": true,
+                        "description": "The stage public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `BlueprintSubStageResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/BlueprintSubStageResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "blueprintSubStage.store",
+                "tags": [
+                    "BlueprintSubStage"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "stage",
+                        "in": "path",
+                        "required": true,
+                        "description": "The stage public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreBlueprintSubStageRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`BlueprintSubStageResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlueprintSubStageResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/{blueprint}/stages/{stage}/sub-stages/{subStage}": {
+            "put": {
+                "operationId": "blueprintSubStage.update",
+                "tags": [
+                    "BlueprintSubStage"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "stage",
+                        "in": "path",
+                        "required": true,
+                        "description": "The stage public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "subStage",
+                        "in": "path",
+                        "required": true,
+                        "description": "The sub stage public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateBlueprintSubStageRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`BlueprintSubStageResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlueprintSubStageResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "blueprintSubStage.destroy",
+                "tags": [
+                    "BlueprintSubStage"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "stage",
+                        "in": "path",
+                        "required": true,
+                        "description": "The stage public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "subStage",
+                        "in": "path",
+                        "required": true,
+                        "description": "The sub stage public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/{blueprint}/stages/{stage}/sub-stages/reorder": {
+            "post": {
+                "operationId": "blueprintSubStage.reorder",
+                "tags": [
+                    "BlueprintSubStage"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "stage",
+                        "in": "path",
+                        "required": true,
+                        "description": "The stage public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReorderSubStagesRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/{blueprint}/transitions": {
+            "get": {
+                "operationId": "blueprintTransition.index",
+                "tags": [
+                    "BlueprintTransition"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `BlueprintTransitionResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/BlueprintTransitionResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "blueprintTransition.store",
+                "tags": [
+                    "BlueprintTransition"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreBlueprintTransitionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`BlueprintTransitionResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlueprintTransitionResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/{blueprint}/transitions/{transition}": {
+            "put": {
+                "operationId": "blueprintTransition.update",
+                "tags": [
+                    "BlueprintTransition"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "transition",
+                        "in": "path",
+                        "required": true,
+                        "description": "The transition public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateBlueprintTransitionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`BlueprintTransitionResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BlueprintTransitionResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "blueprintTransition.destroy",
+                "tags": [
+                    "BlueprintTransition"
+                ],
+                "parameters": [
+                    {
+                        "name": "blueprint",
+                        "in": "path",
+                        "required": true,
+                        "description": "The blueprint public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "transition",
+                        "in": "path",
+                        "required": true,
+                        "description": "The transition public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
         "/iam/capabilities": {
             "get": {
                 "operationId": "capability.index",
@@ -3758,6 +5305,1254 @@
                 }
             }
         },
+        "/blueprints/sla-policies": {
+            "get": {
+                "operationId": "slaPolicy.index",
+                "tags": [
+                    "SlaPolicy"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `SlaPolicyResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SlaPolicyResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "slaPolicy.store",
+                "tags": [
+                    "SlaPolicy"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreSlaPolicyRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`SlaPolicyResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SlaPolicyResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/sla-policies/{slaPolicy}": {
+            "put": {
+                "operationId": "slaPolicy.update",
+                "tags": [
+                    "SlaPolicy"
+                ],
+                "parameters": [
+                    {
+                        "name": "slaPolicy",
+                        "in": "path",
+                        "required": true,
+                        "description": "The sla policy public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSlaPolicyRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`SlaPolicyResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SlaPolicyResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "slaPolicy.destroy",
+                "tags": [
+                    "SlaPolicy"
+                ],
+                "parameters": [
+                    {
+                        "name": "slaPolicy",
+                        "in": "path",
+                        "required": true,
+                        "description": "The sla policy public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/stage-types": {
+            "get": {
+                "operationId": "stageType.index",
+                "tags": [
+                    "StageType"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `StageTypeResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StageTypeResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "stageType.store",
+                "tags": [
+                    "StageType"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreStageTypeRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`StageTypeResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StageTypeResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/blueprints/stage-types/{stageType}": {
+            "put": {
+                "operationId": "stageType.update",
+                "tags": [
+                    "StageType"
+                ],
+                "parameters": [
+                    {
+                        "name": "stageType",
+                        "in": "path",
+                        "required": true,
+                        "description": "The stage type public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateStageTypeRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`StageTypeResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StageTypeResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "stageType.destroy",
+                "tags": [
+                    "StageType"
+                ],
+                "parameters": [
+                    {
+                        "name": "stageType",
+                        "in": "path",
+                        "required": true,
+                        "description": "The stage type public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/tasks": {
+            "get": {
+                "operationId": "task.index",
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/TaskStatus"
+                        }
+                    },
+                    {
+                        "name": "classification_level",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/ClassificationLevel"
+                        }
+                    },
+                    {
+                        "name": "priority_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "blueprint_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "initiator_user_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "created_from",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "created_to",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "due_from",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "due_to",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 255
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated set of `TaskResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TaskResource"
+                                            }
+                                        },
+                                        "links": {
+                                            "type": "object",
+                                            "properties": {
+                                                "first": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "last": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "prev": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "next": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "first",
+                                                "last",
+                                                "prev",
+                                                "next"
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "object",
+                                            "properties": {
+                                                "path": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "Base path for paginator generated URLs."
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "description": "Number of items shown per page.",
+                                                    "minimum": 0
+                                                },
+                                                "next_cursor": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "The \"cursor\" that points to the next set of items."
+                                                },
+                                                "prev_cursor": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "The \"cursor\" that points to the previous set of items."
+                                                }
+                                            },
+                                            "required": [
+                                                "path",
+                                                "per_page",
+                                                "next_cursor",
+                                                "prev_cursor"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "links",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "task.store",
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreTaskRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TaskResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/{task}": {
+            "get": {
+                "operationId": "task.show",
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`TaskDetailResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskDetailResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "put": {
+                "operationId": "task.update",
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateTaskRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TaskResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "task.destroy",
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/tasks/{task}/launch": {
+            "post": {
+                "operationId": "task.launch",
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LaunchTaskRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TaskDetailResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskDetailResource"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "An error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "description": "Error overview.",
+                                            "example": "Only the task initiator or a user with task.manage can launch this task."
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/{task}/suspend": {
+            "post": {
+                "operationId": "task.suspend",
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SuspendTaskRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TaskResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/{task}/resume": {
+            "post": {
+                "operationId": "task.resume",
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`TaskResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/{task}/cancel": {
+            "post": {
+                "operationId": "task.cancel",
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CancelTaskRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TaskResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/priorities": {
+            "get": {
+                "operationId": "taskPriority.index",
+                "tags": [
+                    "TaskPriority"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `TaskPriorityResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/TaskPriorityResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "taskPriority.store",
+                "tags": [
+                    "TaskPriority"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreTaskPriorityRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TaskPriorityResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskPriorityResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/priorities/{priority}": {
+            "put": {
+                "operationId": "taskPriority.update",
+                "tags": [
+                    "TaskPriority"
+                ],
+                "parameters": [
+                    {
+                        "name": "priority",
+                        "in": "path",
+                        "required": true,
+                        "description": "The priority public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateTaskPriorityRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TaskPriorityResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskPriorityResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/priorities/{priority}/deactivate": {
+            "post": {
+                "operationId": "taskPriority.deactivate",
+                "tags": [
+                    "TaskPriority"
+                ],
+                "parameters": [
+                    {
+                        "name": "priority",
+                        "in": "path",
+                        "required": true,
+                        "description": "The priority public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`TaskPriorityResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskPriorityResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/tasks/priorities/{priority}/reactivate": {
+            "post": {
+                "operationId": "taskPriority.reactivate",
+                "tags": [
+                    "TaskPriority"
+                ],
+                "parameters": [
+                    {
+                        "name": "priority",
+                        "in": "path",
+                        "required": true,
+                        "description": "The priority public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`TaskPriorityResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskPriorityResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
         "/iam/users": {
             "get": {
                 "operationId": "user.index",
@@ -4787,6 +7582,23 @@
                 ],
                 "title": "AssignPositionRequest"
             },
+            "AssignmentCardinality": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2
+                ],
+                "title": "AssignmentCardinality"
+            },
+            "AssignmentType": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2,
+                    3
+                ],
+                "title": "AssignmentType"
+            },
             "AuditGrantResource": {
                 "type": "object",
                 "properties": {
@@ -4928,6 +7740,317 @@
                 ],
                 "title": "AuthorityGradeResource"
             },
+            "BlueprintCategoryResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "name_ar": {
+                        "type": "string"
+                    },
+                    "name_en": {
+                        "type": "string"
+                    },
+                    "display_order": {
+                        "type": "string"
+                    },
+                    "is_active": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "name_ar",
+                    "name_en",
+                    "display_order",
+                    "is_active",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "BlueprintCategoryResource"
+            },
+            "BlueprintResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/BlueprintCategoryResource"
+                    },
+                    "name_ar": {
+                        "type": "string"
+                    },
+                    "name_en": {
+                        "type": "string"
+                    },
+                    "description_ar": {
+                        "type": "string"
+                    },
+                    "description_en": {
+                        "type": "string"
+                    },
+                    "scope": {
+                        "type": "string"
+                    },
+                    "department_id": {
+                        "type": "string"
+                    },
+                    "is_locked": {
+                        "type": "string"
+                    },
+                    "is_active": {
+                        "type": "string"
+                    },
+                    "stages": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/BlueprintStageResource"
+                        }
+                    },
+                    "transitions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/BlueprintTransitionResource"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "name_ar",
+                    "name_en",
+                    "description_ar",
+                    "description_en",
+                    "scope",
+                    "department_id",
+                    "is_locked",
+                    "is_active",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "BlueprintResource"
+            },
+            "BlueprintScope": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2
+                ],
+                "title": "BlueprintScope"
+            },
+            "BlueprintStageResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "blueprint_id": {
+                        "type": "string"
+                    },
+                    "stage_type": {
+                        "$ref": "#/components/schemas/StageTypeResource"
+                    },
+                    "sla_policy": {
+                        "$ref": "#/components/schemas/SlaPolicyResource"
+                    },
+                    "name_ar": {
+                        "type": "string"
+                    },
+                    "name_en": {
+                        "type": "string"
+                    },
+                    "description_ar": {
+                        "type": "string"
+                    },
+                    "description_en": {
+                        "type": "string"
+                    },
+                    "sequence_order": {
+                        "type": "string"
+                    },
+                    "assignment_type": {
+                        "type": "string"
+                    },
+                    "assigned_position_id": {
+                        "type": "string"
+                    },
+                    "assigned_department_id": {
+                        "type": "string"
+                    },
+                    "assignment_cardinality": {
+                        "type": "string"
+                    },
+                    "completion_rule": {
+                        "type": "string"
+                    },
+                    "escalation_position_id": {
+                        "type": "string"
+                    },
+                    "sub_stages": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/BlueprintSubStageResource"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "blueprint_id",
+                    "name_ar",
+                    "name_en",
+                    "description_ar",
+                    "description_en",
+                    "sequence_order",
+                    "assignment_type",
+                    "assigned_position_id",
+                    "assigned_department_id",
+                    "assignment_cardinality",
+                    "completion_rule",
+                    "escalation_position_id",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "BlueprintStageResource"
+            },
+            "BlueprintSubStageResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "stage_id": {
+                        "type": "string"
+                    },
+                    "sla_policy": {
+                        "$ref": "#/components/schemas/SlaPolicyResource"
+                    },
+                    "name_ar": {
+                        "type": "string"
+                    },
+                    "name_en": {
+                        "type": "string"
+                    },
+                    "description_ar": {
+                        "type": "string"
+                    },
+                    "description_en": {
+                        "type": "string"
+                    },
+                    "sequence_order": {
+                        "type": "string"
+                    },
+                    "is_required": {
+                        "type": "string"
+                    },
+                    "assignment_type": {
+                        "type": "string"
+                    },
+                    "assigned_position_id": {
+                        "type": "string"
+                    },
+                    "assigned_department_id": {
+                        "type": "string"
+                    },
+                    "assignment_cardinality": {
+                        "type": "string"
+                    },
+                    "completion_rule": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "stage_id",
+                    "name_ar",
+                    "name_en",
+                    "description_ar",
+                    "description_en",
+                    "sequence_order",
+                    "is_required",
+                    "assignment_type",
+                    "assigned_position_id",
+                    "assigned_department_id",
+                    "assignment_cardinality",
+                    "completion_rule",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "BlueprintSubStageResource"
+            },
+            "BlueprintTransitionResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "blueprint_id": {
+                        "type": "string"
+                    },
+                    "from_stage_id": {
+                        "type": "string"
+                    },
+                    "to_stage_id": {
+                        "type": "string"
+                    },
+                    "transition_type": {
+                        "type": "string"
+                    },
+                    "return_reason_required": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "blueprint_id",
+                    "from_stage_id",
+                    "to_stage_id",
+                    "transition_type",
+                    "return_reason_required",
+                    "created_at"
+                ],
+                "title": "BlueprintTransitionResource"
+            },
+            "CancelTaskRequest": {
+                "type": "object",
+                "properties": {
+                    "reason": {
+                        "type": "string",
+                        "maxLength": 1000
+                    }
+                },
+                "required": [
+                    "reason"
+                ],
+                "title": "CancelTaskRequest"
+            },
             "CapabilityResource": {
                 "type": "object",
                 "properties": {
@@ -4967,6 +8090,24 @@
                     "updated_at"
                 ],
                 "title": "CapabilityResource"
+            },
+            "ClassificationLevel": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2,
+                    3
+                ],
+                "title": "ClassificationLevel"
+            },
+            "CompletionRule": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2,
+                    3
+                ],
+                "title": "CompletionRule"
             },
             "DelegationResource": {
                 "type": "object",
@@ -5287,6 +8428,39 @@
                     "user_public_id"
                 ],
                 "title": "ImpersonateRequest"
+            },
+            "LaunchTaskRequest": {
+                "type": "object",
+                "properties": {
+                    "manual_assignments": {
+                        "type": [
+                            "array",
+                            "null"
+                        ],
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "blueprint_stage_id": {
+                                    "type": "string"
+                                },
+                                "blueprint_sub_stage_id": {
+                                    "type": "string"
+                                },
+                                "user_ids": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "minItems": 1
+                                }
+                            },
+                            "required": [
+                                "user_ids"
+                            ]
+                        }
+                    }
+                },
+                "title": "LaunchTaskRequest"
             },
             "LoginRequest": {
                 "type": "object",
@@ -5771,6 +8945,66 @@
                 ],
                 "title": "PublicHolidayResource"
             },
+            "ReorderStagesRequest": {
+                "type": "object",
+                "properties": {
+                    "stages": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "public_id": {
+                                    "type": "integer"
+                                },
+                                "sequence_order": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 32767
+                                }
+                            },
+                            "required": [
+                                "public_id",
+                                "sequence_order"
+                            ]
+                        },
+                        "minItems": 1
+                    }
+                },
+                "required": [
+                    "stages"
+                ],
+                "title": "ReorderStagesRequest"
+            },
+            "ReorderSubStagesRequest": {
+                "type": "object",
+                "properties": {
+                    "sub_stages": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "public_id": {
+                                    "type": "integer"
+                                },
+                                "sequence_order": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 32767
+                                }
+                            },
+                            "required": [
+                                "public_id",
+                                "sequence_order"
+                            ]
+                        },
+                        "minItems": 1
+                    }
+                },
+                "required": [
+                    "sub_stages"
+                ],
+                "title": "ReorderSubStagesRequest"
+            },
             "ScopeType": {
                 "type": "integer",
                 "enum": [
@@ -5782,6 +9016,98 @@
                     6
                 ],
                 "title": "ScopeType"
+            },
+            "SlaPolicyResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "name_ar": {
+                        "type": "string"
+                    },
+                    "name_en": {
+                        "type": "string"
+                    },
+                    "sla_value": {
+                        "type": "string"
+                    },
+                    "sla_unit": {
+                        "type": "string"
+                    },
+                    "warning_threshold_percentage": {
+                        "type": "string"
+                    },
+                    "is_active": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "name_ar",
+                    "name_en",
+                    "sla_value",
+                    "sla_unit",
+                    "warning_threshold_percentage",
+                    "is_active",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "SlaPolicyResource"
+            },
+            "SlaUnit": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2
+                ],
+                "title": "SlaUnit"
+            },
+            "StageTypeResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "name_ar": {
+                        "type": "string"
+                    },
+                    "name_en": {
+                        "type": "string"
+                    },
+                    "is_system_default": {
+                        "type": "string"
+                    },
+                    "is_active": {
+                        "type": "string"
+                    },
+                    "display_order": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "name_ar",
+                    "name_en",
+                    "is_system_default",
+                    "is_active",
+                    "display_order",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "StageTypeResource"
             },
             "StoreAuthorityGradeRequest": {
                 "type": "object",
@@ -5814,6 +9140,258 @@
                     "name_ar"
                 ],
                 "title": "StoreAuthorityGradeRequest"
+            },
+            "StoreBlueprintCategoryRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "display_order": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 32767
+                    }
+                },
+                "required": [
+                    "name_ar"
+                ],
+                "title": "StoreBlueprintCategoryRequest"
+            },
+            "StoreBlueprintRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "description_ar": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "description_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "category_id": {
+                        "type": "integer"
+                    },
+                    "scope": {
+                        "$ref": "#/components/schemas/BlueprintScope"
+                    },
+                    "department_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "name_ar",
+                    "category_id",
+                    "scope"
+                ],
+                "title": "StoreBlueprintRequest"
+            },
+            "StoreBlueprintStageRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "description_ar": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "description_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "stage_type_id": {
+                        "type": "integer"
+                    },
+                    "sla_policy_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "sequence_order": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 32767
+                    },
+                    "assignment_type": {
+                        "$ref": "#/components/schemas/AssignmentType"
+                    },
+                    "assigned_position_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "assigned_department_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "assignment_cardinality": {
+                        "$ref": "#/components/schemas/AssignmentCardinality"
+                    },
+                    "completion_rule": {
+                        "$ref": "#/components/schemas/CompletionRule"
+                    },
+                    "escalation_position_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "name_ar",
+                    "stage_type_id",
+                    "assignment_type"
+                ],
+                "title": "StoreBlueprintStageRequest"
+            },
+            "StoreBlueprintSubStageRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "description_ar": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "description_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "sla_policy_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "sequence_order": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 32767
+                    },
+                    "is_required": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "assignment_type": {
+                        "$ref": "#/components/schemas/AssignmentType"
+                    },
+                    "assigned_position_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "assigned_department_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "assignment_cardinality": {
+                        "$ref": "#/components/schemas/AssignmentCardinality"
+                    },
+                    "completion_rule": {
+                        "$ref": "#/components/schemas/CompletionRule"
+                    }
+                },
+                "required": [
+                    "name_ar",
+                    "assignment_type"
+                ],
+                "title": "StoreBlueprintSubStageRequest"
+            },
+            "StoreBlueprintTransitionRequest": {
+                "type": "object",
+                "properties": {
+                    "from_stage_id": {
+                        "type": "integer"
+                    },
+                    "to_stage_id": {
+                        "type": "integer"
+                    },
+                    "transition_type": {
+                        "$ref": "#/components/schemas/TransitionType"
+                    },
+                    "return_reason_required": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "from_stage_id",
+                    "to_stage_id",
+                    "transition_type"
+                ],
+                "title": "StoreBlueprintTransitionRequest"
             },
             "StoreDelegationRequest": {
                 "type": "object",
@@ -5983,6 +9561,192 @@
                 ],
                 "title": "StorePublicHolidayRequest"
             },
+            "StoreSlaPolicyRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "sla_value": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 32767
+                    },
+                    "sla_unit": {
+                        "$ref": "#/components/schemas/SlaUnit"
+                    },
+                    "warning_threshold_percentage": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 100
+                    }
+                },
+                "required": [
+                    "name_ar",
+                    "sla_value",
+                    "sla_unit"
+                ],
+                "title": "StoreSlaPolicyRequest"
+            },
+            "StoreStageTypeRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "display_order": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 32767
+                    }
+                },
+                "required": [
+                    "name_ar"
+                ],
+                "title": "StoreStageTypeRequest"
+            },
+            "StoreTaskPriorityRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "severity_rank": {
+                        "type": "integer"
+                    },
+                    "color_code": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 20
+                    },
+                    "is_default": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "display_order": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "name_ar",
+                    "severity_rank"
+                ],
+                "title": "StoreTaskPriorityRequest"
+            },
+            "StoreTaskRequest": {
+                "type": "object",
+                "properties": {
+                    "blueprint_id": {
+                        "type": "integer"
+                    },
+                    "priority_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "title_ar": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "title_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "description_ar": {
+                        "type": "string"
+                    },
+                    "description_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "classification_level": {
+                        "$ref": "#/components/schemas/ClassificationLevel"
+                    },
+                    "due_date": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "manual_assignments": {
+                        "type": [
+                            "array",
+                            "null"
+                        ],
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "blueprint_stage_id": {
+                                    "type": "string"
+                                },
+                                "blueprint_sub_stage_id": {
+                                    "type": "string"
+                                },
+                                "user_ids": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "minItems": 1
+                                }
+                            },
+                            "required": [
+                                "user_ids"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "blueprint_id",
+                    "title_ar",
+                    "description_ar"
+                ],
+                "title": "StoreTaskRequest"
+            },
             "StoreTenantRequest": {
                 "type": "object",
                 "properties": {
@@ -6149,6 +9913,421 @@
                 ],
                 "title": "StoreWorkingCalendarRequest"
             },
+            "SuspendTaskRequest": {
+                "type": "object",
+                "properties": {
+                    "reason": {
+                        "type": "string",
+                        "maxLength": 1000
+                    }
+                },
+                "required": [
+                    "reason"
+                ],
+                "title": "SuspendTaskRequest"
+            },
+            "TaskDetailResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "blueprint": {
+                        "$ref": "#/components/schemas/BlueprintResource"
+                    },
+                    "priority": {
+                        "$ref": "#/components/schemas/TaskPriorityResource"
+                    },
+                    "title_ar": {
+                        "type": "string"
+                    },
+                    "title_en": {
+                        "type": "string"
+                    },
+                    "description_ar": {
+                        "type": "string"
+                    },
+                    "description_en": {
+                        "type": "string"
+                    },
+                    "classification_level": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "initiator_id": {
+                        "type": "string"
+                    },
+                    "due_date": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "launched_at": {
+                        "type": "string"
+                    },
+                    "suspended_at": {
+                        "type": "string"
+                    },
+                    "resumed_at": {
+                        "type": "string"
+                    },
+                    "completed_at": {
+                        "type": "string"
+                    },
+                    "cancelled_at": {
+                        "type": "string"
+                    },
+                    "suspension_reason": {
+                        "type": "string"
+                    },
+                    "cancellation_reason": {
+                        "type": "string"
+                    },
+                    "stages": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TaskStageInstanceResource"
+                        }
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "title_ar",
+                    "title_en",
+                    "description_ar",
+                    "description_en",
+                    "classification_level",
+                    "status",
+                    "initiator_id",
+                    "due_date",
+                    "created_at",
+                    "launched_at",
+                    "suspended_at",
+                    "resumed_at",
+                    "completed_at",
+                    "cancelled_at",
+                    "suspension_reason",
+                    "cancellation_reason"
+                ],
+                "title": "TaskDetailResource"
+            },
+            "TaskPriorityResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "name_ar": {
+                        "type": "string"
+                    },
+                    "name_en": {
+                        "type": "string"
+                    },
+                    "severity_rank": {
+                        "type": "string"
+                    },
+                    "color_code": {
+                        "type": "string"
+                    },
+                    "is_default": {
+                        "type": "string"
+                    },
+                    "is_active": {
+                        "type": "string"
+                    },
+                    "display_order": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "name_ar",
+                    "name_en",
+                    "severity_rank",
+                    "color_code",
+                    "is_default",
+                    "is_active",
+                    "display_order",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "TaskPriorityResource"
+            },
+            "TaskResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "blueprint_id": {
+                        "type": "string"
+                    },
+                    "priority": {
+                        "$ref": "#/components/schemas/TaskPriorityResource"
+                    },
+                    "title_ar": {
+                        "type": "string"
+                    },
+                    "title_en": {
+                        "type": "string"
+                    },
+                    "description_ar": {
+                        "type": "string"
+                    },
+                    "description_en": {
+                        "type": "string"
+                    },
+                    "classification_level": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "initiator_id": {
+                        "type": "string"
+                    },
+                    "due_date": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "launched_at": {
+                        "type": "string"
+                    },
+                    "suspended_at": {
+                        "type": "string"
+                    },
+                    "suspension_reason": {
+                        "type": "string"
+                    },
+                    "resumed_at": {
+                        "type": "string"
+                    },
+                    "completed_at": {
+                        "type": "string"
+                    },
+                    "cancelled_at": {
+                        "type": "string"
+                    },
+                    "cancellation_reason": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "blueprint_id",
+                    "title_ar",
+                    "title_en",
+                    "description_ar",
+                    "description_en",
+                    "classification_level",
+                    "status",
+                    "initiator_id",
+                    "due_date",
+                    "created_at",
+                    "launched_at",
+                    "suspended_at",
+                    "suspension_reason",
+                    "resumed_at",
+                    "completed_at",
+                    "cancelled_at",
+                    "cancellation_reason"
+                ],
+                "title": "TaskResource"
+            },
+            "TaskStageAssignmentResource": {
+                "type": "object",
+                "properties": {
+                    "user_id": {
+                        "type": "string"
+                    },
+                    "user_name_ar": {
+                        "type": "string"
+                    },
+                    "user_name_en": {
+                        "type": "string"
+                    },
+                    "position_id": {
+                        "type": "string"
+                    },
+                    "delegated_from_user_id": {
+                        "type": "string"
+                    },
+                    "assignment_role": {
+                        "type": "string"
+                    },
+                    "is_completed": {
+                        "type": "string"
+                    },
+                    "assigned_at": {
+                        "type": "string"
+                    },
+                    "completed_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "user_id",
+                    "user_name_ar",
+                    "user_name_en",
+                    "position_id",
+                    "delegated_from_user_id",
+                    "assignment_role",
+                    "is_completed",
+                    "assigned_at",
+                    "completed_at"
+                ],
+                "title": "TaskStageAssignmentResource"
+            },
+            "TaskStageInstanceResource": {
+                "type": "object",
+                "properties": {
+                    "blueprint_stage": {
+                        "type": "object",
+                        "properties": {
+                            "public_id": {
+                                "type": "string"
+                            },
+                            "name_ar": {
+                                "type": "string"
+                            },
+                            "name_en": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "sequence_order": {
+                        "type": "string"
+                    },
+                    "owning_department_id": {
+                        "type": "string"
+                    },
+                    "completion_rule": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "entered_at": {
+                        "type": "string"
+                    },
+                    "exited_at": {
+                        "type": "string"
+                    },
+                    "completion_note": {
+                        "type": "string"
+                    },
+                    "return_reason": {
+                        "type": "string"
+                    },
+                    "sub_stages": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TaskSubStageInstanceResource"
+                        }
+                    },
+                    "assignments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TaskStageAssignmentResource"
+                        }
+                    }
+                },
+                "required": [
+                    "blueprint_stage",
+                    "sequence_order",
+                    "owning_department_id",
+                    "completion_rule",
+                    "status",
+                    "entered_at",
+                    "exited_at",
+                    "completion_note",
+                    "return_reason"
+                ],
+                "title": "TaskStageInstanceResource"
+            },
+            "TaskStatus": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "title": "TaskStatus"
+            },
+            "TaskSubStageInstanceResource": {
+                "type": "object",
+                "properties": {
+                    "blueprint_sub_stage": {
+                        "type": "object",
+                        "properties": {
+                            "public_id": {
+                                "type": "string"
+                            },
+                            "name_ar": {
+                                "type": "string"
+                            },
+                            "name_en": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "sequence_order": {
+                        "type": "string"
+                    },
+                    "owning_department_id": {
+                        "type": "string"
+                    },
+                    "is_required": {
+                        "type": "string"
+                    },
+                    "completion_rule": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "entered_at": {
+                        "type": "string"
+                    },
+                    "exited_at": {
+                        "type": "string"
+                    },
+                    "completion_note": {
+                        "type": "string"
+                    },
+                    "assignments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TaskStageAssignmentResource"
+                        }
+                    }
+                },
+                "required": [
+                    "blueprint_sub_stage",
+                    "sequence_order",
+                    "owning_department_id",
+                    "is_required",
+                    "completion_rule",
+                    "status",
+                    "entered_at",
+                    "exited_at",
+                    "completion_note"
+                ],
+                "title": "TaskSubStageInstanceResource"
+            },
             "Tenant": {
                 "type": "object",
                 "properties": {
@@ -6251,6 +10430,14 @@
                 ],
                 "title": "TransferPositionRequest"
             },
+            "TransitionType": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2
+                ],
+                "title": "TransitionType"
+            },
             "UpdateAuthorityGradeRequest": {
                 "type": "object",
                 "properties": {
@@ -6278,6 +10465,255 @@
                     }
                 },
                 "title": "UpdateAuthorityGradeRequest"
+            },
+            "UpdateBlueprintCategoryRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "display_order": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 32767
+                    },
+                    "is_active": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    }
+                },
+                "title": "UpdateBlueprintCategoryRequest"
+            },
+            "UpdateBlueprintRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "description_ar": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "description_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "category_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "department_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    }
+                },
+                "title": "UpdateBlueprintRequest"
+            },
+            "UpdateBlueprintStageRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "description_ar": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "description_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "stage_type_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "sla_policy_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "assignment_type": {
+                        "$ref": "#/components/schemas/AssignmentType"
+                    },
+                    "assigned_position_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "assigned_department_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "assignment_cardinality": {
+                        "$ref": "#/components/schemas/AssignmentCardinality"
+                    },
+                    "completion_rule": {
+                        "$ref": "#/components/schemas/CompletionRule"
+                    },
+                    "escalation_position_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    }
+                },
+                "title": "UpdateBlueprintStageRequest"
+            },
+            "UpdateBlueprintSubStageRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "description_ar": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "description_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "sla_policy_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "sequence_order": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 32767
+                    },
+                    "is_required": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "assignment_type": {
+                        "$ref": "#/components/schemas/AssignmentType"
+                    },
+                    "assigned_position_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "assigned_department_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "assignment_cardinality": {
+                        "$ref": "#/components/schemas/AssignmentCardinality"
+                    },
+                    "completion_rule": {
+                        "$ref": "#/components/schemas/CompletionRule"
+                    }
+                },
+                "title": "UpdateBlueprintSubStageRequest"
+            },
+            "UpdateBlueprintTransitionRequest": {
+                "type": "object",
+                "properties": {
+                    "from_stage_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "to_stage_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "transition_type": {
+                        "$ref": "#/components/schemas/TransitionType"
+                    },
+                    "return_reason_required": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    }
+                },
+                "title": "UpdateBlueprintTransitionRequest"
             },
             "UpdateCapabilityRequest": {
                 "type": "object",
@@ -6406,6 +10842,160 @@
                     }
                 },
                 "title": "UpdatePublicHolidayRequest"
+            },
+            "UpdateSlaPolicyRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "sla_value": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 1,
+                        "maximum": 32767
+                    },
+                    "sla_unit": {
+                        "$ref": "#/components/schemas/SlaUnit"
+                    },
+                    "warning_threshold_percentage": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 100
+                    },
+                    "is_active": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    }
+                },
+                "title": "UpdateSlaPolicyRequest"
+            },
+            "UpdateStageTypeRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "display_order": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 32767
+                    },
+                    "is_active": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    }
+                },
+                "title": "UpdateStageTypeRequest"
+            },
+            "UpdateTaskPriorityRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "severity_rank": {
+                        "type": "integer"
+                    },
+                    "color_code": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 20
+                    },
+                    "is_default": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "display_order": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    }
+                },
+                "title": "UpdateTaskPriorityRequest"
+            },
+            "UpdateTaskRequest": {
+                "type": "object",
+                "properties": {
+                    "title_ar": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "title_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "description_ar": {
+                        "type": "string"
+                    },
+                    "description_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "classification_level": {
+                        "$ref": "#/components/schemas/ClassificationLevel"
+                    },
+                    "due_date": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    }
+                },
+                "title": "UpdateTaskRequest"
             },
             "UpdateTenantRequest": {
                 "type": "object",

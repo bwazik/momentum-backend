@@ -47,7 +47,7 @@ it('lists all capabilities', function () {
         ->getJson('/v1/iam/capabilities');
 
     $response->assertOk()
-        ->assertJsonCount(27);
+        ->assertJsonCount(29);
 });
 
 it('shows a capability', function () {

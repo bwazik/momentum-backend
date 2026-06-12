@@ -7,7 +7,7 @@ use App\Modules\Platform\Controllers\PlatformImpersonationController;
 use App\Modules\Platform\Controllers\PlatformTenantController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1/platform/auth')->group(function () {
+Route::prefix('platform/auth')->group(function () {
     Route::post('login', [PlatformAuthController::class, 'login']);
     Route::post('logout', [PlatformAuthController::class, 'logout'])
         ->middleware('auth:sanctum');
@@ -15,7 +15,7 @@ Route::prefix('v1/platform/auth')->group(function () {
         ->middleware(['auth:sanctum', 'platform.admin']);
 });
 
-Route::prefix('v1/platform')->middleware(['auth:sanctum', 'platform.admin'])->group(function () {
+Route::prefix('platform')->middleware(['auth:sanctum', 'platform.admin'])->group(function () {
     Route::get('admins', [PlatformAdminController::class, 'index']);
     Route::post('admins', [PlatformAdminController::class, 'store']);
     Route::get('admins/{admin}', [PlatformAdminController::class, 'show']);

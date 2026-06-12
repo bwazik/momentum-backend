@@ -9,7 +9,7 @@
 ## Current Focus
 
 **Active Milestone:** M4 — Task Execution & Lifecycle
-**Active Spec:** `005-task-execution`
+**Active Spec:** `006-stage-lifecycle`
 **Branch:** `main`
 
 Do not implement specs marked ⬜ Not Started unless explicitly instructed.
@@ -23,7 +23,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | M1 | Platform & Core Foundation | ✅ Done | — |
 | M2 | Organization & IAM | ✅ Done | M1 |
 | M3 | Blueprint Engine | ✅ Done | M2 |
-| M4 | Task Execution & Lifecycle | ⬜ Not Started | M3 |
+| M4 | Task Execution & Lifecycle | 🔄 In Progress | M3 |
 | M5 | SLA, Escalation & Notifications | ⬜ Not Started | M4 |
 | M6 | Analytics, Follow-up & Search | ⬜ Not Started | M5 |
 | M7 | Documents, Audit, Onboarding & Help | ⬜ Not Started | M4 |
@@ -41,7 +41,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | `002-organization-structure` | M2 | Organization | `007-organization-structure` | ✅ Done |
 | `003-iam-abac` | M2 | IAM | `009-system-administration` | ✅ Done |
 | `004-blueprint-engine` | M3 | Blueprint | `004-blueprint-builder` | ✅ Done |
-| `005-task-execution` | M4 | Task creation & launch | `002-task-board`, `003-task-details` | ⬜ Not Started |
+| `005-task-execution` | M4 | Task creation & launch | `002-task-board`, `003-task-details` | ✅ Done |
 | `006-stage-lifecycle` | M4 | Stage/sub-stage progression | `003-task-details`, `005-workflow-visualization` | ⬜ Not Started |
 | `007-sla-escalation` | M5 | Tracking & SLA | `006-follow-up-center` | ⬜ Not Started |
 | `008-notifications` | M5 | Notification | — (backend-only delivery) | ⬜ Not Started |
@@ -163,11 +163,32 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 
 ## M4 — Task Execution
 
-**Status:** ⬜ Not Started · **Blocked by:** M3
+**Status:** 🔄 In Progress · **Blocked by:** M3
 
-**Specs:** `005`, `006`, `013`, `014`
+**Specs:** `005` ✅, `006` ⬜, `013` ⬜, `014` ⬜
 
-**Will establish:** TaskRunner, stage instances, assignment resolution, comments, external references
+**Established by 005:**
+- `task_priorities`, `tasks`, `task_stage_instances`, `task_sub_stage_instances`, `task_stage_assignments` tables
+- 5 Task enums: `TaskStatus`, `ClassificationLevel`, `StageInstanceStatus`, `SubStageInstanceStatus`, `AssignmentRole`
+- `TaskPriority` CRUD with cached listing (300s warm), default-swap transaction
+- `Task` CRUD (create draft, update draft, soft-delete draft, show, cursor-paginated list)
+- Task launch with Stage 1 instance + sub-stage + assignment creation
+- Blueprint lock on first task launch
+- Assignment resolution: `SpecificPosition`, `DepartmentHead`, `ManualAtLaunch` with delegation check
+- `TaskVisibilityScope` — ABAC-aware query scope (org-wide, department-touched, follow-up scope, confidential filter)
+- Task lifecycle: suspend/resume/cancel with state machine validation
+- `TaskPriorityService`, `TaskService`, `AssignmentResolutionService`
+- `TaskController`, `TaskPriorityController`
+- 11 domain events implementing `ShouldDispatchAfterCommit`
+- 9 domain exceptions extending `DomainException` (refactored to base class)
+- 4 factories, 4 feature test files (27 tests), 6 API Resources, 9 Form Requests
+- `task` logging channel
+- Route file `routes/api/v1/tasks.php`
+- 2 new capabilities: `task.manage_priorities`, `task.manage`
+- 3 default priorities seeded: Critical, Urgent, Routine
+- `DomainException` base class (refactored 33 exceptions across all modules)
+
+**Will establish (remaining):** Stage progression (006), comments (013), external references (014)
 
 ---
 

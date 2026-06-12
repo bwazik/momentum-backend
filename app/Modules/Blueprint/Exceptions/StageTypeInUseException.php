@@ -2,9 +2,9 @@
 
 namespace App\Modules\Blueprint\Exceptions;
 
-use Exception;
+use App\Exceptions\DomainException;
 
-class StageTypeInUseException extends Exception
+class StageTypeInUseException extends DomainException
 {
     public function __construct()
     {

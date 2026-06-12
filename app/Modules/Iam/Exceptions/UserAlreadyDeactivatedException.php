@@ -2,9 +2,9 @@
 
 namespace App\Modules\Iam\Exceptions;
 
-use Exception;
+use App\Exceptions\DomainException;
 
-class UserAlreadyDeactivatedException extends Exception
+class UserAlreadyDeactivatedException extends DomainException
 {
     public function __construct()
     {

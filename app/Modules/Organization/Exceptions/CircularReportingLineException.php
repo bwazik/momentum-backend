@@ -2,9 +2,9 @@
 
 namespace App\Modules\Organization\Exceptions;
 
-use Exception;
+use App\Exceptions\DomainException;
 
-class CircularReportingLineException extends Exception
+class CircularReportingLineException extends DomainException
 {
     public function __construct()
     {

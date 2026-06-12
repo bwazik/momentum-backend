@@ -2,9 +2,9 @@
 
 namespace App\Modules\Blueprint\Exceptions;
 
-use Exception;
+use App\Exceptions\DomainException;
 
-class InvalidBlueprintScopeException extends Exception
+class InvalidBlueprintScopeException extends DomainException
 {
     public function __construct()
     {

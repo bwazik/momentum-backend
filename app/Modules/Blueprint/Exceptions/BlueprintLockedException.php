@@ -2,9 +2,9 @@
 
 namespace App\Modules\Blueprint\Exceptions;
 
-use Exception;
+use App\Exceptions\DomainException;
 
-class BlueprintLockedException extends Exception
+class BlueprintLockedException extends DomainException
 {
     public function __construct()
     {

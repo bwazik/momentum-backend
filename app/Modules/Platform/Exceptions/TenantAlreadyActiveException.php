@@ -2,9 +2,9 @@
 
 namespace App\Modules\Platform\Exceptions;
 
-use Exception;
+use App\Exceptions\DomainException;
 
-class TenantAlreadyActiveException extends Exception
+class TenantAlreadyActiveException extends DomainException
 {
     public function __construct()
     {

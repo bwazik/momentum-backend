@@ -19,6 +19,10 @@ use App\Http\Middleware\InitializeTenancyByHeader;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
+Route::middleware(['api'])->prefix('v1')->group(function () {
+    require __DIR__.'/api/v1/platform.php';
+});
+
 Route::middleware([
     InitializeTenancyByHeader::class,
     CheckTenantStatus::class,
@@ -37,8 +41,8 @@ Route::middleware([
         ]);
     });
 
-    require __DIR__.'/api/v1/platform.php';
     require __DIR__.'/api/v1/organization.php';
     require __DIR__.'/api/v1/iam.php';
     require __DIR__.'/api/v1/blueprints.php';
+    require __DIR__.'/api/v1/tasks.php';
 });

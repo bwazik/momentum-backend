@@ -156,6 +156,14 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'task' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/task/task.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 14,
+            'replace_placeholders' => true,
+        ],
+
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],

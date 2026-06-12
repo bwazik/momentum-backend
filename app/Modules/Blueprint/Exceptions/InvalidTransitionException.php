@@ -2,9 +2,9 @@
 
 namespace App\Modules\Blueprint\Exceptions;
 
-use Exception;
+use App\Exceptions\DomainException;
 
-class InvalidTransitionException extends Exception
+class InvalidTransitionException extends DomainException
 {
     public function __construct(string $message = 'Invalid transition definition.')
     {

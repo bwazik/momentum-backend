@@ -131,7 +131,11 @@ Spec IDs match `../frontend/specs/` where UI exists. Backend establishes API con
 **Milestone 1 — Platform & Core Foundation: ✅ Done** (including 001-platform-admin supplement)
 **Milestone 2 — Organization & IAM: ✅ Done**
 **Milestone 3 — Blueprint Engine: ✅ Done**
-**Next:** M4 Task Execution (spec 005)
+**Milestone 4 — Task Execution & Lifecycle: 🔄 In Progress**
+- ✅ `005-task-execution` — Task creation, launch, assignment resolution, lifecycle
+- ⬜ `006-stage-lifecycle` — Stage/sub-stage progression (next)
+- ⬜ `013-comments-collaboration`
+- ⬜ `014-external-references`
 
 ---
 

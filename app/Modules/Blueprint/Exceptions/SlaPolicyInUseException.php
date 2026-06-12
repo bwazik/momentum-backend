@@ -2,9 +2,9 @@
 
 namespace App\Modules\Blueprint\Exceptions;
 
-use Exception;
+use App\Exceptions\DomainException;
 
-class SlaPolicyInUseException extends Exception
+class SlaPolicyInUseException extends DomainException
 {
     public function __construct()
     {

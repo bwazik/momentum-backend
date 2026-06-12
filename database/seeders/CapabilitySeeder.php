@@ -35,6 +35,8 @@ class CapabilitySeeder extends Seeder
         ['key' => 'organization.manage', 'name_ar' => 'إدارة الهيكل التنظيمي', 'name_en' => 'Manage Organization', 'description' => 'Can manage departments, positions, grades, and calendars.'],
         ['key' => 'helpcenter.manage', 'name_ar' => 'إدارة مركز المساعدة', 'name_en' => 'Manage Help Center', 'description' => 'Can create, edit, publish, unpublish, and delete help articles.'],
         ['key' => 'helpcenter.view', 'name_ar' => 'عرض مركز المساعدة', 'name_en' => 'View Help Center', 'description' => 'Can browse and read published help articles.'],
+        ['key' => 'task.manage_priorities', 'name_ar' => 'إدارة أولويات المهام', 'name_en' => 'Manage Task Priorities', 'description' => 'Can create, update, deactivate, and reactivate task priority levels.'],
+        ['key' => 'task.manage', 'name_ar' => 'إدارة المهام', 'name_en' => 'Manage Tasks', 'description' => 'Can update or delete other users\' draft tasks.'],
     ];
 
     public function run(): void

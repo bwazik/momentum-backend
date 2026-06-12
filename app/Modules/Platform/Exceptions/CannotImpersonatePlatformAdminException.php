@@ -2,9 +2,9 @@
 
 namespace App\Modules\Platform\Exceptions;
 
-use Exception;
+use App\Exceptions\DomainException;
 
-class CannotImpersonatePlatformAdminException extends Exception
+class CannotImpersonatePlatformAdminException extends DomainException
 {
     public function __construct()
     {

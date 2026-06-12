@@ -2,9 +2,9 @@
 
 namespace App\Modules\Iam\Exceptions;
 
-use Exception;
+use App\Exceptions\DomainException;
 
-class CannotRevokeSystemCapabilityKeyException extends Exception
+class CannotRevokeSystemCapabilityKeyException extends DomainException
 {
     public function __construct()
     {

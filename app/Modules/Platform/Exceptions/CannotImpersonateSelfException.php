@@ -2,9 +2,9 @@
 
 namespace App\Modules\Platform\Exceptions;
 
-use Exception;
+use App\Exceptions\DomainException;
 
-class CannotImpersonateSelfException extends Exception
+class CannotImpersonateSelfException extends DomainException
 {
     public function __construct()
     {
