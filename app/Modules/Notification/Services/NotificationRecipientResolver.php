@@ -23,7 +23,7 @@ class NotificationRecipientResolver
             ->values();
     }
 
-    public function activeTaskParticipants(Task $task): Collection
+    public function taskParticipants(Task $task): Collection
     {
         $assigneeIds = TaskStageAssignment::where('task_id', $task->id)
             ->where('is_completed', false)

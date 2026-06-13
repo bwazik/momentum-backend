@@ -21,7 +21,7 @@ class SendTaskResumedNotification
                 $task->load('initiator');
             }
 
-            $participants = $this->resolver->activeTaskParticipants($task);
+            $participants = $this->resolver->taskParticipants($task);
 
             if ($participants->isEmpty()) {
                 return;

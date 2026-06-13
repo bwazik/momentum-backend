@@ -11,20 +11,35 @@ class SendStageAssignmentNotification
     public function handle(StageAssignmentCreated $event): void
     {
         try {
-            $assignment = $event->assignment->loadMissing(['user', 'stageInstance.task', 'stageInstance.blueprintStage']);
+            $assignment = $event->assignment->loadMissing([
+                'user',
+                'stageInstance.task',
+                'stageInstance.blueprintStage',
+                'subStageInstance.parentStageInstance.task',
+                'subStageInstance.parentStageInstance.blueprintStage',
+            ]);
 
             if (! $assignment->user || ! $assignment->user->is_active) {
                 return;
             }
 
-            $task = $assignment->stageInstance->task;
-            $stage = $assignment->stageInstance->blueprintStage;
+            if ($assignment->stageInstance) {
+                $task = $assignment->stageInstance->task;
+                $stage = $assignment->stageInstance->blueprintStage;
+                $stageIdentifier = $assignment->stageInstance->id;
+            } elseif ($assignment->subStageInstance?->parentStageInstance) {
+                $task = $assignment->subStageInstance->parentStageInstance->task;
+                $stage = $assignment->subStageInstance->parentStageInstance->blueprintStage;
+                $stageIdentifier = $assignment->subStageInstance->id;
+            } else {
+                return;
+            }
 
             if (! $task || ! $stage) {
                 return;
             }
 
-            $dedupe = 'stage_assignment_received:'.$assignment->stageInstance->public_id.':'.$assignment->user->public_id;
+            $dedupe = 'stage_assignment_received:'.$stageIdentifier.':'.$assignment->user->public_id;
 
             if ($this->alreadyNotified($assignment->user, $dedupe)) {
                 return;
@@ -34,6 +49,7 @@ class SendStageAssignmentNotification
                 taskPublicId: $task->public_id,
                 taskTitleAr: $task->title_ar,
                 taskTitleEn: $task->title_en,
+                stagePublicId: (string) $stageIdentifier,
                 stageNameAr: $stage->name_ar,
                 stageNameEn: $stage->name_en,
                 dedupeKey: $dedupe,

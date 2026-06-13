@@ -47,6 +47,7 @@ class SendSlaBreachNotification
                         taskPublicId: $stage->task->public_id,
                         taskTitleAr: $stage->task->title_ar,
                         taskTitleEn: $stage->task->title_en,
+                        stagePublicId: (string) $stage->id,
                         stageNameAr: $stage->blueprintStage->name_ar,
                         stageNameEn: $stage->blueprintStage->name_en,
                         dedupeKey: $dedupe,

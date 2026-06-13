@@ -43,6 +43,8 @@ class SendEscalationReceivedNotification
                 taskPublicId: $task->public_id,
                 taskTitleAr: $task->title_ar,
                 taskTitleEn: $task->title_en,
+                stagePublicId: $escalation->stageInstance ? (string) $escalation->stageInstance->id : null,
+                escalationPublicId: $escalation->public_id,
                 stageNameAr: $stageNameAr,
                 stageNameEn: $stageNameEn,
                 dedupeKey: $dedupe,

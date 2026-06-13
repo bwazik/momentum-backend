@@ -59,6 +59,7 @@ it('sends notification in Arabic when preferred_language is Arabic', function ()
         taskPublicId: 'test-task',
         taskTitleAr: 'مهمة اختبار',
         taskTitleEn: null,
+        stagePublicId: 'stage-1',
         stageNameAr: 'مراجعة',
         stageNameEn: null,
         dedupeKey: 'test:1',
@@ -89,6 +90,7 @@ it('sends notification in English when preferred_language is English', function 
         taskPublicId: 'test-task',
         taskTitleAr: 'مهمة اختبار',
         taskTitleEn: 'Test Task',
+        stagePublicId: 'stage-1',
         stageNameAr: 'مراجعة',
         stageNameEn: 'Review',
         dedupeKey: 'test:1',
@@ -117,6 +119,7 @@ it('stores bilingual payload in database notification', function () {
         taskPublicId: 'test-task',
         taskTitleAr: 'مهمة اختبار',
         taskTitleEn: 'Test Task',
+        stagePublicId: 'stage-1',
         stageNameAr: 'مراجعة',
         stageNameEn: 'Review',
         dedupeKey: 'test:1',
@@ -131,6 +134,8 @@ it('stores bilingual payload in database notification', function () {
     expect($data['title_en'])->not->toBeEmpty();
     expect($data['body_ar'])->toContain('مراجعة');
     expect($data['body_en'])->toContain('Review');
+    expect($data['stage_public_id'])->toBe('stage-1');
+    expect($data['task_public_id'])->toBe('test-task');
 });
 
 it('falls back to Arabic when English title is null', function () {

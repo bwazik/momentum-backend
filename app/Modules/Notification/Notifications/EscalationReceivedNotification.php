@@ -21,6 +21,8 @@ class EscalationReceivedNotification extends Notification implements ShouldQueue
         public string $taskPublicId,
         public string $taskTitleAr,
         public ?string $taskTitleEn,
+        public ?string $stagePublicId,
+        public ?string $escalationPublicId,
         public string $stageNameAr,
         public ?string $stageNameEn,
         public string $dedupeKey,
@@ -40,6 +42,8 @@ class EscalationReceivedNotification extends Notification implements ShouldQueue
             'title_en' => __('notifications.escalation_received.title', [], 'en'),
             'body_ar' => __('notifications.escalation_received.body', ['stage' => $this->stageNameAr, 'task' => $this->taskTitleAr], 'ar'),
             'body_en' => __('notifications.escalation_received.body', ['stage' => $this->stageNameEn ?? $this->stageNameAr, 'task' => $this->taskTitleEn ?? $this->taskTitleAr], 'en'),
+            'stage_public_id' => $this->stagePublicId,
+            'escalation_public_id' => $this->escalationPublicId,
             'task_public_id' => $this->taskPublicId,
             'action_url' => "/tasks/{$this->taskPublicId}",
         ];

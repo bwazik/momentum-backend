@@ -21,7 +21,7 @@ class SendTaskCancelledNotification
                 $task->load('initiator');
             }
 
-            $participants = $this->resolver->activeTaskParticipants($task);
+            $participants = $this->resolver->taskParticipants($task);
             $reason = $event->reason;
 
             if ($participants->isEmpty()) {

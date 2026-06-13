@@ -21,6 +21,7 @@ class SlaWarningNotification extends Notification implements ShouldQueue
         public string $taskPublicId,
         public string $taskTitleAr,
         public ?string $taskTitleEn,
+        public string $stagePublicId,
         public string $stageNameAr,
         public ?string $stageNameEn,
         public string $dedupeKey,
@@ -40,6 +41,7 @@ class SlaWarningNotification extends Notification implements ShouldQueue
             'title_en' => __('notifications.sla_warning.title', [], 'en'),
             'body_ar' => __('notifications.sla_warning.body', ['stage' => $this->stageNameAr, 'task' => $this->taskTitleAr], 'ar'),
             'body_en' => __('notifications.sla_warning.body', ['stage' => $this->stageNameEn ?? $this->stageNameAr, 'task' => $this->taskTitleEn ?? $this->taskTitleAr], 'en'),
+            'stage_public_id' => $this->stagePublicId,
             'task_public_id' => $this->taskPublicId,
             'action_url' => "/tasks/{$this->taskPublicId}",
         ];
