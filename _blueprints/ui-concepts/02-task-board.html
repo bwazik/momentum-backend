@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gov TMS — Task Board</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>*{font-family:'Inter',system-ui,sans-serif}body{background:#f1f5f9}</style>
+</head>
+<body>
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-[#0f172a] text-white flex flex-col shrink-0">
+      <div class="px-6 py-5 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-xs font-bold">G</div>
+          <div><p class="text-sm font-semibold">Gov TMS</p><p class="text-[10px] text-slate-400">Ministry of Finance</p></div>
+        </div>
+      </div>
+      <nav class="flex-1 px-3 py-4 space-y-1 text-sm">
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Executive Dashboard</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-emerald-600/20 text-emerald-300 font-medium">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>Task Board</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>Blueprints</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Analytics</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Follow-Up Center</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>Organization</a>
+      </nav>
+      <div class="px-4 py-4 border-t border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center text-xs font-bold text-white">HE</div>
+          <div class="flex-1 min-w-0"><p class="text-sm font-medium truncate">H.E. Abdullah Al-Faisal</p><p class="text-[10px] text-slate-400">Minister of Finance</p></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Top bar -->
+      <header class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
+        <h1 class="text-lg font-semibold text-slate-900">Task Board</h1>
+        <div class="flex items-center gap-4">
+          <div class="relative">
+            <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" placeholder="Search tasks..." class="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg w-64 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400" />
+          </div>
+          <button class="flex items-center gap-2 text-sm bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            New Task
+          </button>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 overflow-y-auto">
+        <!-- Quick filters -->
+        <div class="bg-white border-b border-slate-200 px-6 py-3">
+          <div class="flex items-center gap-2 flex-wrap">
+            <button class="text-xs font-medium bg-emerald-600 text-white px-3 py-1.5 rounded-lg">All Tasks</button>
+            <button class="text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition">My Tasks</button>
+            <button class="text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition">Overdue</button>
+            <button class="text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition">At Risk</button>
+            <button class="text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition">Suspended</button>
+            <span class="w-px h-5 bg-slate-200 mx-1"></span>
+            <select class="text-xs text-slate-600 bg-slate-50 border border-slate-200 px-2 py-1.5 rounded-lg">
+              <option>All Departments</option>
+              <option>Minister's Office</option>
+              <option>Legal Affairs</option>
+              <option>Financial Affairs</option>
+              <option>IT & Digital Transformation</option>
+            </select>
+            <select class="text-xs text-slate-600 bg-slate-50 border border-slate-200 px-2 py-1.5 rounded-lg">
+              <option>All Priorities</option>
+              <option>Critical</option>
+              <option>Urgent</option>
+              <option>Routine</option>
+            </select>
+            <select class="text-xs text-slate-600 bg-slate-50 border border-slate-200 px-2 py-1.5 rounded-lg">
+              <option>All Blueprints</option>
+              <option>Ministerial Directive</option>
+              <option>HR Request</option>
+              <option>Procurement Study</option>
+            </select>
+            <button class="text-xs text-slate-500 hover:text-slate-700 px-2 py-1.5">
+              <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+              Filters
+            </button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="p-6">
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-slate-100 bg-slate-50/50">
+                  <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-4 py-3 w-8">
+                    <input type="checkbox" class="rounded border-slate-300" />
+                  </th>
+                  <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Task</th>
+                  <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Blueprint</th>
+                  <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Current Stage</th>
+                  <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Assignee</th>
+                  <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">SLA</th>
+                  <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Priority</th>
+                  <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Due</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr class="hover:bg-slate-50 transition cursor-pointer">
+                  <td class="px-4 py-3.5"><input type="checkbox" class="rounded border-slate-300" /></td>
+                  <td class="px-4 py-3.5">
+                    <p class="text-sm font-medium text-slate-900">Q1 IT Infrastructure Upgrade</p>
+                    <p class="text-[10px] text-slate-400">Ref: وارد-2026-0412</p>
+                  </td>
+                  <td class="px-4 py-3.5 text-sm text-slate-600">Procurement Study</td>
+                  <td class="px-4 py-3.5">
+                    <span class="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-md font-medium">Legal Review</span>
+                  </td>
+                  <td class="px-4 py-3.5">
+                    <div class="flex items-center gap-2">
+                      <div class="w-7 h-7 rounded-full bg-amber-200 flex items-center justify-center text-[10px] font-bold text-amber-800">N</div>
+                      <span class="text-sm text-slate-700">Noura Al-Qahtani</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3.5">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded-md">
+                      <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                      2 days overdue
+                    </span>
+                  </td>
+                  <td class="px-4 py-3.5">
+                    <span class="text-[10px] font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Critical</span>
+                  </td>
+                  <td class="px-4 py-3.5 text-sm text-slate-500">Jun 12, 2026</td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition cursor-pointer">
+                  <td class="px-4 py-3.5"><input type="checkbox" class="rounded border-slate-300" /></td>
+                  <td class="px-4 py-3.5">
+                    <p class="text-sm font-medium text-slate-900">HR Policy Update — Chapter 4</p>
+                    <p class="text-[10px] text-slate-400">Ref: مذكرة-2026-0083</p>
+                  </td>
+                  <td class="px-4 py-3.5 text-sm text-slate-600">Internal Memo</td>
+                  <td class="px-4 py-3.5">
+                    <span class="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded-md font-medium">Director Sign-off</span>
+                  </td>
+                  <td class="px-4 py-3.5">
+                    <div class="flex items-center gap-2">
+                      <div class="w-7 h-7 rounded-full bg-emerald-200 flex items-center justify-center text-[10px] font-bold text-emerald-800">F</div>
+                      <span class="text-sm text-slate-700">Fahad Al-Otaibi</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3.5">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-md">
+                      <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                      4 hrs remaining
+                    </span>
+                  </td>
+                  <td class="px-4 py-3.5">
+                    <span class="text-[10px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">Urgent</span>
+                  </td>
+                  <td class="px-4 py-3.5 text-sm text-slate-500">Jun 8, 2026</td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition cursor-pointer">
+                  <td class="px-4 py-3.5"><input type="checkbox" class="rounded border-slate-300" /></td>
+                  <td class="px-4 py-3.5">
+                    <p class="text-sm font-medium text-slate-900">Vendor Onboarding — TechSphere LLC</p>
+                    <p class="text-[10px] text-slate-400">Ref: قرار-2026-0021</p>
+                  </td>
+                  <td class="px-4 py-3.5 text-sm text-slate-600">Vendor Registration</td>
+                  <td class="px-4 py-3.5">
+                    <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md font-medium">Budget Verification</span>
+                  </td>
+                  <td class="px-4 py-3.5">
+                    <div class="flex items-center gap-2">
+                      <div class="w-7 h-7 rounded-full bg-purple-200 flex items-center justify-center text-[10px] font-bold text-purple-800">S</div>
+                      <span class="text-sm text-slate-700">Sara Al-Mansouri</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3.5">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      3 days left
+                    </span>
+                  </td>
+                  <td class="px-4 py-3.5">
+                    <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">Routine</span>
+                  </td>
+                  <td class="px-4 py-3.5 text-sm text-slate-500">Jun 15, 2026</td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition cursor-pointer">
+                  <td class="px-4 py-3.5"><input type="checkbox" class="rounded border-slate-300" /></td>
+                  <td class="px-4 py-3.5">
+                    <p class="text-sm font-medium text-slate-900">Annual Audit Response — State Audit Bureau</p>
+                    <p class="text-[10px] text-slate-400">Ref: خطاب-2026-0187</p>
+                  </td>
+                  <td class="px-4 py-3.5 text-sm text-slate-600">Audit Response</td>
+                  <td class="px-4 py-3.5">
+                    <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md font-medium">Undersecretary Review</span>
+                  </td>
+                  <td class="px-4 py-3.5">
+                    <div class="flex items-center gap-2">
+                      <div class="w-7 h-7 rounded-full bg-blue-200 flex items-center justify-center text-[10px] font-bold text-blue-800">K</div>
+                      <span class="text-sm text-slate-700">Khalid Al-Rashid</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3.5">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      5 days left
+                    </span>
+                  </td>
+                  <td class="px-4 py-3.5">
+                    <span class="text-[10px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">Urgent</span>
+                  </td>
+                  <td class="px-4 py-3.5 text-sm text-slate-500">Jun 20, 2026</td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition cursor-pointer">
+                  <td class="px-4 py-3.5"><input type="checkbox" class="rounded border-slate-300" /></td>
+                  <td class="px-4 py-3.5">
+                    <p class="text-sm font-medium text-slate-900">National ID Integration Project</p>
+                    <p class="text-[10px] text-slate-400">Ref: تعميم-2026-0044</p>
+                  </td>
+                  <td class="px-4 py-3.5 text-sm text-slate-600">IT Directive</td>
+                  <td class="px-4 py-3.5">
+                    <span class="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded-md font-medium">Technical Assessment</span>
+                  </td>
+                  <td class="px-4 py-3.5">
+                    <div class="flex items-center gap-2">
+                      <div class="w-7 h-7 rounded-full bg-red-200 flex items-center justify-center text-[10px] font-bold text-red-800">A</div>
+                      <span class="text-sm text-slate-700">Ahmed Al-Zahrani</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3.5">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded-md">
+                      <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                      Suspended
+                    </span>
+                  </td>
+                  <td class="px-4 py-3.5">
+                    <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">Routine</span>
+                  </td>
+                  <td class="px-4 py-3.5 text-sm text-slate-500">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- Pagination -->
+          <div class="flex items-center justify-between mt-4">
+            <p class="text-xs text-slate-500">Showing 1–5 of 248 tasks</p>
+            <div class="flex items-center gap-1">
+              <button class="px-3 py-1.5 text-xs border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-500">&laquo;</button>
+              <button class="px-3 py-1.5 text-xs bg-emerald-600 text-white rounded-lg font-medium">1</button>
+              <button class="px-3 py-1.5 text-xs border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-600">2</button>
+              <button class="px-3 py-1.5 text-xs border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-600">3</button>
+              <span class="px-2 text-xs text-slate-400">...</span>
+              <button class="px-3 py-1.5 text-xs border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-600">50</button>
+              <button class="px-3 py-1.5 text-xs border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-500">&raquo;</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

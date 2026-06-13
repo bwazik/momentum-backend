@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gov TMS — Pending Approvals</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>*{font-family:'Inter',system-ui,sans-serif}body{background:#f1f5f9}</style>
+</head>
+<body>
+  <div class="flex h-screen overflow-hidden">
+    <aside class="w-64 bg-[#0f172a] text-white flex flex-col shrink-0">
+      <div class="px-6 py-5 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-xs font-bold">G</div>
+          <div><p class="text-sm font-semibold">Gov TMS</p><p class="text-[10px] text-slate-400">Ministry of Finance</p></div>
+        </div>
+      </div>
+      <nav class="flex-1 px-3 py-4 space-y-1 text-sm">
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Manager Dashboard</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-emerald-600/20 text-emerald-300 font-medium"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Pending Approvals</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Team Workload</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Staff Performance</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Decisions Registry</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>Memos</a>
+      </nav>
+      <div class="px-4 py-4 border-t border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-xs font-bold text-white">F</div>
+          <div class="flex-1 min-w-0"><p class="text-sm font-medium truncate">Fahad Al-Otaibi</p><p class="text-[10px] text-slate-400">Director, Human Resources</p></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <header class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
+        <div>
+          <h1 class="text-lg font-semibold text-slate-900">Pending Approvals</h1>
+          <p class="text-xs text-slate-400 mt-0.5">Tasks awaiting your decision across all departments</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="flex items-center gap-1.5 text-xs text-slate-600 border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Export
+          </button>
+          <button class="flex items-center gap-1.5 text-xs text-slate-600 border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+            Filters
+          </button>
+        </div>
+      </header>
+
+      <main class="flex-1 overflow-y-auto p-6 space-y-6">
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-5 gap-4">
+          <div class="bg-white rounded-xl border border-slate-200 p-4">
+            <p class="text-[10px] font-semibold text-slate-500 uppercase">Total Pending</p>
+            <p class="text-2xl font-bold text-slate-900 mt-1">23</p>
+          </div>
+          <div class="bg-white rounded-xl border border-red-200 p-4">
+            <p class="text-[10px] font-semibold text-slate-500 uppercase">Overdue</p>
+            <p class="text-2xl font-bold text-red-600 mt-1">7</p>
+          </div>
+          <div class="bg-white rounded-xl border border-amber-200 p-4">
+            <p class="text-[10px] font-semibold text-slate-500 uppercase">At Risk</p>
+            <p class="text-2xl font-bold text-amber-600 mt-1">5</p>
+          </div>
+          <div class="bg-white rounded-xl border border-emerald-200 p-4">
+            <p class="text-[10px] font-semibold text-slate-500 uppercase">Approved Today</p>
+            <p class="text-2xl font-bold text-emerald-600 mt-1">4</p>
+          </div>
+          <div class="bg-white rounded-xl border border-slate-200 p-4">
+            <p class="text-[10px] font-semibold text-slate-500 uppercase">Avg Decision Time</p>
+            <p class="text-2xl font-bold text-slate-900 mt-1">1.2d</p>
+          </div>
+        </div>
+
+        <!-- Approvals Table -->
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <!-- Filter Tabs -->
+          <div class="px-4 py-3 border-b border-slate-100 bg-slate-50/50 flex items-center gap-2">
+            <button class="text-xs font-medium bg-emerald-600 text-white px-3 py-1.5 rounded-lg">All Pending</button>
+            <button class="text-xs font-medium text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50">Overdue</button>
+            <button class="text-xs font-medium text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50">At Risk</button>
+            <button class="text-xs font-medium text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50">Approved</button>
+            <span class="w-px h-5 bg-slate-200 mx-1"></span>
+            <select class="text-xs text-slate-600 bg-white border border-slate-200 px-2 py-1.5 rounded-lg">
+              <option>All Blueprints</option>
+              <option>HR Request</option>
+              <option>Procurement Study</option>
+              <option>Ministerial Directive</option>
+            </select>
+            <select class="text-xs text-slate-600 bg-white border border-slate-200 px-2 py-1.5 rounded-lg">
+              <option>All Departments</option>
+              <option>Legal Affairs</option>
+              <option>IT & Digital</option>
+              <option>Financial Affairs</option>
+            </select>
+            <span class="text-xs text-slate-400 ml-auto">Sorted by: Due Date (Earliest)</span>
+          </div>
+
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-slate-100 bg-slate-50/50">
+                <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-4 py-3 w-8">
+                  <input type="checkbox" class="rounded border-slate-300" />
+                </th>
+                <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Task</th>
+                <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Blueprint</th>
+                <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Stage</th>
+                <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Submitted By</th>
+                <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Waiting Since</th>
+                <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">SLA</th>
+                <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Decision</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="bg-red-50/50">
+                <td class="px-4 py-3.5"><input type="checkbox" class="rounded border-slate-300" /></td>
+                <td class="px-4 py-3.5">
+                  <p class="text-sm font-medium text-slate-900">Annual Audit Response — SAB</p>
+                  <p class="text-[10px] text-slate-400">خطاب-2026-0187</p>
+                </td>
+                <td class="px-4 py-3.5 text-sm text-slate-600">Audit Response</td>
+                <td class="px-4 py-3.5">
+                  <span class="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-md font-medium">Undersecretary Review</span>
+                </td>
+                <td class="px-4 py-3.5">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-blue-200 flex items-center justify-center text-[10px] font-bold text-blue-800">K</div>
+                    <span class="text-sm text-slate-700">Khalid Al-Rashid</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3.5 text-sm text-slate-500">8 days</td>
+                <td class="px-4 py-3.5">
+                  <span class="text-[10px] font-medium text-red-600 bg-red-100 px-2 py-0.5 rounded-full">Breached</span>
+                </td>
+                <td class="px-4 py-3.5">
+                  <div class="flex items-center gap-1.5">
+                    <button class="text-xs bg-emerald-600 text-white px-3 py-1.5 rounded-lg hover:bg-emerald-700 font-medium">Approve</button>
+                    <button class="text-xs border border-slate-200 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-50 font-medium">Return</button>
+                  </div>
+                </td>
+              </tr>
+              <tr class="bg-amber-50/50">
+                <td class="px-4 py-3.5"><input type="checkbox" class="rounded border-slate-300" /></td>
+                <td class="px-4 py-3.5">
+                  <p class="text-sm font-medium text-slate-900">Q2 Training Budget Proposal</p>
+                  <p class="text-[10px] text-slate-400">HR-2026-0092</p>
+                </td>
+                <td class="px-4 py-3.5 text-sm text-slate-600">HR Request</td>
+                <td class="px-4 py-3.5">
+                  <span class="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded-md font-medium">Director Sign-off</span>
+                </td>
+                <td class="px-4 py-3.5">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-amber-200 flex items-center justify-center text-[10px] font-bold text-amber-800">N</div>
+                    <span class="text-sm text-slate-700">Noura Al-Qahtani</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3.5 text-sm text-slate-500">4 days</td>
+                <td class="px-4 py-3.5">
+                  <span class="text-[10px] font-medium text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">At Risk</span>
+                </td>
+                <td class="px-4 py-3.5">
+                  <div class="flex items-center gap-1.5">
+                    <button class="text-xs bg-emerald-600 text-white px-3 py-1.5 rounded-lg hover:bg-emerald-700 font-medium">Approve</button>
+                    <button class="text-xs border border-slate-200 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-50 font-medium">Return</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3.5"><input type="checkbox" class="rounded border-slate-300" /></td>
+                <td class="px-4 py-3.5">
+                  <p class="text-sm font-medium text-slate-900">New Employee Onboarding — IT Specialist</p>
+                  <p class="text-[10px] text-slate-400">HR-2026-0089</p>
+                </td>
+                <td class="px-4 py-3.5 text-sm text-slate-600">HR Request</td>
+                <td class="px-4 py-3.5">
+                  <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md font-medium">Budget Approval</span>
+                </td>
+                <td class="px-4 py-3.5">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-red-200 flex items-center justify-center text-[10px] font-bold text-red-800">A</div>
+                    <span class="text-sm text-slate-700">Ahmed Al-Zahrani</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3.5 text-sm text-slate-500">1 day</td>
+                <td class="px-4 py-3.5">
+                  <span class="text-[10px] font-medium text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">On Track</span>
+                </td>
+                <td class="px-4 py-3.5">
+                  <div class="flex items-center gap-1.5">
+                    <button class="text-xs bg-emerald-600 text-white px-3 py-1.5 rounded-lg hover:bg-emerald-700 font-medium">Approve</button>
+                    <button class="text-xs border border-slate-200 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-50 font-medium">Return</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3.5"><input type="checkbox" class="rounded border-slate-300" /></td>
+                <td class="px-4 py-3.5">
+                  <p class="text-sm font-medium text-slate-900">Consultancy Contract Extension</p>
+                  <p class="text-[10px] text-slate-400">FIN-2026-0055</p>
+                </td>
+                <td class="px-4 py-3.5 text-sm text-slate-600">Procurement Study</td>
+                <td class="px-4 py-3.5">
+                  <span class="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-md font-medium">Undersecretary Sign-off</span>
+                </td>
+                <td class="px-4 py-3.5">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-purple-200 flex items-center justify-center text-[10px] font-bold text-purple-800">M</div>
+                    <span class="text-sm text-slate-700">Mohammed Al-Ghamdi</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3.5 text-sm text-slate-500">2 days</td>
+                <td class="px-4 py-3.5">
+                  <span class="text-[10px] font-medium text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">At Risk</span>
+                </td>
+                <td class="px-4 py-3.5">
+                  <div class="flex items-center gap-1.5">
+                    <button class="text-xs bg-emerald-600 text-white px-3 py-1.5 rounded-lg hover:bg-emerald-700 font-medium">Approve</button>
+                    <button class="text-xs border border-slate-200 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-50 font-medium">Return</button>
+                  </div>
+                </td>
+              </tr>
+              <tr class="bg-amber-50/50">
+                <td class="px-4 py-3.5"><input type="checkbox" class="rounded border-slate-300" /></td>
+                <td class="px-4 py-3.5">
+                  <p class="text-sm font-medium text-slate-900">Leave Policy Amendment — Chapter 4</p>
+                  <p class="text-[10px] text-slate-400">مذكرة-2026-0095</p>
+                </td>
+                <td class="px-4 py-3.5 text-sm text-slate-600">Internal Memo</td>
+                <td class="px-4 py-3.5">
+                  <span class="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded-md font-medium">Director Sign-off</span>
+                </td>
+                <td class="px-4 py-3.5">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-emerald-200 flex items-center justify-center text-[10px] font-bold text-emerald-800">S</div>
+                    <span class="text-sm text-slate-700">Sara Al-Mansouri</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3.5 text-sm text-slate-500">5 days</td>
+                <td class="px-4 py-3.5">
+                  <span class="text-[10px] font-medium text-red-600 bg-red-100 px-2 py-0.5 rounded-full">Overdue</span>
+                </td>
+                <td class="px-4 py-3.5">
+                  <div class="flex items-center gap-1.5">
+                    <button class="text-xs bg-emerald-600 text-white px-3 py-1.5 rounded-lg hover:bg-emerald-700 font-medium">Approve</button>
+                    <button class="text-xs border border-slate-200 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-50 font-medium">Return</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Approval History -->
+        <div class="bg-white rounded-xl border border-slate-200 p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-sm font-semibold text-slate-900">Recent Approval Decisions</h2>
+            <span class="text-xs text-slate-400">Last 7 days</span>
+          </div>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-slate-900">IT Procurement RFP — Network Security</p>
+                  <p class="text-xs text-slate-400">Approved · Budget Verification stage</p>
+                </div>
+              </div>
+              <span class="text-xs text-slate-400">Yesterday, 11:30 AM</span>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-lg bg-red-50">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-slate-900">HR Policy Update — Remote Work</p>
+                  <p class="text-xs text-slate-400">Returned to Legal Review · Reason: Incomplete</p>
+                </div>
+              </div>
+              <span class="text-xs text-slate-400">2 days ago</span>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-slate-900">Vendor Onboarding — Al-Rajhi Contracting</p>
+                  <p class="text-xs text-slate-400">Approved · Undersecretary Sign-off stage</p>
+                </div>
+              </div>
+              <span class="text-xs text-slate-400">3 days ago</span>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

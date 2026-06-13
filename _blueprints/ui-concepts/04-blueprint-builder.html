@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gov TMS — Blueprint Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>*{font-family:'Inter',system-ui,sans-serif}body{background:#f1f5f9}</style>
+</head>
+<body>
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-[#0f172a] text-white flex flex-col shrink-0">
+      <div class="px-6 py-5 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-xs font-bold">G</div>
+          <div><p class="text-sm font-semibold">Gov TMS</p><p class="text-[10px] text-slate-400">Ministry of Finance</p></div>
+        </div>
+      </div>
+      <nav class="flex-1 px-3 py-4 space-y-1 text-sm">
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Dashboard</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>Task Board</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-emerald-600/20 text-emerald-300 font-medium"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>Blueprints</a>
+      </nav>
+      <div class="px-4 py-4 border-t border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center text-xs font-bold text-white">SA</div>
+          <div class="flex-1 min-w-0"><p class="text-sm font-medium truncate">Salem Al-Rashidi</p><p class="text-[10px] text-slate-400">System Admin</p></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Top bar -->
+      <header class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <a href="#" class="text-slate-400 hover:text-slate-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></a>
+          <span class="text-xs text-slate-400">Blueprints /</span>
+          <span class="text-xs text-slate-600 font-medium">Procurement Study</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="flex items-center gap-1.5 text-xs text-slate-500">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            Published — v2.1
+          </span>
+          <button class="text-xs text-slate-600 border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50 font-medium">Preview Flow</button>
+          <button class="text-xs bg-emerald-600 text-white px-4 py-1.5 rounded-lg hover:bg-emerald-700 font-medium">Save</button>
+        </div>
+      </header>
+
+      <!-- Editor Layout -->
+      <main class="flex-1 flex overflow-hidden">
+        <!-- Left: Stage Canvas -->
+        <div class="flex-1 p-6 overflow-y-auto">
+          <div class="bg-white rounded-xl border border-slate-200 p-6 min-h-full">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h1 class="text-lg font-bold text-slate-900">Procurement Study Blueprint</h1>
+                <p class="text-sm text-slate-500 mt-0.5">Standard procurement workflow for IT and infrastructure acquisitions above SAR 500K</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] text-slate-500 bg-slate-100 px-2 py-1 rounded-full">Organization-wide</span>
+                <span class="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">12 active tasks</span>
+              </div>
+            </div>
+
+            <!-- Flow Canvas -->
+            <div class="relative p-8 bg-slate-50/50 rounded-xl border border-dashed border-slate-300">
+              <!-- Connection arrows -->
+              <svg class="absolute inset-0 w-full h-full pointer-events-none" style="z-index:0">
+                <defs>
+                  <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#94a3b8" />
+                  </marker>
+                </defs>
+                <line x1="180" y1="95" x2="370" y2="95" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)" />
+                <line x1="180" y1="235" x2="370" y2="235" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)" />
+                <line x1="180" y1="375" x2="370" y2="375" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)" />
+                <line x1="180" y1="515" x2="370" y2="515" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)" />
+                <!-- Return arrow (dashed) -->
+                <line x1="460" y1="515" x2="460" y2="235" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,5" marker-end="url(#arrowhead)" />
+              </svg>
+
+              <div class="space-y-8 relative z-10">
+                <!-- Stage 1 -->
+                <div class="flex items-center gap-8">
+                  <div class="w-44 p-4 rounded-xl bg-white border-2 border-emerald-500 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Stage 1</span>
+                      <button class="text-slate-300 hover:text-slate-500"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg></button>
+                    </div>
+                    <p class="text-sm font-semibold text-slate-900">Director Assignment</p>
+                    <p class="text-[10px] text-slate-500 mt-1">Type: Action · SLA: 4 hours</p>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Assignee: Director grade+</p>
+                  </div>
+                  <div class="text-xs text-slate-400 font-medium">→</div>
+                </div>
+
+                <!-- Stage 2 -->
+                <div class="flex items-center gap-8">
+                  <div class="w-44 p-4 rounded-xl bg-white border-2 border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">Stage 2</span>
+                      <button class="text-slate-300 hover:text-slate-500"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg></button>
+                    </div>
+                    <p class="text-sm font-semibold text-slate-900">Technical Specifications</p>
+                    <p class="text-[10px] text-slate-500 mt-1">Type: Action · SLA: 3 days</p>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Assignee: IT Specialists</p>
+                  </div>
+                  <div class="text-xs text-slate-400 font-medium">→</div>
+                </div>
+
+                <!-- Stage 3 -->
+                <div class="flex items-center gap-8">
+                  <div class="w-44 p-4 rounded-xl bg-white border-2 border-blue-500 shadow-sm ring-2 ring-blue-200">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Stage 3</span>
+                      <button class="text-slate-300 hover:text-slate-500"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg></button>
+                    </div>
+                    <p class="text-sm font-semibold text-slate-900">Legal Review</p>
+                    <div class="flex items-center gap-1 mt-1">
+                      <span class="text-[10px] text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Sub-stages: 2</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-0.5">SLA: 3 days · Escalation: Director</p>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Assignee: Legal Team</p>
+                  </div>
+                  <div class="text-xs text-slate-400 font-medium">→</div>
+                </div>
+
+                <!-- Stage 4 -->
+                <div class="flex items-center gap-8">
+                  <div class="w-44 p-4 rounded-xl bg-white border-2 border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">Stage 4</span>
+                      <button class="text-slate-300 hover:text-slate-500"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg></button>
+                    </div>
+                    <p class="text-sm font-semibold text-slate-900">Budget Approval</p>
+                    <p class="text-[10px] text-slate-500 mt-1">Type: Approval · SLA: 2 days</p>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Assignee: Finance Director</p>
+                    <div class="mt-2 flex items-center gap-1">
+                      <span class="text-[10px] text-red-500 bg-red-50 px-1.5 py-0.5 rounded font-medium">Return path → Stage 2</span>
+                    </div>
+                  </div>
+                  <div class="text-xs text-slate-400 font-medium">→</div>
+                </div>
+
+                <!-- Stage 5 -->
+                <div class="flex items-center gap-8">
+                  <div class="w-44 p-4 rounded-xl bg-white border-2 border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">Stage 5</span>
+                      <button class="text-slate-300 hover:text-slate-500"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg></button>
+                    </div>
+                    <p class="text-sm font-semibold text-slate-900">Undersecretary Sign-off</p>
+                    <p class="text-[10px] text-slate-500 mt-1">Type: Decision · SLA: 1 day</p>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Assignee: Undersecretary</p>
+                  </div>
+                  <div class="text-xs text-slate-400 font-medium">→</div>
+                  <div class="w-12 h-12 rounded-xl bg-emerald-100 border-2 border-emerald-400 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Add Stage -->
+              <div class="mt-8 flex justify-center">
+                <button class="flex items-center gap-2 text-sm text-emerald-600 border-2 border-dashed border-emerald-300 px-5 py-3 rounded-xl hover:bg-emerald-50 transition font-medium">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                  Add Stage
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Stage Properties Panel -->
+        <aside class="w-80 bg-white border-l border-slate-200 p-5 overflow-y-auto shrink-0">
+          <h2 class="text-sm font-semibold text-slate-900 mb-4">Stage Properties</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">Stage Name (English)</label>
+              <input type="text" value="Legal Review" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400" />
+            </div>
+            <div>
+              <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">Stage Name (Arabic)</label>
+              <input type="text" value="المراجعة القانونية" dir="rtl" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400" />
+            </div>
+            <div>
+              <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">Stage Type</label>
+              <select class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400">
+                <option>Action</option>
+                <option selected>Review</option>
+                <option>Approval</option>
+                <option>Decision</option>
+                <option>Information Gathering</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">Assignment Method</label>
+              <select class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400">
+                <option>Specific Position</option>
+                <option selected>Department Head</option>
+                <option>Manual at Launch</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">SLA Policy</label>
+              <select class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400">
+                <option>Standard - 3 days</option>
+                <option selected>Standard - 3 days</option>
+                <option>Express - 1 day</option>
+                <option>Extended - 7 days</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">SLA Warning at</label>
+              <select class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400">
+                <option>50%</option>
+                <option selected>75%</option>
+                <option>90%</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">Escalation Rule</label>
+              <select class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400">
+                <option selected>Direct Manager</option>
+                <option>Department Director</option>
+                <option>Undersecretary</option>
+              </select>
+            </div>
+
+            <hr class="border-slate-200" />
+
+            <div>
+              <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-2">Exit Requirements</label>
+              <div class="space-y-2">
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" checked class="rounded text-emerald-600" />
+                  <span class="text-sm text-slate-700">Attach document</span>
+                </label>
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" checked class="rounded text-emerald-600" />
+                  <span class="text-sm text-slate-700">Record decision outcome</span>
+                </label>
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" class="rounded text-emerald-600" />
+                  <span class="text-sm text-slate-700">Complete all sub-stages</span>
+                </label>
+              </div>
+            </div>
+
+            <hr class="border-slate-200" />
+
+            <div>
+              <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-2">Advance Transition</label>
+              <select class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400">
+                <option selected>Next stage: Budget Approval</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-2">Return Transition</label>
+              <select class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400">
+                <option>None</option>
+                <option selected>Return to: Technical Specifications</option>
+                <option>Return to: Director Assignment</option>
+              </select>
+            </div>
+
+            <hr class="border-slate-200" />
+
+            <div>
+              <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-2">Sub-stages</label>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg">
+                  <div>
+                    <p class="text-xs font-medium text-slate-900">Compliance Check</p>
+                    <p class="text-[10px] text-slate-500">Assignee: Legal Officer · SLA: 1d</p>
+                  </div>
+                  <button class="text-slate-300 hover:text-red-500"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+                </div>
+                <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg">
+                  <div>
+                    <p class="text-xs font-medium text-slate-900">Risk Assessment</p>
+                    <p class="text-[10px] text-slate-500">Assignee: Risk Officer · SLA: 2d</p>
+                  </div>
+                  <button class="text-slate-300 hover:text-red-500"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+                </div>
+                <button class="flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 font-medium mt-2">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                  Add Sub-stage
+                </button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

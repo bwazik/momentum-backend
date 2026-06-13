@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gov TMS — System Administration</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>*{font-family:'Inter',system-ui,sans-serif}body{background:#f1f5f9}</style>
+</head>
+<body>
+  <div class="flex h-screen overflow-hidden">
+    <aside class="w-64 bg-[#0f172a] text-white flex flex-col shrink-0">
+      <div class="px-6 py-5 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-xs font-bold">G</div>
+          <div><p class="text-sm font-semibold">Gov TMS</p><p class="text-[10px] text-slate-400">Ministry of Finance</p></div>
+        </div>
+      </div>
+      <nav class="flex-1 px-3 py-4 space-y-1 text-sm">
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Dashboard</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>Task Board</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-emerald-600/20 text-emerald-300 font-medium"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Administration</a>
+      </nav>
+      <div class="px-4 py-4 border-t border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-slate-400 to-slate-600 flex items-center justify-center text-xs font-bold text-white">SA</div>
+          <div class="flex-1 min-w-0"><p class="text-sm font-medium truncate">Salem Al-Rashidi</p><p class="text-[10px] text-slate-400">System Admin</p></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <header class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
+        <h1 class="text-lg font-semibold text-slate-900">System Administration</h1>
+        <div class="flex items-center gap-2 text-xs text-slate-400">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          All systems operational
+        </div>
+      </header>
+
+      <main class="flex-1 flex overflow-hidden">
+        <!-- Admin Sidebar -->
+        <aside class="w-56 bg-white border-r border-slate-200 p-4 shrink-0">
+          <nav class="space-y-1">
+            <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg bg-emerald-50 text-emerald-700">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+              Organization
+            </a>
+            <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-50">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
+              Users
+            </a>
+            <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-50">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              Permissions
+            </a>
+            <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-50">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              Calendar
+            </a>
+            <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-50">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+              Blueprints
+            </a>
+            <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-50">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              Audit Log
+            </a>
+            <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-50">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              Branding
+            </a>
+            <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-50">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              Settings
+            </a>
+          </nav>
+        </aside>
+
+        <!-- Content -->
+        <div class="flex-1 overflow-y-auto p-6">
+          <!-- Organization Settings -->
+          <div class="bg-white rounded-xl border border-slate-200 p-6">
+            <h2 class="text-base font-semibold text-slate-900 mb-1">Organization Settings</h2>
+            <p class="text-xs text-slate-500 mb-6">Configure your organization structure and working calendar</p>
+
+            <div class="grid grid-cols-2 gap-6">
+              <div class="space-y-4">
+                <div>
+                  <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">Organization Name (English)</label>
+                  <input type="text" value="Ministry of Finance" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400" />
+                </div>
+                <div>
+                  <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">Organization Name (Arabic)</label>
+                  <input type="text" value="وزارة المالية" dir="rtl" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400" />
+                </div>
+                <div>
+                  <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">Default Language</label>
+                  <select class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400">
+                    <option>Arabic (RTL)</option>
+                    <option>English (LTR)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="space-y-4">
+                <div>
+                  <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">Working Days</label>
+                  <div class="flex flex-wrap gap-2">
+                    <label class="flex items-center gap-1.5 text-xs text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200"><input type="checkbox" checked class="rounded text-emerald-600" /> Sun</label>
+                    <label class="flex items-center gap-1.5 text-xs text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200"><input type="checkbox" checked class="rounded text-emerald-600" /> Mon</label>
+                    <label class="flex items-center gap-1.5 text-xs text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200"><input type="checkbox" checked class="rounded text-emerald-600" /> Tue</label>
+                    <label class="flex items-center gap-1.5 text-xs text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200"><input type="checkbox" checked class="rounded text-emerald-600" /> Wed</label>
+                    <label class="flex items-center gap-1.5 text-xs text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200"><input type="checkbox" checked class="rounded text-emerald-600" /> Thu</label>
+                    <label class="flex items-center gap-1.5 text-xs text-slate-400 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200"><input type="checkbox" class="rounded" /> Fri</label>
+                    <label class="flex items-center gap-1.5 text-xs text-slate-400 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200"><input type="checkbox" class="rounded" /> Sat</label>
+                  </div>
+                </div>
+                <div>
+                  <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">Timezone</label>
+                  <select class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400">
+                    <option>Asia/Riyadh (UTC+3)</option>
+                    <option>Asia/Dubai (UTC+4)</option>
+                    <option>Asia/Qatar (UTC+3)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <hr class="border-slate-200 my-6" />
+
+            <!-- Public Holidays -->
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-semibold text-slate-900">Public Holidays</h3>
+              <button class="text-xs text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Add Holiday
+              </button>
+            </div>
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-slate-100">
+                  <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider pb-2">Name</th>
+                  <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider pb-2">Arabic Name</th>
+                  <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider pb-2">Date</th>
+                  <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider pb-2">Recurring</th>
+                  <th class="text-left text-[10px] font-semibold text-slate-500 uppercase tracking-wider pb-2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b border-slate-50">
+                  <td class="py-2.5 text-slate-700">Eid al-Fitr</td>
+                  <td class="py-2.5 text-slate-700" dir="rtl">عيد الفطر</td>
+                  <td class="py-2.5 text-slate-600">Mar 30 – Apr 2, 2026</td>
+                  <td class="py-2.5"><span class="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded">Yes</span></td>
+                  <td class="py-2.5"><button class="text-[10px] text-red-500 hover:text-red-600">Remove</button></td>
+                </tr>
+                <tr class="border-b border-slate-50">
+                  <td class="py-2.5 text-slate-700">Eid al-Adha</td>
+                  <td class="py-2.5 text-slate-700" dir="rtl">عيد الأضحى</td>
+                  <td class="py-2.5 text-slate-600">Jun 6 – Jun 9, 2026</td>
+                  <td class="py-2.5"><span class="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded">Yes</span></td>
+                  <td class="py-2.5"><button class="text-[10px] text-red-500 hover:text-red-600">Remove</button></td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 text-slate-700">Saudi National Day</td>
+                  <td class="py-2.5 text-slate-700" dir="rtl">اليوم الوطني</td>
+                  <td class="py-2.5 text-slate-600">Sep 23, 2026</td>
+                  <td class="py-2.5"><span class="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded">Yes</span></td>
+                  <td class="py-2.5"><button class="text-[10px] text-red-500 hover:text-red-600">Remove</button></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <hr class="border-slate-200 my-6" />
+
+            <!-- Security Classification -->
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-semibold text-slate-900">Security Classification Levels</h3>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                <div class="flex items-center gap-3">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Public</p>
+                    <p class="text-[10px] text-slate-500">Visible to all authorized users in the organization</p>
+                  </div>
+                </div>
+                <span class="text-[10px] text-slate-400 bg-white px-2 py-0.5 rounded border">Default</span>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                <div class="flex items-center gap-3">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Internal</p>
+                    <p class="text-[10px] text-slate-500">Visible only to direct participants and management chain</p>
+                  </div>
+                </div>
+                <input type="text" value="Internal" class="text-xs border border-slate-200 rounded px-2 py-1 w-28 text-center" />
+              </div>
+              <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                <div class="flex items-center gap-3">
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Confidential</p>
+                    <p class="text-[10px] text-slate-500">Strictly named-access only with governance oversight</p>
+                  </div>
+                </div>
+                <input type="text" value="Confidential" class="text-xs border border-slate-200 rounded px-2 py-1 w-28 text-center" />
+              </div>
+            </div>
+
+            <!-- Save -->
+            <div class="mt-6 flex justify-end">
+              <button class="text-sm bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 font-medium">Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

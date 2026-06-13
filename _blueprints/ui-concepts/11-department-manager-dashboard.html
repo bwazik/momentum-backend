@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gov TMS — Department Manager Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>*{font-family:'Inter',system-ui,sans-serif}body{background:#f1f5f9}.stat-card{transition:all .2s ease}.stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,.1)}</style>
+</head>
+<body>
+  <div class="flex h-screen overflow-hidden">
+    <aside class="w-64 bg-[#0f172a] text-white flex flex-col shrink-0">
+      <div class="px-6 py-5 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-xs font-bold">G</div>
+          <div><p class="text-sm font-semibold">Gov TMS</p><p class="text-[10px] text-slate-400">Ministry of Finance</p></div>
+        </div>
+      </div>
+      <nav class="flex-1 px-3 py-4 space-y-1 text-sm">
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-emerald-600/20 text-emerald-300 font-medium">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Manager Dashboard
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Pending Approvals</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Team Workload</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Staff Performance</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Decisions Registry</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>Memos</a>
+      </nav>
+      <div class="px-4 py-4 border-t border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-xs font-bold text-white">F</div>
+          <div class="flex-1 min-w-0"><p class="text-sm font-medium truncate">Fahad Al-Otaibi</p><p class="text-[10px] text-slate-400">Director, Human Resources</p></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <header class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
+        <div>
+          <h1 class="text-lg font-semibold text-slate-900">Department Manager Dashboard</h1>
+          <p class="text-xs text-slate-400 mt-0.5">Human Resources Department · 16 team members</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="relative">
+            <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" placeholder="Search team, tasks..." class="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg w-64 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400" />
+          </div>
+          <button class="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">5</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="flex-1 overflow-y-auto p-6 space-y-6">
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-4 gap-4">
+          <div class="stat-card bg-white rounded-xl border border-slate-200 p-5">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Team Active Tasks</p>
+              <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+              </div>
+            </div>
+            <p class="text-3xl font-bold text-slate-900">35</p>
+            <p class="text-xs text-emerald-600 mt-1">12 completed this week</p>
+          </div>
+          <div class="stat-card bg-white rounded-xl border border-slate-200 p-5">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Pending My Approval</p>
+              <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+            </div>
+            <p class="text-3xl font-bold text-amber-600">8</p>
+            <p class="text-xs text-amber-600 mt-1">3 are overdue</p>
+          </div>
+          <div class="stat-card bg-white rounded-xl border border-slate-200 p-5">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Team Members</p>
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </div>
+            </div>
+            <p class="text-3xl font-bold text-slate-900">16</p>
+            <p class="text-xs text-emerald-600 mt-1">14 available · 2 on leave</p>
+          </div>
+          <div class="stat-card bg-white rounded-xl border border-slate-200 p-5">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Dept SLA Rate</p>
+              <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+                <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+              </div>
+            </div>
+            <p class="text-3xl font-bold text-purple-600">81%</p>
+            <p class="text-xs text-purple-600 mt-1">+4% vs last month</p>
+          </div>
+        </div>
+
+        <!-- Two-Column Layout -->
+        <div class="grid grid-cols-3 gap-6">
+          <!-- Team Workload Snapshot -->
+          <div class="col-span-2 bg-white rounded-xl border border-slate-200 p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-sm font-semibold text-slate-900">Team Workload Snapshot</h2>
+              <button class="text-xs text-emerald-600 hover:text-emerald-700 font-medium">Manage Workload →</button>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 w-48">
+                  <div class="w-7 h-7 rounded-full bg-emerald-200 flex items-center justify-center text-[10px] font-bold text-emerald-800">S</div>
+                  <span class="text-sm text-slate-700">Sara Al-Mansouri</span>
+                </div>
+                <div class="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full bg-emerald-500" style="width:85%"></div>
+                </div>
+                <span class="text-xs font-medium text-emerald-600 w-12 text-right">6</span>
+                <span class="text-xs text-slate-400 w-16 text-right">Legal Head</span>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 w-48">
+                  <div class="w-7 h-7 rounded-full bg-blue-200 flex items-center justify-center text-[10px] font-bold text-blue-800">K</div>
+                  <span class="text-sm text-slate-700">Khalid Al-Rashid</span>
+                </div>
+                <div class="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full bg-emerald-500" style="width:70%"></div>
+                </div>
+                <span class="text-xs font-medium text-emerald-600 w-12 text-right">5</span>
+                <span class="text-xs text-slate-400 w-16 text-right">Sr. Analyst</span>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 w-48">
+                  <div class="w-7 h-7 rounded-full bg-amber-200 flex items-center justify-center text-[10px] font-bold text-amber-800">N</div>
+                  <span class="text-sm text-slate-700">Noura Al-Qahtani</span>
+                </div>
+                <div class="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full bg-amber-500" style="width:90%"></div>
+                </div>
+                <span class="text-xs font-medium text-amber-600 w-12 text-right">9</span>
+                <span class="text-xs text-amber-600 w-16 text-right">Overloaded</span>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 w-48">
+                  <div class="w-7 h-7 rounded-full bg-purple-200 flex items-center justify-center text-[10px] font-bold text-purple-800">M</div>
+                  <span class="text-sm text-slate-700">Mohammed Al-Ghamdi</span>
+                </div>
+                <div class="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full bg-emerald-500" style="width:40%"></div>
+                </div>
+                <span class="text-xs font-medium text-slate-600 w-12 text-right">2</span>
+                <span class="text-xs text-slate-400 w-16 text-right">On leave</span>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 w-48">
+                  <div class="w-7 h-7 rounded-full bg-red-200 flex items-center justify-center text-[10px] font-bold text-red-800">A</div>
+                  <span class="text-sm text-slate-700">Ahmed Al-Zahrani</span>
+                </div>
+                <div class="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full bg-emerald-500" style="width:60%"></div>
+                </div>
+                <span class="text-xs font-medium text-slate-600 w-12 text-right">4</span>
+                <span class="text-xs text-slate-400 w-16 text-right">Available</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upcoming Leave & Availability -->
+          <div class="bg-white rounded-xl border border-slate-200 p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-sm font-semibold text-slate-900">Team Availability</h2>
+              <span class="text-xs text-slate-400">This week</span>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-full bg-amber-200 flex items-center justify-center text-[10px] font-bold text-amber-800">N</div>
+                  <div>
+                    <p class="text-xs font-medium text-slate-900">Noura Al-Qahtani</p>
+                    <p class="text-[10px] text-slate-400">Annual leave</p>
+                  </div>
+                </div>
+                <span class="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded font-medium">Jun 10–14</span>
+              </div>
+              <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-full bg-blue-200 flex items-center justify-center text-[10px] font-bold text-blue-800">K</div>
+                  <div>
+                    <p class="text-xs font-medium text-slate-900">Khalid Al-Rashid</p>
+                    <p class="text-[10px] text-slate-400">Training course</p>
+                  </div>
+                </div>
+                <span class="text-[10px] text-blue-600 bg-blue-50 px-2 py-0.5 rounded font-medium">Jun 15–16</span>
+              </div>
+              <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-full bg-emerald-200 flex items-center justify-center text-[10px] font-bold text-emerald-800">S</div>
+                  <div>
+                    <p class="text-xs font-medium text-slate-900">Sara Al-Mansouri</p>
+                    <p class="text-[10px] text-slate-400">Sick leave</p>
+                  </div>
+                </div>
+                <span class="text-[10px] text-red-600 bg-red-50 px-2 py-0.5 rounded font-medium">Today</span>
+              </div>
+            </div>
+            <button class="mt-4 text-xs text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              View Team Calendar
+            </button>
+          </div>
+        </div>
+
+        <!-- Bottom Grid -->
+        <div class="grid grid-cols-2 gap-6">
+          <!-- My Pending Approvals -->
+          <div class="bg-white rounded-xl border border-slate-200 p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-sm font-semibold text-slate-900">Pending My Approval</h2>
+              <button class="text-xs text-emerald-600 hover:text-emerald-700 font-medium">View All</button>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-start gap-3 p-3 rounded-lg bg-amber-50 border border-amber-100">
+                <span class="w-2 h-2 rounded-full bg-amber-500 mt-1.5 shrink-0"></span>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2">
+                    <p class="text-sm font-medium text-slate-900 truncate">Q2 Training Budget Proposal</p>
+                    <span class="text-[10px] font-medium text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">Stage: Sign-off</span>
+                  </div>
+                  <p class="text-xs text-slate-500 mt-0.5">Awaiting your approval · Due in 2 days</p>
+                  <p class="text-[10px] text-slate-400 mt-1">From: Noura Al-Qahtani · Blueprint: HR Request</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 p-3 rounded-lg bg-amber-50 border border-amber-100">
+                <span class="w-2 h-2 rounded-full bg-red-500 mt-1.5 shrink-0"></span>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2">
+                    <p class="text-sm font-medium text-slate-900 truncate">Leave Policy Amendment</p>
+                    <span class="text-[10px] font-medium text-red-600 bg-red-100 px-1.5 py-0.5 rounded">Overdue</span>
+                  </div>
+                  <p class="text-xs text-slate-500 mt-0.5">Overdue by 3 days · Legal Review completed</p>
+                  <p class="text-[10px] text-slate-400 mt-1">From: Sara Al-Mansouri · Priority: Urgent</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 p-3 rounded-lg border border-slate-100">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 shrink-0"></span>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-slate-900 truncate">New Hire Onboarding — IT Specialist</p>
+                  <p class="text-xs text-slate-500 mt-0.5">Pending your sign-off · On track</p>
+                  <p class="text-[10px] text-slate-400 mt-1">From: Ahmed Al-Zahrani · Created 1d ago</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Team Activity Feed -->
+          <div class="bg-white rounded-xl border border-slate-200 p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-sm font-semibold text-slate-900">Team Activity</h2>
+              <span class="text-xs text-slate-400">Today</span>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-start gap-2">
+                <div class="w-6 h-6 rounded-full bg-emerald-200 flex items-center justify-center text-[9px] font-bold text-emerald-800 shrink-0">S</div>
+                <div>
+                  <p class="text-xs text-slate-600"><span class="font-medium text-slate-900">Sara Al-Mansouri</span> completed Legal Review on T-2026-0083</p>
+                  <p class="text-[10px] text-slate-400">15 min ago</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2">
+                <div class="w-6 h-6 rounded-full bg-blue-200 flex items-center justify-center text-[9px] font-bold text-blue-800 shrink-0">K</div>
+                <div>
+                  <p class="text-xs text-slate-600"><span class="font-medium text-slate-900">Khalid Al-Rashid</span> requested your approval on Q2 Training Budget</p>
+                  <p class="text-[10px] text-slate-400">1 hour ago</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2">
+                <div class="w-6 h-6 rounded-full bg-amber-200 flex items-center justify-center text-[9px] font-bold text-amber-800 shrink-0">N</div>
+                <div>
+                  <p class="text-xs text-slate-600"><span class="font-medium text-slate-900">Noura Al-Qahtani</span> was assigned T-2026-0091 (Priority: Critical)</p>
+                  <p class="text-[10px] text-slate-400">3 hours ago</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2">
+                <div class="w-6 h-6 rounded-full bg-red-200 flex items-center justify-center text-[9px] font-bold text-red-800 shrink-0">A</div>
+                <div>
+                  <p class="text-xs text-slate-600"><span class="font-medium text-slate-900">Ahmed Al-Zahrani</span> submitted Technical Specs for T-2026-0412</p>
+                  <p class="text-[10px] text-slate-400">5 hours ago</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2">
+                <div class="w-6 h-6 rounded-full bg-slate-300 flex items-center justify-center text-[9px] font-bold text-slate-500 shrink-0">S</div>
+                <div>
+                  <p class="text-xs text-slate-600"><span class="font-medium text-slate-900">System</span> SLA warning: T-2026-0090 approaching deadline</p>
+                  <p class="text-[10px] text-slate-400">6 hours ago</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

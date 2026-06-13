@@ -1,0 +1,939 @@
+// ============================================================================
+// Gov TMS — MVP Entity-Relationship Diagram (DBML)
+// ============================================================================
+//
+// Architecture:  Database-per-Tenant
+//                - Central Management DB: tenant registry & platform config
+//                - Tenant DB (one per tenant): all business, IAM, operational data
+//
+// Conventions:
+//   - tenant_id appears ONLY in Central Management DB tables
+//   - Tenant DB tables omit tenant_id (physical isolation guarantees it)
+//   - Enums stored as TINYINT, mapped via Laravel Enum Classes
+//   - Bilingual fields use explicit columns: _en (English), _ar (Arabic)
+//   - Arabic fields are required; English fields are optional for user content
+//   - System copies Arabic to English if English is empty (task titles, descriptions)
+//   - Dates stored as Gregorian only; Hijri computed at presentation layer
+//   - Soft deletes via deleted_at (nullable timestamp)
+//   - All internal primary keys (`id`) are unsigned big integers (BIGINT) for maximum join performance.
+//   - All API-exposed entities have a `public_id` (UUID v7) column for external routing to prevent enumeration.
+//
+// Document version: 1.0
+// Input: Feature Inventory v1.1 (288 features, 22 domains)
+//        Module Boundary Map v1.1
+//        Visibility & Access Rules v1.1
+//        ERD Pre-Review Questions (all resolved)
+//
+// ============================================================================
+
+
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║                    CENTRAL MANAGEMENT DATABASE                         ║
+// ║         (Shared across all tenants — one instance per deployment)      ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
+Table tenants {
+  id             bigint [pk, increment]
+  public_id      uuid [not null, unique, note: 'UUID v7 for API routing']
+  name_en        varchar [not null]
+  name_ar        varchar [not null]
+  slug           varchar [not null, unique, note: 'URL-safe identifier for tenant routing']
+  domain         varchar [note: 'Custom domain if applicable']
+  database_name  varchar [not null, unique, note: 'Name of the tenant-specific database']
+  logo_path      varchar [note: 'Path to tenant logo in object storage']
+  default_language tinyint [not null, default: 1, note: '1=ar, 2=en']
+  timezone       varchar [not null, default: 'Asia/Riyadh']
+  is_active      boolean [not null, default: true]
+  settings       jsonb [note: 'Tenant-level config: classification labels, confidential override toggle, initiator confidential mgmt toggle, etc.']
+  created_at     timestamp [not null]
+  updated_at     timestamp [not null]
+
+  Note: 'Central tenant registry. Each row represents one organization with its own isolated database. Settings JSONB holds tenant-configurable toggles that do not warrant dedicated columns.'
+}
+
+
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║                         TENANT DATABASE                                ║
+// ║            (One database per tenant — no tenant_id columns)            ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
+
+// ────────────────────────────────────────────────────────────────────────────
+//  ORGANIZATION DOMAIN
+//  Source: Feature Inventory Domain 1, Visibility & Access Rules Section 3-4
+// ────────────────────────────────────────────────────────────────────────────
+
+Table departments {
+  id                   bigint [pk, increment]
+  public_id            uuid [not null, unique, note: 'UUID v7 for API routing']
+  parent_department_id bigint [ref: > departments.id, note: 'Null for root-level departments/sectors']
+  name_en              varchar [not null]
+  name_ar              varchar [not null]
+  is_active            boolean [not null, default: true]
+  created_at           timestamp [not null]
+  updated_at           timestamp [not null]
+  deleted_at           timestamp [note: 'Soft delete']
+
+  Note: 'Organizational hierarchy: sectors, directorates, sections, units. Self-referential parent for nesting. Feature #2-3.'
+}
+
+Table authority_grades {
+  id          bigint [pk, increment]
+  public_id   uuid [not null, unique, note: 'UUID v7 for API routing']
+  rank        smallint [not null, note: 'Lower number = higher authority. Minister=1, Undersecretary=2, etc.']
+  name_en     varchar [not null]
+  name_ar     varchar [not null]
+  description varchar [note: 'Optional description of this grade level']
+  created_at  timestamp [not null]
+  updated_at  timestamp [not null]
+
+  Note: 'Tenant-configurable seniority tiers. Used for escalation routing and Blueprint assignment rules. Feature #6.'
+}
+
+Table positions {
+  id                     bigint [pk, increment]
+  public_id              uuid [not null, unique, note: 'UUID v7 for API routing']
+  department_id          bigint [not null, ref: > departments.id]
+  title_en               varchar [not null]
+  title_ar               varchar [not null]
+  reports_to_position_id bigint [ref: > positions.id, note: 'Reporting line for escalation. Null for top position.']
+  authority_grade_id     bigint [not null, ref: > authority_grades.id]
+  is_department_head     boolean [not null, default: false, note: 'Used by Department Head assignment resolution method']
+  is_active              boolean [not null, default: true]
+  created_at             timestamp [not null]
+  updated_at             timestamp [not null]
+  deleted_at             timestamp [note: 'Soft delete']
+
+  Note: 'Tenant-configurable job slots. Exist independently of occupants. Feature #4-6. Position-based assignment is the core of the access model.'
+}
+
+Table working_calendars {
+  id                  bigint [pk, increment]
+  name_en             varchar [not null]
+  name_ar             varchar [not null]
+  working_days        varchar [not null, note: 'Comma-separated day numbers: 0=Sun,1=Mon,...,6=Sat. E.g. "0,1,2,3,4" for Sun-Thu']
+  working_hours_start time [not null, note: 'e.g. 08:00']
+  working_hours_end   time [not null, note: 'e.g. 16:00']
+  timezone            varchar [not null, default: 'Asia/Riyadh']
+  is_default           boolean [not null, default: false, note: 'One default per tenant']
+  created_at          timestamp [not null]
+  updated_at          timestamp [not null]
+
+  Note: 'Working calendar for SLA calculations. Hours-aware to support hour-based SLAs. Feature #120, #230.'
+}
+
+Table public_holidays {
+  id                  bigint [pk, increment]
+  working_calendar_id bigint [not null, ref: > working_calendars.id]
+  name_en             varchar [not null]
+  name_ar             varchar [not null]
+  holiday_date        date [not null]
+  is_recurring        boolean [not null, default: false, note: 'True = same date every year']
+  created_at          timestamp [not null]
+
+  Note: 'Official holidays excluded from SLA countdown. Feature #121, #231.'
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+//  IAM DOMAIN (Identity & Access Management)
+//  Source: Feature Inventory Domain 2, 15; Visibility & Access Rules Sections 2-8
+// ────────────────────────────────────────────────────────────────────────────
+
+Table users {
+  id                 bigint [pk, increment]
+  public_id          uuid [not null, unique, note: 'UUID v7 for API routing']
+  account_type       tinyint [not null, note: '1=internal_user, 2=tenant_admin, 3=external_auditor, 4=platform_admin']
+  name_en            varchar [not null]
+  name_ar            varchar [not null]
+  email              varchar [not null, unique]
+  mobile             varchar
+  employee_id        varchar [unique, note: 'HR employee number']
+  preferred_language tinyint [not null, default: 1, note: '1=ar, 2=en']
+  is_active          boolean [not null, default: true]
+  email_verified_at  timestamp
+  password           varchar [not null]
+  remember_token     varchar
+  created_at         timestamp [not null]
+  updated_at         timestamp [not null]
+  deleted_at         timestamp [note: 'Soft delete — deactivated users preserved for history']
+
+  Note: 'User accounts. account_type is a fixed technical classification, NOT a business role. Feature #11-16. No hardcoded business roles (Minister, Director, etc.).'
+}
+
+Table user_position_assignments {
+  id          bigint [pk, increment]
+  user_id     bigint [not null, ref: > users.id]
+  position_id bigint [not null, ref: > positions.id]
+  started_at  timestamp [not null]
+  ended_at    timestamp [note: 'Null = currently active assignment']
+  is_primary  boolean [not null, default: true, note: 'MVP: one active primary position per user']
+  created_at  timestamp [not null]
+
+  Note: 'History table for user-to-position assignments. Supports transfers (Feature #13). MVP enforces one active primary position per user. Old assignments have ended_at set.'
+}
+
+Table capabilities {
+  id                bigint [pk, increment]
+  key               varchar [not null, unique, note: 'Machine-readable key, e.g. task.view.organization']
+  name_en           varchar [not null]
+  name_ar           varchar [not null]
+  description       varchar
+  is_system_defined boolean [not null, default: true, note: 'True = shipped with platform, False = tenant-created']
+  created_at        timestamp [not null]
+  updated_at        timestamp [not null]
+
+  Note: 'Named permissions for the ABAC policy engine. ~25 MVP capabilities defined. Feature #237.'
+}
+
+Table position_capability_grants {
+  id                 bigint [pk, increment]
+  position_id        bigint [not null, ref: > positions.id]
+  capability_id      bigint [not null, ref: > capabilities.id]
+  scope_type         tinyint [not null, note: '1=tenant, 2=own_department, 3=specific_department, 4=department_tree, 5=own_tasks, 6=audit_grant']
+  scope_department_id bigint [ref: > departments.id, note: 'Required when scope_type=3 or 4']
+  granted_by_user_id bigint [not null, ref: > users.id]
+  granted_at         timestamp [not null]
+  revoked_at         timestamp [note: 'Null = active grant. Never mutate old rows; create new row on re-grant.']
+
+  Note: 'Primary permission mechanism. Capabilities are assigned to positions, not users. Feature #237. New row created on re-grant for full audit trail.'
+}
+
+Table user_capability_grants {
+  id                 bigint [pk, increment]
+  user_id            bigint [not null, ref: > users.id]
+  capability_id      bigint [not null, ref: > capabilities.id]
+  scope_type         tinyint [not null, note: '1=tenant, 2=own_department, 3=specific_department, 4=department_tree, 5=own_tasks, 6=audit_grant']
+  scope_department_id bigint [ref: > departments.id]
+  granted_by_user_id bigint [not null, ref: > users.id]
+  granted_at         timestamp [not null]
+  revoked_at         timestamp
+  reason             varchar [not null, note: 'Mandatory justification for user-level exception grants']
+
+  Note: 'Exception-only user-specific capability grants. Audit-sensitive. Requires mandatory reason. Feature #237.'
+}
+
+Table monitoring_scope_grants {
+  id                    bigint [pk, increment]
+  user_id               bigint [not null, ref: > users.id]
+  scope_type            tinyint [not null, note: '1=tenant, 2=own_department, 3=specific_department, 4=department_tree']
+  scope_department_id   bigint [ref: > departments.id, note: 'Required for scope_type 3 or 4']
+  blueprint_category_id bigint [ref: > blueprint_categories.id, note: 'Null = all categories in scope']
+  granted_by_user_id    bigint [not null, ref: > users.id]
+  granted_at            timestamp [not null]
+  revoked_at            timestamp
+
+  Note: 'Follow-up / monitoring scope configuration. Combined with task.view.follow_up_scope capability to enable follow-up board access. Feature #97-113. Replaces hardcoded Follow-Up Specialist role.'
+}
+
+Table delegations {
+  id                    bigint [pk, increment]
+  public_id             uuid [not null, unique, note: 'UUID v7 for API routing']
+  delegator_user_id     bigint [not null, ref: > users.id, note: 'User delegating their authority']
+  delegate_user_id      bigint [not null, ref: > users.id, note: 'User receiving delegated authority']
+  starts_at             timestamp [not null]
+  ends_at               timestamp [not null, note: 'Auto-expire date. Feature #206.']
+  scope_type            tinyint [not null, note: '1=all, 2=blueprint_category, 3=stage_type, 4=blueprint_category_and_stage_type']
+  blueprint_category_id bigint [ref: > blueprint_categories.id, note: 'Used when scope_type includes category']
+  stage_type_id         bigint [ref: > stage_types.id, note: 'Used when scope_type includes stage type']
+  is_active             boolean [not null, default: true]
+  created_at            timestamp [not null]
+  updated_at            timestamp [not null]
+
+  Note: 'Authority delegation for out-of-office. Scoped by Blueprint category and/or stage type (Decision #23). Feature #204-208. Incoming assignments resolve to delegate during active period.'
+}
+
+Table audit_grants {
+  id                       bigint [pk, increment]
+  external_auditor_user_id bigint [not null, ref: > users.id]
+  granted_by_user_id       bigint [not null, ref: > users.id]
+  date_range_start         date [not null]
+  date_range_end           date [not null]
+  department_id            bigint [ref: > departments.id, note: 'Null = all departments']
+  granted_at               timestamp [not null]
+  revoked_at               timestamp
+
+  Note: 'Explicit grants for external auditor access. Auditors see only completed/archived tasks within grant scope. Visibility Rule T-6.'
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+//  BLUEPRINT DOMAIN (Design-Time)
+//  Source: Feature Inventory Domain 3; Module Boundary Map Rule 2
+// ────────────────────────────────────────────────────────────────────────────
+
+Table blueprint_categories {
+  id            bigint [pk, increment]
+  public_id     uuid [not null, unique, note: 'UUID v7 for API routing']
+  name_en       varchar [not null]
+  name_ar       varchar [not null]
+  display_order smallint [not null, default: 0]
+  is_active     boolean [not null, default: true]
+  created_at    timestamp [not null]
+  updated_at    timestamp [not null]
+  deleted_at    timestamp
+
+  Note: 'Tenant-defined categories for classifying Blueprints. Feature #20. Used for monitoring scope grants and delegation scope. Each Blueprint belongs to exactly one category.'
+}
+
+Table blueprints {
+  id                 bigint [pk, increment]
+  public_id          uuid [not null, unique, note: 'UUID v7 for API routing']
+  category_id        bigint [not null, ref: > blueprint_categories.id]
+  name_en            varchar [not null]
+  name_ar            varchar [not null]
+  description_en     varchar
+  description_ar     varchar
+  scope              tinyint [not null, note: '1=organization, 2=department']
+  department_id      bigint [ref: > departments.id, note: 'Required when scope=2 (department-scoped)']
+  is_locked          boolean [not null, default: false, note: 'True once any task is launched. Feature #25. Immutable after lock.']
+  is_active          boolean [not null, default: true, note: 'Feature #23-24']
+  created_by_user_id bigint [not null, ref: > users.id]
+  created_at         timestamp [not null]
+  updated_at         timestamp [not null]
+  deleted_at         timestamp
+
+  Note: 'Reusable lifecycle templates. Immutable after first task launch (Feature #25). Edit via duplicate-to-edit workflow (MVP). Versioning deferred to V2.'
+}
+
+Table stage_types {
+  id                bigint [pk, increment]
+  public_id         uuid [not null, unique, note: 'UUID v7 for API routing']
+  name_en           varchar [not null]
+  name_ar           varchar [not null]
+  is_system_default boolean [not null, default: false, note: 'True = shipped with platform (Action, Review, Approval, Decision, Info Gathering)']
+  is_active         boolean [not null, default: true]
+  display_order     smallint [not null, default: 0]
+  created_at        timestamp [not null]
+  updated_at        timestamp [not null]
+  deleted_at        timestamp
+
+  Note: 'Tenant-configurable stage types. Platform ships with 5 defaults. Tenants may add their own. Decision #13. Feature #35.'
+}
+
+Table sla_policies {
+  id                           bigint [pk, increment]
+  public_id                    uuid [not null, unique, note: 'UUID v7 for API routing']
+  name_en                      varchar [not null]
+  name_ar                      varchar [not null]
+  sla_value                    smallint [not null, note: 'Numeric duration value']
+  sla_unit                     tinyint [not null, note: '1=hours, 2=days. Decision #14.']
+  warning_threshold_percentage smallint [not null, default: 75, note: 'Percent of SLA elapsed before warning fires. Feature #43.']
+  is_active                    boolean [not null, default: true]
+  created_at                   timestamp [not null]
+  updated_at                   timestamp [not null]
+  deleted_at                   timestamp
+
+  Note: 'Reusable named SLA policies. Shared across Blueprint stages. Feature #118-119. Working calendar is hours-aware (Decision #14).'
+}
+
+Table blueprint_stages {
+  id                          bigint [pk, increment]
+  public_id                   uuid [not null, unique, note: 'UUID v7 for API routing']
+  blueprint_id                bigint [not null, ref: > blueprints.id]
+  stage_type_id               bigint [not null, ref: > stage_types.id]
+  sla_policy_id               bigint [ref: > sla_policies.id, note: 'Null if no SLA on this stage']
+  name_en                     varchar [not null]
+  name_ar                     varchar [not null]
+  description_en              varchar
+  description_ar              varchar
+  sequence_order              smallint [not null, note: 'Position in sequential flow. Strictly sequential for MVP (Decision).']
+  assignment_type             tinyint [not null, note: '1=specific_position, 2=department_head, 3=manual_at_launch']
+  assigned_position_id        bigint [ref: > positions.id, note: 'Used when assignment_type=1']
+  assigned_department_id      bigint [ref: > departments.id, note: 'Used when assignment_type=2 (resolve dept head)']
+  assignment_cardinality      tinyint [not null, default: 1, note: '1=single, 2=multiple']
+  completion_rule             tinyint [not null, default: 1, note: '1=any_assignee, 2=all_assignees, 3=lead_assignee. Feature #39B.']
+  escalation_position_id      bigint [ref: > positions.id, note: 'Override escalation target. If null, escalation follows reports_to chain. Feature #47.']
+  created_at                  timestamp [not null]
+  updated_at                  timestamp [not null]
+
+  indexes {
+    (blueprint_id, sequence_order) [unique]
+  }
+
+  Note: 'Stage definitions within a Blueprint. Sequential flow via sequence_order. Feature #33-47. Assignment resolved at runtime (Module Boundary Rule 3). Only Stage 1 validated at task launch (Decision #18).'
+}
+
+Table blueprint_sub_stages {
+  id                     bigint [pk, increment]
+  public_id              uuid [not null, unique, note: 'UUID v7 for API routing']
+  blueprint_stage_id     bigint [not null, ref: > blueprint_stages.id]
+  sla_policy_id          bigint [ref: > sla_policies.id]
+  name_en                varchar [not null]
+  name_ar                varchar [not null]
+  description_en         varchar
+  description_ar         varchar
+  sequence_order         smallint [not null]
+  is_required            boolean [not null, default: true, note: 'Required sub-stages must complete before parent stage can advance. Decision #16.']
+  assignment_type        tinyint [not null, note: '1=specific_position, 2=department_head, 3=manual_at_launch']
+  assigned_position_id   bigint [ref: > positions.id]
+  assigned_department_id bigint [ref: > departments.id]
+  assignment_cardinality tinyint [not null, default: 1, note: '1=single, 2=multiple']
+  completion_rule        tinyint [not null, default: 1, note: '1=any_assignee, 2=all_assignees, 3=lead_assignee']
+  created_at             timestamp [not null]
+  updated_at             timestamp [not null]
+
+  indexes {
+    (blueprint_stage_id, sequence_order) [unique]
+  }
+
+  Note: 'Optional internal steps within a stage. Feature #39A. Independent SLA timers (Decision #16). Parent stage cannot complete until all required sub-stages complete.'
+}
+
+Table blueprint_stage_transitions {
+  id                bigint [pk, increment]
+  blueprint_id      bigint [not null, ref: > blueprints.id]
+  from_stage_id     bigint [not null, ref: > blueprint_stages.id]
+  to_stage_id       bigint [not null, ref: > blueprint_stages.id]
+  transition_type   tinyint [not null, note: '1=advance (forward), 2=return (backward)']
+  return_reason_required boolean [not null, default: false, note: 'True for return transitions — mandatory reason']
+  created_at        timestamp [not null]
+
+  Note: 'Explicit transition rules between stages. Feature #45-46. MVP: advance is always to next sequence_order. Returns can target any earlier stage with mandatory reason.'
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+//  TASK & EXECUTION DOMAIN (Run-Time)
+//  Source: Feature Inventory Domains 4-6, 10, 17
+// ────────────────────────────────────────────────────────────────────────────
+
+Table task_priorities {
+  id            bigint [pk, increment]
+  public_id     uuid [not null, unique, note: 'UUID v7 for API routing']
+  name_en       varchar [not null]
+  name_ar       varchar [not null]
+  severity_rank smallint [not null, note: 'Lower = more severe. 1=Critical, 2=Urgent, 3=Routine']
+  color_code    varchar [note: 'Hex color for UI display, e.g. #E74C3C']
+  is_default    boolean [not null, default: false, note: 'Default priority for new tasks']
+  is_active     boolean [not null, default: true]
+  display_order smallint [not null, default: 0]
+  created_at    timestamp [not null]
+  updated_at    timestamp [not null]
+  deleted_at    timestamp
+
+  Note: 'Tenant-configurable priority levels. Replaces hardcoded Routine/Urgent/Critical enum. Decision #12. Feature #62. Platform ships with 3 defaults.'
+}
+
+Table tasks {
+  id                   bigint [pk, increment]
+  public_id            uuid [not null, unique, note: 'UUID v7 for API routing']
+  blueprint_id         bigint [not null, ref: > blueprints.id, note: 'Blueprint is immutable after this task launches']
+  priority_id          bigint [not null, ref: > task_priorities.id]
+  title_en             varchar [note: 'Optional. System copies title_ar if empty. Decision #10.']
+  title_ar             varchar [not null]
+  description_en       text [note: 'Optional. System copies description_ar if empty.']
+  description_ar       text [not null]
+  classification_level tinyint [not null, default: 1, note: '1=public, 2=internal, 3=confidential. Feature #68.']
+  initiator_user_id    bigint [not null, ref: > users.id, note: 'Person who created the task. Feature #67.']
+  status               tinyint [not null, default: 1, note: '1=draft, 2=active, 3=suspended, 4=completed, 5=cancelled']
+  due_date             date [note: 'Overall task target completion date, separate from stage SLAs. Feature #63.']
+  created_at           timestamp [not null]
+  launched_at          timestamp [note: 'When task moved from draft to active. Feature #70.']
+  suspended_at         timestamp [note: 'Most recent suspension timestamp. Feature #72.']
+  resumed_at           timestamp [note: 'Most recent resume timestamp. Feature #73.']
+  completed_at         timestamp [note: 'When final stage closed. Feature #74.']
+  cancelled_at         timestamp [note: 'When task was cancelled. Feature #71.']
+  cancellation_reason  text [note: 'Mandatory reason for cancellation. Feature #71.']
+  archived_at          timestamp [note: 'Logical archive status. Decision #19. No separate archive table.']
+  archived_by_user_id  bigint [ref: > users.id]
+  deleted_at           timestamp
+
+  Note: 'A single instance of work launched from a Blueprint. Feature #59-79. Overdue/at-risk are derived from stage SLA, not stored status. Archive is logical (Decision #19). Reopening (V2) creates new task with reopened_from_task_id.'
+}
+
+Table task_stage_instances {
+  id                       bigint [pk, increment]
+  task_id                  bigint [not null, ref: > tasks.id]
+  blueprint_stage_id       bigint [not null, ref: > blueprint_stages.id, note: 'Reference to the immutable Blueprint stage definition']
+  sequence_order           smallint [not null, note: 'Copied from blueprint_stages.sequence_order at creation']
+  owning_department_id     bigint [ref: > departments.id, note: 'Resolved and stored on entry for department-touched queries. Visibility Rule T-3.']
+  completion_rule          tinyint [not null, note: '1=any_assignee, 2=all_assignees, 3=lead_assignee. Copied from blueprint stage.']
+  status                   tinyint [not null, default: 1, note: '1=pending, 2=active, 3=completed, 4=returned, 5=skipped']
+  entered_at               timestamp [note: 'When this stage became active']
+  exited_at                timestamp [note: 'When this stage completed or was exited']
+  completion_note          text [note: 'Free-text summary of what was done. Feature #85.']
+  return_reason            text [note: 'Mandatory reason if status=returned. Feature #87.']
+  created_at               timestamp [not null]
+
+  Note: 'Runtime stage instance for a task. One row per stage entry (a returned stage creates a new instance on re-entry). Feature #80-89. owning_department_id frozen on entry.'
+}
+
+Table task_sub_stage_instances {
+  id                          bigint [pk, increment]
+  task_id                     bigint [not null, ref: > tasks.id]
+  parent_stage_instance_id    bigint [not null, ref: > task_stage_instances.id]
+  blueprint_sub_stage_id      bigint [not null, ref: > blueprint_sub_stages.id]
+  sequence_order              smallint [not null]
+  owning_department_id        bigint [ref: > departments.id]
+  is_required                 boolean [not null, note: 'Copied from blueprint_sub_stages. Decision #16.']
+  completion_rule             tinyint [not null, note: '1=any_assignee, 2=all_assignees, 3=lead_assignee']
+  status                      tinyint [not null, default: 1, note: '1=pending, 2=active, 3=completed, 4=returned']
+  entered_at                  timestamp
+  exited_at                   timestamp
+  completion_note             text
+  created_at                  timestamp [not null]
+
+  Note: 'Runtime sub-stage instance. Parent stage cannot complete until all required sub-stages complete (Decision #16). Independent SLA timers tracked in SLA domain.'
+}
+
+Table task_stage_assignments {
+  id                    bigint [pk, increment]
+  task_id               bigint [not null, ref: > tasks.id]
+  stage_instance_id     bigint [ref: > task_stage_instances.id, note: 'Populated for stage-level assignment']
+  sub_stage_instance_id bigint [ref: > task_sub_stage_instances.id, note: 'Populated for sub-stage-level assignment']
+  user_id               bigint [not null, ref: > users.id]
+  position_id           bigint [ref: > positions.id, note: 'Position at time of assignment — preserved for audit']
+  delegated_from_user_id bigint [ref: > users.id, note: 'If assigned via delegation, the original authority holder']
+  assignment_role       tinyint [not null, default: 1, note: '1=required, 2=optional, 3=lead. Decision #17. Only required/lead participate in completion.']
+  is_completed          boolean [not null, default: false]
+  assigned_at           timestamp [not null]
+  completed_at          timestamp
+  reassigned_at         timestamp [note: 'If this assignment was overridden']
+  reassigned_by_user_id bigint [ref: > users.id]
+  reassignment_reason   text [note: 'Mandatory reason for override. Feature #90.']
+
+  Note: 'Who is assigned to each stage/sub-stage instance. Multiple rows = multiple assignees. Feature #39B, #81, #90. assignment_role determines participation in completion (Decision #17).'
+}
+
+Table task_external_references {
+  id                 bigint [pk, increment]
+  public_id          uuid [not null, unique, note: 'UUID v7 for API routing']
+  task_id            bigint [not null, ref: > tasks.id]
+  reference_type     tinyint [not null, note: '1=correspondence, 2=contract, 3=ministerial_decision, 4=authority_decision, 5=meeting_minute, 6=external_org_request, 7=vendor_reference, 8=other']
+  reference_number   varchar [not null, note: 'The external identifier string']
+  external_entity_id bigint [ref: > external_entities.id, note: 'Issuing entity from reference table']
+  notes              text
+  created_at         timestamp [not null]
+
+  Note: 'Links tasks to external identifiers. Feature #64, #221-225, Domain 17. Multiple references per task allowed (Feature #224). Searchable (Feature #105, #225).'
+}
+
+Table task_confidential_participants {
+  id               bigint [pk, increment]
+  task_id          bigint [not null, ref: > tasks.id]
+  user_id          bigint [not null, ref: > users.id]
+  added_by_user_id bigint [not null, ref: > users.id]
+  added_at         timestamp [not null]
+
+  Note: 'Explicitly named participants for confidential tasks. Visibility Rule Section 8. Feature #68.'
+}
+
+Table task_follow_up_actions {
+  id          bigint [pk, increment]
+  public_id   uuid [not null, unique, note: 'UUID v7 for API routing']
+  task_id     bigint [not null, ref: > tasks.id]
+  user_id     bigint [not null, ref: > users.id, note: 'User who logged the follow-up']
+  action_type tinyint [not null, note: '1=phone_call, 2=email, 3=meeting, 4=message, 5=other']
+  notes       text [not null]
+  created_at  timestamp [not null]
+
+  Note: 'Manual follow-up actions logged by follow-up specialists. Feature #111. Permanently stored in task history.'
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+//  CONFIDENTIALITY DOMAIN
+//  Source: Visibility & Access Rules Sections 8, 10
+// ────────────────────────────────────────────────────────────────────────────
+
+Table confidential_governance_participants {
+  id                            bigint [pk, increment]
+  position_id                   bigint [not null, ref: > positions.id]
+  scope_type                    tinyint [not null, note: '1=tenant, 3=specific_department, 4=department_tree']
+  scope_department_id           bigint [ref: > departments.id]
+  blueprint_category_id         bigint [ref: > blueprint_categories.id, note: 'Null = all categories']
+  applies_to_classification_level tinyint [not null, default: 3, note: '3=confidential. Configurable per visibility level.']
+  created_by_user_id            bigint [not null, ref: > users.id]
+  created_at                    timestamp [not null]
+  revoked_at                    timestamp
+
+  Note: 'Positions automatically included in confidential governance access. Prevents confidential tasks from being invisible to accountable leadership. Visibility Rule Section 8.'
+}
+
+Table confidential_access_events {
+  id          bigint [pk, increment]
+  task_id     bigint [not null, ref: > tasks.id]
+  user_id     bigint [not null, ref: > users.id]
+  access_type tinyint [not null, note: '1=metadata_view, 2=content_override, 3=participant_added, 4=participant_removed']
+  reason      text [note: 'Mandatory for content_override']
+  created_at  timestamp [not null]
+
+  Note: 'Dedicated table for confidential access tracking. Also emitted to audit_events. Supports quick governance reporting on sensitive access. Visibility Rule Section 10.'
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+//  ESCALATION DOMAIN
+//  Source: Feature Inventory Domain 7 (Features #118-128)
+// ────────────────────────────────────────────────────────────────────────────
+
+Table escalations {
+  id                    bigint [pk, increment]
+  public_id             uuid [not null, unique, note: 'UUID v7 for API routing']
+  task_id               bigint [not null, ref: > tasks.id]
+  stage_instance_id     bigint [ref: > task_stage_instances.id]
+  sub_stage_instance_id bigint [ref: > task_sub_stage_instances.id]
+  escalation_type       tinyint [not null, note: '1=auto_sla_breach, 2=manual']
+  escalated_to_user_id  bigint [not null, ref: > users.id, note: 'Resolved from reports_to chain (Decision #15)']
+  escalated_to_position_id bigint [ref: > positions.id]
+  escalated_by_user_id  bigint [ref: > users.id, note: 'Null for auto-escalation']
+  reason                text [not null, note: 'Mandatory escalation reason. Feature #126.']
+  status                tinyint [not null, default: 1, note: '1=open, 2=resolved']
+  resolution_note       text [note: 'Manager action taken. Feature #128.']
+  resolved_at           timestamp
+  created_at            timestamp [not null]
+
+  Note: 'Tracks SLA breach escalations and manual escalations. Feature #124-128. Auto-escalation resolves target via positions.reports_to_position_id (Decision #15).'
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+//  SLA RUNTIME DOMAIN
+//  Source: Feature Inventory Domain 7; Module Boundary Map Rule 4
+// ────────────────────────────────────────────────────────────────────────────
+
+Table sla_timer_instances {
+  id                    bigint [pk, increment]
+  task_id               bigint [not null, ref: > tasks.id]
+  stage_instance_id     bigint [ref: > task_stage_instances.id]
+  sub_stage_instance_id bigint [ref: > task_sub_stage_instances.id]
+  sla_policy_id         bigint [not null, ref: > sla_policies.id]
+  working_calendar_id   bigint [not null, ref: > working_calendars.id]
+  started_at            timestamp [not null]
+  deadline_at           timestamp [not null, note: 'Computed deadline based on SLA value, unit, and working calendar']
+  warning_at            timestamp [not null, note: 'Computed warning threshold timestamp']
+  paused_at             timestamp [note: 'Set when task is suspended. Feature #72.']
+  elapsed_before_pause  integer [default: 0, note: 'Working seconds elapsed before pause, for accurate resume calculation']
+  completed_at          timestamp
+  status                tinyint [not null, default: 1, note: '1=running, 2=warning, 3=breached, 4=completed, 5=paused']
+  created_at            timestamp [not null]
+
+  Note: 'Runtime SLA timer per stage/sub-stage. Tracking & SLA module owns these — it monitors stage events but never writes to task tables (Rule 4). Holiday-aware. Feature #42-43, #120-123.'
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+//  COMMENTS DOMAIN
+//  Source: Feature Inventory Domain 10
+// ────────────────────────────────────────────────────────────────────────────
+
+Table comments {
+  id                bigint [pk, increment]
+  public_id         uuid [not null, unique, note: 'UUID v7 for API routing']
+  task_id           bigint [not null, ref: > tasks.id]
+  user_id           bigint [not null, ref: > users.id]
+  parent_comment_id bigint [ref: > comments.id, note: 'Null for top-level comments. Single-level threading only (Decision #22).']
+  body              text [not null]
+  created_at        timestamp [not null]
+  updated_at        timestamp [not null]
+  deleted_at        timestamp
+
+  Note: 'Task comments. Single-level threading: replies cannot have sub-replies (Decision #22). Visible to all task viewers (Rule S-5). Feature #169-172.'
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+//  DOCUMENT & ATTACHMENT DOMAIN
+//  Source: Feature Inventory Domain 11; Decision #24
+// ────────────────────────────────────────────────────────────────────────────
+
+Table documents {
+  id                  bigint [pk, increment]
+  public_id           uuid [not null, unique, note: 'UUID v7 for API routing']
+  uploader_user_id    bigint [not null, ref: > users.id]
+  original_filename   varchar [not null]
+  storage_path        varchar [not null, note: 'Path in object storage (S3/Azure Blob/MinIO). Decision #24.']
+  mime_type           varchar [not null]
+  size_bytes          bigint [not null]
+  entity_type         varchar [not null, note: 'Polymorphic: task, comment, stage_output, help_article']
+  entity_id           bigint [not null, note: 'ID of the owning entity']
+  version_number      smallint [not null, default: 1, note: 'Feature #179-180']
+  parent_document_id  bigint [ref: > documents.id, note: 'Previous version. Null for first version.']
+  created_at          timestamp [not null]
+  deleted_at          timestamp
+
+  indexes {
+    (entity_type, entity_id)
+  }
+
+  Note: 'Document metadata. Actual files in configurable object storage. Polymorphic via entity_type+entity_id. Feature #176-180. Help Center images tracked here with entity_type=help_article.'
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+//  EXTERNAL REFERENCE DOMAIN
+//  Source: Feature Inventory Domain 17; Decision #26
+// ────────────────────────────────────────────────────────────────────────────
+
+Table external_entities {
+  id          bigint [pk, increment]
+  public_id   uuid [not null, unique, note: 'UUID v7 for API routing']
+  name_en     varchar [not null]
+  name_ar     varchar [not null]
+  entity_type tinyint [not null, note: '1=government_ministry, 2=government_authority, 3=semi_government, 4=university, 5=hospital, 6=private_company, 7=vendor, 8=other']
+  is_active   boolean [not null, default: true]
+  created_at  timestamp [not null]
+  updated_at  timestamp [not null]
+  deleted_at  timestamp
+
+  Note: 'Tenant-managed reference table for external entities that issue reference numbers. Decision #26. Feature #223. Avoids free-text inconsistency.'
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+//  NOTIFICATION DOMAIN
+//  Source: Feature Inventory Domain 8; Decision #25
+// ────────────────────────────────────────────────────────────────────────────
+
+Table notifications {
+  id               bigint [pk, increment, note: 'UUID in Laravel convention']
+  user_id          bigint [not null, ref: > users.id]
+  type             varchar [not null, note: 'Laravel notification class name, e.g. App\\Notifications\\SlaBreachNotification']
+  notifiable_type  varchar [not null, note: 'Polymorphic: task, stage_instance, escalation']
+  notifiable_id    bigint [not null]
+  data             jsonb [not null, note: 'Notification payload: title, body, action URL, task_id, stage info, etc.']
+  read_at          timestamp [note: 'Null = unread']
+  created_at       timestamp [not null]
+
+  indexes {
+    (user_id, read_at)
+    (notifiable_type, notifiable_id)
+  }
+
+  Note: 'Persisted notifications with read/unread state. Laravel notification convention. Decision #25. Feature #134-145. In-app + email for MVP. SMS/WhatsApp deferred to V2.'
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+//  AUDIT DOMAIN
+//  Source: Feature Inventory Domain 14; Module Boundary Map Rule 6
+// ────────────────────────────────────────────────────────────────────────────
+
+Table audit_events {
+  id          bigint [pk, increment]
+  event_type  varchar [not null, note: 'e.g. task.created, stage.advanced, assignment.overridden, escalation.created, article.published']
+  entity_type varchar [not null, note: 'Polymorphic: task, stage_instance, blueprint, user, delegation, help_article, etc.']
+  entity_id   bigint [not null]
+  user_id     bigint [ref: > users.id, note: 'Null for system-triggered events']
+  ip_address  varchar [note: 'Client IP']
+  user_agent  varchar [note: 'Client user agent string. Government audit requirement.']
+  payload     jsonb [note: 'Event-specific data: old values, new values, reason, context']
+  created_at  timestamp [not null]
+
+  indexes {
+    (entity_type, entity_id)
+    (user_id, created_at)
+    (event_type, created_at)
+  }
+
+  Note: 'Immutable, append-only audit log. Feature #199-201. All modules emit events here (Rule 6). Cannot be modified or deleted by anyone including admins. Includes user_agent for government compliance.'
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+//  HELP CENTER DOMAIN
+//  Source: Feature Inventory Domain 22; Visibility Rules Section 17
+// ────────────────────────────────────────────────────────────────────────────
+
+Table help_article_categories {
+  id            bigint [pk, increment]
+  public_id     uuid [not null, unique, note: 'UUID v7 for API routing']
+  name_en       varchar [not null]
+  name_ar       varchar [not null]
+  display_order smallint [not null, default: 0]
+  is_active     boolean [not null, default: true]
+  created_at    timestamp [not null]
+  updated_at    timestamp [not null]
+  deleted_at    timestamp
+
+  Note: 'Flat (non-hierarchical) categories for organizing help articles. Feature #276. Each article belongs to exactly one category.'
+}
+
+Table help_articles {
+  id                  bigint [pk, increment]
+  public_id           uuid [not null, unique, note: 'UUID v7 for API routing']
+  category_id         bigint [not null, ref: > help_article_categories.id]
+  title_en            varchar [note: 'Optional. System copies title_ar if empty.']
+  title_ar            varchar [not null]
+  body_en             text [note: 'Rich text content. Optional.']
+  body_ar             text [not null, note: 'Rich text content. Arabic required. Feature #277.']
+  is_published        boolean [not null, default: false, note: 'Simple toggle. Unpublished = draft visible only to helpcenter.manage users. Feature #278.']
+  display_order       smallint [not null, default: 0, note: 'Order within category. Feature #284.']
+  view_count          integer [not null, default: 0, note: 'Simple counter for basic MVP analytics. V2 adds detailed tracking.']
+  search_vector_ar    tsvector [note: 'PostgreSQL full-text search vector for Arabic content']
+  search_vector_en    tsvector [note: 'PostgreSQL full-text search vector for English content']
+  created_by_user_id  bigint [not null, ref: > users.id]
+  updated_by_user_id  bigint [ref: > users.id]
+  published_at        timestamp [note: 'When article was first published or last re-published']
+  created_at          timestamp [not null]
+  updated_at          timestamp [not null]
+  deleted_at          timestamp [note: 'Soft delete. Feature #283.']
+
+  indexes {
+    search_vector_ar [type: gin]
+    search_vector_en [type: gin]
+  }
+
+  Note: 'Self-service knowledge base articles. Feature #275-284. Images tracked via documents table (entity_type=help_article). Flat categories, one per article. Simple is_published boolean. Full-text search via PostgreSQL tsvector. Rule HC-4: unpublished articles visible only to helpcenter.manage users.'
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+//  ONBOARDING DOMAIN
+//  Source: Feature Inventory Domain 21; Module Boundary Map Rule 9
+// ────────────────────────────────────────────────────────────────────────────
+
+Table onboarding_journeys {
+  id              bigint [pk, increment]
+  public_id       uuid [not null, unique, note: 'UUID v7 for API routing']
+  journey_key     varchar [not null, unique, note: 'Machine key: executive, department_leader, follow_up, stage_assignee, admin']
+  name_en         varchar [not null]
+  name_ar         varchar [not null]
+  description_en  text
+  description_ar  text
+  detection_rule  jsonb [not null, note: 'Access pattern that triggers this journey. E.g. {"capabilities": ["task.view.organization"]}']
+  display_order   smallint [not null, default: 0]
+  is_active       boolean [not null, default: true]
+  created_at      timestamp [not null]
+  updated_at      timestamp [not null]
+
+  Note: 'Access-profile-based onboarding journeys. Feature #254-262. Journey selection uses IAM access profile (Rule 9). 5 MVP journeys. Content stored as database records for runtime editing.'
+}
+
+Table onboarding_journey_sections {
+  id              bigint [pk, increment]
+  public_id       uuid [not null, unique, note: 'UUID v7 for API routing']
+  journey_id      bigint [not null, ref: > onboarding_journeys.id]
+  title_en        varchar [not null]
+  title_ar        varchar [not null]
+  sequence_order  smallint [not null]
+  pass_threshold  smallint [not null, default: 70, note: 'Minimum quiz score percentage to pass. Feature #266.']
+  created_at      timestamp [not null]
+  updated_at      timestamp [not null]
+
+  indexes {
+    (journey_id, sequence_order) [unique]
+  }
+
+  Note: 'Major sections within an onboarding journey. Each section ends with a knowledge check. Feature #265-266.'
+}
+
+Table onboarding_journey_steps {
+  id              bigint [pk, increment]
+  public_id       uuid [not null, unique, note: 'UUID v7 for API routing']
+  section_id      bigint [not null, ref: > onboarding_journey_sections.id]
+  title_en        varchar [not null]
+  title_ar        varchar [not null]
+  content_en      text [note: 'Step instruction content']
+  content_ar      text [note: 'Step instruction content']
+  target_selector varchar [note: 'CSS/UI selector for the element to highlight in the interactive walkthrough']
+  sequence_order  smallint [not null]
+  created_at      timestamp [not null]
+  updated_at      timestamp [not null]
+
+  indexes {
+    (section_id, sequence_order) [unique]
+  }
+
+  Note: 'Individual walkthrough steps within a section. Feature #255. Interactive overlay on real UI elements.'
+}
+
+Table onboarding_quiz_questions {
+  id              bigint [pk, increment]
+  section_id      bigint [not null, ref: > onboarding_journey_sections.id]
+  question_en     text [not null]
+  question_ar     text [not null]
+  options         jsonb [not null, note: 'Array of {text_en, text_ar, is_correct}. 3-5 options per question.']
+  display_order   smallint [not null, default: 0]
+  created_at      timestamp [not null]
+  updated_at      timestamp [not null]
+
+  Note: 'Multiple-choice knowledge check questions. Feature #265. 3-5 questions per section. Scenario-based and access-profile-specific.'
+}
+
+Table onboarding_user_progress {
+  id                   bigint [pk, increment]
+  user_id              bigint [not null, ref: > users.id]
+  journey_id           bigint [not null, ref: > onboarding_journeys.id]
+  status               tinyint [not null, default: 1, note: '1=not_started, 2=in_progress, 3=completed, 4=skipped']
+  current_section_id   bigint [ref: > onboarding_journey_sections.id, note: 'Where the user left off']
+  current_step_id      bigint [ref: > onboarding_journey_steps.id]
+  skipped_at           timestamp [note: 'Feature #262. Logged when user skips.']
+  completed_at         timestamp [note: 'Feature #268.']
+  created_at           timestamp [not null]
+  updated_at           timestamp [not null]
+
+  indexes {
+    (user_id, journey_id) [unique]
+  }
+
+  Note: 'Per-user onboarding journey progress. Feature #260-261, #268. Resume from where left off. Admin training dashboard reads this (Feature #270-272).'
+}
+
+Table onboarding_quiz_attempts {
+  id          bigint [pk, increment]
+  user_id     bigint [not null, ref: > users.id]
+  section_id  bigint [not null, ref: > onboarding_journey_sections.id]
+  score       smallint [not null, note: 'Percentage score achieved']
+  passed      boolean [not null]
+  answers     jsonb [not null, note: 'Array of {question_id, selected_option_index, is_correct}']
+  created_at  timestamp [not null]
+
+  Note: 'Quiz attempt records. Feature #265-267. Multiple attempts allowed (Feature #267). Number of attempts is logged.'
+}
+
+
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║                     SEARCH DOMAIN (PostgreSQL FTS)                     ║
+// ║  Note: Full-text search uses PostgreSQL tsvector columns on relevant   ║
+// ║  tables (tasks, help_articles) and GIN indexes. No external search     ║
+// ║  engine for MVP. Columns are defined on the source tables above.       ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
+// Additional tsvector columns needed on tasks table for full-text search:
+// tasks.search_vector_ar tsvector (generated from title_ar + description_ar)
+// tasks.search_vector_en tsvector (generated from title_en + description_en)
+// These should be maintained via PostgreSQL triggers or Laravel model observers.
+// GIN indexes created on both columns.
+
+
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║                        RELATIONSHIP SUMMARY                            ║
+// ║  All explicit foreign keys are defined inline above via ref: syntax.   ║
+// ║  Below is a summary of the key relationship patterns.                  ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
+// --- Self-referential ---
+// departments.parent_department_id -> departments.id
+// positions.reports_to_position_id -> positions.id
+// comments.parent_comment_id -> comments.id
+// documents.parent_document_id -> documents.id
+
+// --- Polymorphic (application-level, no DB FK) ---
+// documents: entity_type + entity_id -> (tasks, comments, task_stage_instances, help_articles)
+// notifications: notifiable_type + notifiable_id -> (tasks, task_stage_instances, escalations)
+// audit_events: entity_type + entity_id -> (any entity in the system)
+
+// --- Key Business Relationships ---
+// blueprints -> blueprint_categories (many-to-one)
+// blueprint_stages -> blueprints (many-to-one)
+// blueprint_sub_stages -> blueprint_stages (many-to-one)
+// tasks -> blueprints (many-to-one, Blueprint immutable after first task)
+// tasks -> task_priorities (many-to-one)
+// task_stage_instances -> tasks (many-to-one)
+// task_sub_stage_instances -> task_stage_instances (many-to-one)
+// task_stage_assignments -> task_stage_instances OR task_sub_stage_instances
+// task_external_references -> tasks (many-to-one)
+// task_external_references -> external_entities (many-to-one)
+// escalations -> tasks + stage/sub-stage instances
+// sla_timer_instances -> tasks + stage/sub-stage instances + sla_policies
+// help_articles -> help_article_categories (many-to-one)
+
+// --- IAM Relationships ---
+// users -> positions (via user_position_assignments, history table)
+// positions -> departments (many-to-one)
+// positions -> authority_grades (many-to-one)
+// capability grants -> positions OR users + capabilities
+// monitoring_scope_grants -> users + optional department + optional blueprint_category
+// delegations -> users (delegator -> delegate)

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gov TMS — UI/UX Concept Package</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>*{font-family:'Inter',system-ui,sans-serif}body{background:#f8fafc}</style>
+</head>
+<body>
+  <!-- Cover -->
+  <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-6">
+    <div class="text-center max-w-3xl">
+      <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center mx-auto mb-6 shadow-2xl">
+        <span class="text-3xl font-bold text-white">G</span>
+      </div>
+      <h1 class="text-4xl font-bold text-white mb-3">Gov TMS</h1>
+      <p class="text-xl text-slate-300 font-light mb-2">Configurable Task Lifecycle Management Platform</p>
+      <p class="text-slate-400 text-sm mb-8">UI/UX Concept Package — High-Fidelity Visual Mockups</p>
+      <div class="w-16 h-0.5 bg-emerald-500 mx-auto mb-8"></div>
+      <p class="text-slate-500 text-xs">Designed for GCC Government & Enterprise | Next.js · React · TypeScript · Tailwind CSS · shadcn/ui</p>
+      <p class="text-slate-600 text-[10px] mt-1">June 2026 — Pre-Implementation Visual Concept</p>
+    </div>
+  </div>
+
+  <!-- Screen Index -->
+  <div class="max-w-6xl mx-auto px-6 py-16">
+    <h2 class="text-2xl font-bold text-slate-900 mb-2">Screen Concepts</h2>
+    <p class="text-slate-500 text-sm mb-10">16 core screens designed to visualize the product before implementation. Click any screen to open the full mockup.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- 1 -->
+      <a href="01-executive-dashboard.html" target="_blank" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+        <div class="h-48 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 30% 50%, #22c55e 0%, transparent 50%), radial-gradient(circle at 70% 80%, #3b82f6 0%, transparent 50%);"></div>
+          <div class="absolute bottom-4 left-4 right-4">
+            <div class="flex gap-2">
+              <div class="flex-1 h-2 bg-white/10 rounded-full overflow-hidden"><div class="h-full w-3/4 bg-emerald-500 rounded-full"></div></div>
+              <div class="flex-1 h-2 bg-white/10 rounded-full overflow-hidden"><div class="h-full w-1/2 bg-amber-500 rounded-full"></div></div>
+              <div class="flex-1 h-2 bg-white/10 rounded-full overflow-hidden"><div class="h-full w-1/4 bg-red-500 rounded-full"></div></div>
+            </div>
+          </div>
+          <div class="absolute top-4 left-4 text-white/30 text-[10px] font-mono">Executive Dashboard</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Screen 01</span>
+            <span class="text-[10px] text-slate-400">Minister / Undersecretary</span>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition">Executive Dashboard</h3>
+          <p class="text-sm text-slate-500 mt-1">High-level strategic overview with RAG status indicators, department SLA health bars, bottleneck analysis, escalation feed, and task aging distribution. The single pane of glass for top leadership.</p>
+        </div>
+      </a>
+
+      <!-- 2 -->
+      <a href="02-task-board.html" target="_blank" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+        <div class="h-48 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 50% 30%, #3b82f6 0%, transparent 50%);"></div>
+          <div class="absolute bottom-4 left-4 right-4 flex gap-2">
+            <div class="flex-1 space-y-1.5">
+              <div class="h-2 bg-white/10 rounded"></div>
+              <div class="h-2 bg-white/5 rounded w-2/3"></div>
+            </div>
+            <div class="w-8 h-8 rounded-full bg-emerald-500/20"></div>
+          </div>
+          <div class="absolute top-4 left-4 text-white/30 text-[10px] font-mono">Task Board</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Screen 02</span>
+            <span class="text-[10px] text-slate-400">All Users</span>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition">Task Board</h3>
+          <p class="text-sm text-slate-500 mt-1">Unified, filterable table view of all active tasks. Quick filters by status, department, priority, and blueprint. Sortable columns with SLA health indicators and inline assignee avatars.</p>
+        </div>
+      </a>
+
+      <!-- 3 -->
+      <a href="03-task-details.html" target="_blank" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+        <div class="h-48 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 60% 40%, #f59e0b 0%, transparent 50%);"></div>
+          <div class="absolute bottom-4 left-4 right-4 space-y-1.5">
+            <div class="h-2 bg-white/20 rounded w-1/2"></div>
+            <div class="h-2 bg-white/10 rounded w-1/3"></div>
+          </div>
+          <div class="absolute top-4 left-4 text-white/30 text-[10px] font-mono">Task Details</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Screen 03</span>
+            <span class="text-[10px] text-slate-400">Task Participants</span>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition">Task Details</h3>
+          <p class="text-sm text-slate-500 mt-1">Deep dive into a single task. Vertical stage timeline with SLA status, stage actions (submit/advance/return), threaded comments, document attachments, activity log, and external reference links.</p>
+        </div>
+      </a>
+
+      <!-- 4 -->
+      <a href="04-blueprint-builder.html" target="_blank" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+        <div class="h-48 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 40% 60%, #8b5cf6 0%, transparent 50%);"></div>
+          <div class="absolute bottom-4 left-4 right-4 flex gap-3 justify-center">
+            <div class="w-12 h-12 rounded-xl bg-white/10 border border-white/20"></div>
+            <div class="w-12 h-12 rounded-xl bg-white/10 border border-white/20"></div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-400/30"></div>
+            <div class="w-12 h-12 rounded-xl bg-white/10 border border-white/20"></div>
+          </div>
+          <div class="absolute top-4 left-4 text-white/30 text-[10px] font-mono">Blueprint Builder</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Screen 04</span>
+            <span class="text-[10px] text-slate-400">Admin / Process Owner</span>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition">Blueprint Builder</h3>
+          <p class="text-sm text-slate-500 mt-1">Visual workflow editor with connected stage nodes. Left canvas shows the flow diagram; right properties panel allows configuring stage name, type, SLA, assignment method, exit requirements, and return/advance transitions.</p>
+        </div>
+      </a>
+
+      <!-- 5 -->
+      <a href="05-workflow-visualization.html" target="_blank" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+        <div class="h-48 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 50% 50%, #06b6d4 0%, transparent 50%);"></div>
+          <div class="absolute bottom-4 left-4 right-4 flex gap-2">
+            <div class="h-16 flex-1 bg-white/5 rounded-xl border border-white/10"></div>
+            <div class="h-16 flex-1 bg-white/5 rounded-xl border border-white/10"></div>
+            <div class="h-16 flex-1 bg-red-500/20 rounded-xl border border-red-400/30"></div>
+            <div class="h-16 flex-1 bg-white/5 rounded-xl border border-white/10"></div>
+          </div>
+          <div class="absolute top-4 left-4 text-white/30 text-[10px] font-mono">Workflow Visualization</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Screen 05</span>
+            <span class="text-[10px] text-slate-400">All Users</span>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition">Workflow Visualization</h3>
+          <p class="text-sm text-slate-500 mt-1">Horizontal flow diagram showing a task's full lifecycle. Color-coded stage cards (completed/active/pending/overdue) with assignees, SLAs, sub-stage details, return path indicators, and a timeline bar.</p>
+        </div>
+      </a>
+
+      <!-- 6 -->
+      <a href="06-follow-up-center.html" target="_blank" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+        <div class="h-48 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 30% 70%, #ef4444 0%, transparent 50%), radial-gradient(circle at 70% 30%, #f59e0b 0%, transparent 50%);"></div>
+          <div class="absolute bottom-4 left-4 right-4 flex gap-1">
+            <div class="flex-1 h-1 bg-red-500 rounded"></div>
+            <div class="flex-1 h-1 bg-amber-500 rounded"></div>
+            <div class="flex-1 h-1 bg-emerald-500 rounded"></div>
+            <div class="flex-1 h-1 bg-slate-500 rounded"></div>
+          </div>
+          <div class="absolute top-4 left-4 text-white/30 text-[10px] font-mono">Follow-Up Center</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Screen 06</span>
+            <span class="text-[10px] text-slate-400">Follow-Up Specialist</span>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition">Follow-Up Center</h3>
+          <p class="text-sm text-slate-500 mt-1">Dedicated monitoring hub for follow-up specialists. Scoped task board, live alert banner, bottleneck analysis by department, and manual follow-up action logging to replace spreadsheets and WhatsApp coordination.</p>
+        </div>
+      </a>
+
+      <!-- 7 -->
+      <a href="07-organization-structure.html" target="_blank" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+        <div class="h-48 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 50% 30%, #22c55e 0%, transparent 50%);"></div>
+          <div class="absolute bottom-4 left-4 right-4 flex justify-center gap-4">
+            <div class="w-10 h-10 rounded-full bg-white/10"></div>
+            <div class="w-10 h-10 rounded-full bg-white/10"></div>
+            <div class="w-10 h-10 rounded-full bg-white/10"></div>
+            <div class="w-10 h-10 rounded-full bg-white/10"></div>
+          </div>
+          <div class="absolute top-4 left-4 text-white/30 text-[10px] font-mono">Organization Structure</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Screen 07</span>
+            <span class="text-[10px] text-slate-400">Admin / HR</span>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition">Organization Structure</h3>
+          <p class="text-sm text-slate-500 mt-1">Interactive org chart tree from Minister down to section level. Visual hierarchy with gradient avatar nodes, department cards showing position counts and occupancy, and drill-down into sections.</p>
+        </div>
+      </a>
+
+      <!-- 8 -->
+      <a href="08-analytics-reporting.html" target="_blank" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+        <div class="h-48 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 50% 50%, #3b82f6 0%, transparent 50%), radial-gradient(circle at 80% 20%, #8b5cf6 0%, transparent 50%);"></div>
+          <div class="absolute bottom-4 left-4 right-4 flex gap-2">
+            <div class="flex-1 h-16 bg-white/5 rounded-xl"></div>
+            <div class="flex-1 h-16 bg-white/5 rounded-xl"></div>
+          </div>
+          <div class="absolute top-4 left-4 text-white/30 text-[10px] font-mono">Analytics & Reporting</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Screen 08</span>
+            <span class="text-[10px] text-slate-400">Executives / Directors</span>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition">Analytics & Reporting</h3>
+          <p class="text-sm text-slate-500 mt-1">Data-rich analytics hub with multiple report tabs (Overview, Department Performance, Blueprint Analysis, SLA Compliance, Task Aging, Workload). Bar charts, donut charts, trend graphs, and compliance tables.</p>
+        </div>
+      </a>
+
+      <!-- 9 -->
+      <a href="09-system-administration.html" target="_blank" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+        <div class="h-48 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 40% 60%, #64748b 0%, transparent 50%);"></div>
+          <div class="absolute bottom-4 left-4 right-4">
+            <div class="flex gap-3">
+              <div class="w-20 space-y-1.5"><div class="h-2 bg-white/20 rounded"></div><div class="h-2 bg-white/10 rounded"></div></div>
+              <div class="w-20 space-y-1.5"><div class="h-2 bg-white/20 rounded"></div><div class="h-2 bg-white/10 rounded"></div></div>
+            </div>
+          </div>
+          <div class="absolute top-4 left-4 text-white/30 text-[10px] font-mono">System Administration</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Screen 09</span>
+            <span class="text-[10px] text-slate-400">System Admin</span>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition">System Administration</h3>
+          <p class="text-sm text-slate-500 mt-1">Central configuration panel with sidebar navigation (Organization, Users, Permissions, Calendar, Blueprints, Audit Log, Branding, Settings). Working calendar config, public holidays, and security classification management.</p>
+        </div>
+      </a>
+
+      <!-- 10 -->
+      <a href="10-help-center.html" target="_blank" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+        <div class="h-48 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 50% 50%, #22c55e 0%, transparent 50%), radial-gradient(circle at 20% 80%, #06b6d4 0%, transparent 50%);"></div>
+          <div class="absolute bottom-4 left-4 right-4">
+            <div class="mx-auto w-3/4 h-3 bg-white/10 rounded-full"></div>
+          </div>
+          <div class="absolute top-4 left-4 text-white/30 text-[10px] font-mono">Help Center</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Screen 10</span>
+            <span class="text-[10px] text-slate-400">All Users</span>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition">Help Center</h3>
+          <p class="text-sm text-slate-500 mt-1">Built-in knowledge base with hero search, category cards (Getting Started, Managing Tasks, Blueprint Guide, Reports & Analytics), featured articles, and a browsable article library with metadata.</p>
+        </div>
+      </a>
+
+      <!-- 11 -->
+      <a href="11-department-manager-dashboard.html" target="_blank" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+        <div class="h-48 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 70% 30%, #06b6d4 0%, transparent 50%), radial-gradient(circle at 30% 70%, #22c55e 0%, transparent 50%);"></div>
+          <div class="absolute bottom-4 left-4 right-4 flex gap-2">
+            <div class="flex-1 h-2 bg-white/10 rounded-full overflow-hidden"><div class="h-full w-3/4 bg-cyan-400 rounded-full"></div></div>
+            <div class="flex-1 h-2 bg-white/10 rounded-full overflow-hidden"><div class="h-full w-1/2 bg-amber-400 rounded-full"></div></div>
+          </div>
+          <div class="absolute top-4 left-4 text-white/30 text-[10px] font-mono">Manager Dashboard</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Screen 11</span>
+            <span class="text-[10px] text-slate-400">Department Manager</span>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition">Department Manager Dashboard</h3>
+          <p class="text-sm text-slate-500 mt-1">Team-focused operational dashboard for department heads. Shows workload snapshot, pending approvals, team activity feed, availability, and SLA health — all scoped to the manager's team.</p>
+        </div>
+      </a>
+
+      <!-- 12 -->
+      <a href="12-pending-approvals.html" target="_blank" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+        <div class="h-48 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 50% 50%, #f59e0b 0%, transparent 50%);"></div>
+          <div class="absolute bottom-4 left-4 right-4 flex gap-2 justify-center">
+            <div class="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
+              <svg class="w-5 h-5 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+          </div>
+          <div class="absolute top-4 left-4 text-white/30 text-[10px] font-mono">Pending Approvals</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Screen 12</span>
+            <span class="text-[10px] text-slate-400">Managers / Directors</span>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition">Pending Approvals</h3>
+          <p class="text-sm text-slate-500 mt-1">Unified hub of all tasks awaiting manager decision. Filterable table with approve/return actions, SLA context, task details, and submission history. Includes approval statistics and recent decisions log.</p>
+        </div>
+      </a>
+
+      <!-- 13 -->
+      <a href="13-team-capacity-workload.html" target="_blank" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+        <div class="h-48 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 50% 50%, #8b5cf6 0%, transparent 50%);"></div>
+          <div class="absolute bottom-4 left-4 right-4 flex gap-1">
+            <div class="flex-1 h-4 bg-emerald-500/30 rounded"></div>
+            <div class="flex-1 h-4 bg-amber-500/30 rounded"></div>
+            <div class="flex-1 h-4 bg-slate-500/30 rounded"></div>
+            <div class="flex-1 h-4 bg-emerald-500/30 rounded"></div>
+          </div>
+          <div class="absolute top-4 left-4 text-white/30 text-[10px] font-mono">Team Workload</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Screen 13</span>
+            <span class="text-[10px] text-slate-400">Department Manager</span>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition">Team Capacity & Workload</h3>
+          <p class="text-sm text-slate-500 mt-1">Visual workload distribution across team members with capacity indicators, overload warnings, availability tracking, and suggested task reassignments for balanced workload management.</p>
+        </div>
+      </a>
+
+      <!-- 14 -->
+      <a href="14-staff-performance-hub.html" target="_blank" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+        <div class="h-48 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 50% 50%, #3b82f6 0%, transparent 50%);"></div>
+          <div class="absolute bottom-4 left-4 right-4 flex gap-2 items-end">
+            <div class="flex-1 h-12 bg-emerald-400/30 rounded-t"></div>
+            <div class="flex-1 h-8 bg-blue-400/30 rounded-t"></div>
+            <div class="flex-1 h-16 bg-amber-400/30 rounded-t"></div>
+            <div class="flex-1 h-10 bg-red-400/30 rounded-t"></div>
+          </div>
+          <div class="absolute top-4 left-4 text-white/30 text-[10px] font-mono">Staff Performance</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Screen 14</span>
+            <span class="text-[10px] text-slate-400">Department Manager</span>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition">Staff Performance Hub</h3>
+          <p class="text-sm text-slate-500 mt-1">Individual performance scorecards with SLA compliance, completion rates, average resolution time, and overdue counts. Includes team trend charts and department-wide KPI summaries.</p>
+        </div>
+      </a>
+
+      <!-- 15 -->
+      <a href="15-decisions-registry.html" target="_blank" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+        <div class="h-48 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 40% 60%, #a855f7 0%, transparent 50%), radial-gradient(circle at 70% 20%, #22c55e 0%, transparent 50%);"></div>
+          <div class="absolute bottom-4 left-4 right-4 flex gap-2">
+            <div class="flex-1 space-y-1"><div class="h-2 bg-white/20 rounded w-3/4"></div><div class="h-2 bg-white/10 rounded"></div></div>
+          </div>
+          <div class="absolute top-4 left-4 text-white/30 text-[10px] font-mono">Decisions Registry</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Screen 15</span>
+            <span class="text-[10px] text-slate-400">All Managers</span>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition">Decisions Registry</h3>
+          <p class="text-sm text-slate-500 mt-1">Searchable record of management decisions, meeting outcomes, escalations, and directives. Each entry is linked to relevant tasks with decision maker, description, and pending action items.</p>
+        </div>
+      </a>
+
+      <!-- 16 -->
+      <a href="16-department-memos.html" target="_blank" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+        <div class="h-48 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 50% 50%, #f43f5e 0%, transparent 50%), radial-gradient(circle at 80% 80%, #3b82f6 0%, transparent 50%);"></div>
+          <div class="absolute bottom-4 left-4 right-4">
+            <div class="mx-auto w-1/2 h-4 bg-white/10 rounded-lg"></div>
+          </div>
+          <div class="absolute top-4 left-4 text-white/30 text-[10px] font-mono">Department Memos</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Screen 16</span>
+            <span class="text-[10px] text-slate-400">Department Managers</span>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition">Department Memos & Announcements</h3>
+          <p class="text-sm text-slate-500 mt-1">Internal communications hub for department-level memos, circulars, announcements, and meeting agendas. Features read tracking, priority indicators, audience targeting, and compose functionality.</p>
+        </div>
+      </a>
+    </div>
+
+    <!-- Design System Summary -->
+    <div class="mt-16 bg-white rounded-2xl border border-slate-200 p-8">
+      <h2 class="text-lg font-bold text-slate-900 mb-6">Design System Summary</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div>
+          <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Technology</p>
+          <ul class="space-y-1 text-sm text-slate-600">
+            <li>Next.js (React)</li>
+            <li>TypeScript</li>
+            <li>Tailwind CSS</li>
+            <li>shadcn/ui</li>
+          </ul>
+        </div>
+        <div>
+          <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Typography</p>
+          <ul class="space-y-1 text-sm text-slate-600">
+            <li>Font: Inter</li>
+            <li>Headings: 600–700 weight</li>
+            <li>Body: 400 weight</li>
+            <li>Labels: 10–12px uppercase</li>
+          </ul>
+        </div>
+        <div>
+          <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Color Palette</p>
+          <div class="space-y-1.5">
+            <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-[#0f172a]"></span><span class="text-xs text-slate-600">Slate 900 — Sidebar</span></div>
+            <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-emerald-500"></span><span class="text-xs text-slate-600">Emerald — Primary</span></div>
+            <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-amber-500"></span><span class="text-xs text-slate-600">Amber — Warning</span></div>
+            <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-red-500"></span><span class="text-xs text-slate-600">Red — Danger</span></div>
+          </div>
+        </div>
+        <div>
+          <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Inspiration</p>
+          <ul class="space-y-1 text-sm text-slate-600">
+            <li>Linear (clean UI)</li>
+            <li>Jira (enterprise depth)</li>
+            <li>Monday.com (boards)</li>
+            <li>Notion (docs)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-12 pb-8">
+      <p class="text-xs text-slate-400">Gov TMS — Configurable Task Lifecycle Management Platform</p>
+      <p class="text-[10px] text-slate-300 mt-1">Open each HTML file in a browser to view the full high-fidelity mockup.</p>
+    </div>
+  </div>
+</body>
+</html>

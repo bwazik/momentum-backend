@@ -1,0 +1,198 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gov TMS — Department Memos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>*{font-family:'Inter',system-ui,sans-serif}body{background:#f1f5f9}</style>
+</head>
+<body>
+  <div class="flex h-screen overflow-hidden">
+    <aside class="w-64 bg-[#0f172a] text-white flex flex-col shrink-0">
+      <div class="px-6 py-5 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-xs font-bold">G</div>
+          <div><p class="text-sm font-semibold">Gov TMS</p><p class="text-[10px] text-slate-400">Ministry of Finance</p></div>
+        </div>
+      </div>
+      <nav class="flex-1 px-3 py-4 space-y-1 text-sm">
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Manager Dashboard</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Pending Approvals</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Team Workload</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Staff Performance</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Decisions Registry</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-emerald-600/20 text-emerald-300 font-medium"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>Memos</a>
+      </nav>
+      <div class="px-4 py-4 border-t border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-xs font-bold text-white">F</div>
+          <div class="flex-1 min-w-0"><p class="text-sm font-medium truncate">Fahad Al-Otaibi</p><p class="text-[10px] text-slate-400">Director, Human Resources</p></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <header class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
+        <div>
+          <h1 class="text-lg font-semibold text-slate-900">Department Memos & Announcements</h1>
+          <p class="text-xs text-slate-400 mt-0.5">Internal communications, circulars, and departmental announcements</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="flex items-center gap-1.5 text-xs text-slate-600 border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v3a1 1 0 001 1h3m8-16h3a1 1 0 011 1v3M4 4l5 5m11 0l-5 5"/></svg>
+            Export
+          </button>
+          <button class="flex items-center gap-1.5 text-xs bg-emerald-600 text-white px-4 py-1.5 rounded-lg hover:bg-emerald-700 font-medium">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Compose Memo
+          </button>
+        </div>
+      </header>
+
+      <main class="flex-1 overflow-y-auto p-6 space-y-6">
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+            <p class="text-sm text-amber-800"><span class="font-semibold">New:</span> Eid al-Adha holiday schedule — Ministry will be closed Jun 6–9. All pending tasks with SLA deadlines during this period will be automatically extended.</p>
+          </div>
+          <span class="text-[10px] text-amber-500">5 min ago</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button class="text-xs font-medium bg-emerald-600 text-white px-3 py-1.5 rounded-lg">All Memos</button>
+          <button class="text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg">Announcements</button>
+          <button class="text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg">Circulars</button>
+          <button class="text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg">Directives</button>
+          <button class="text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg">Drafts</button>
+          <span class="text-xs text-slate-400 ml-auto">24 memos this month</span>
+        </div>
+
+        <div class="space-y-3">
+          <div class="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition cursor-pointer">
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <p class="text-sm font-semibold text-slate-900">Urgent: System Maintenance — Jun 8</p>
+                    <span class="text-[10px] font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded">High Priority</span>
+                  </div>
+                  <p class="text-xs text-slate-400">From: IT & Digital Transformation · Jun 6, 2026</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 text-[10px] text-slate-400">
+                <span class="flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg> 24 views</span>
+              </div>
+            </div>
+            <p class="text-sm text-slate-600">The system will be unavailable from 10:00 PM to 2:00 AM on June 8 for scheduled maintenance. Please save all work and complete pending submissions before the downtime.</p>
+            <div class="flex items-center gap-4 mt-3 text-[10px]">
+              <span class="text-slate-400">Audience: All Departments</span>
+              <span class="text-slate-300">|</span>
+              <span class="text-emerald-600 font-medium">18 read · 6 unread</span>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition cursor-pointer">
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <p class="text-sm font-semibold text-slate-900">Circular: Q3 Performance Review Timeline</p>
+                    <span class="text-[10px] font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded">Circular</span>
+                  </div>
+                  <p class="text-xs text-slate-400">From: Human Resources · Jun 5, 2026</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 text-[10px] text-slate-400">
+                <span class="flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg> 42 views</span>
+              </div>
+            </div>
+            <p class="text-sm text-slate-600">Q3 performance review cycle begins July 1. All department heads must submit preliminary evaluations by July 15. Final reviews and one-on-one meetings to be completed by August 1.</p>
+            <div class="flex items-center gap-4 mt-3 text-[10px]">
+              <span class="text-slate-400">Audience: All Managers</span>
+              <span class="text-slate-300">|</span>
+              <span class="text-emerald-600 font-medium">36 read · 6 unread</span>
+              <span class="text-slate-300">|</span>
+              <span class="text-amber-600 font-medium">Attachment: review_template_v3.xlsx</span>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition cursor-pointer">
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <p class="text-sm font-semibold text-slate-900">New Blueprint Published: Vendor Registration</p>
+                    <span class="text-[10px] font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Announcement</span>
+                  </div>
+                  <p class="text-xs text-slate-400">From: System Admin · Jun 4, 2026</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 text-[10px] text-slate-400">
+                <span class="flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg> 56 views</span>
+              </div>
+            </div>
+            <p class="text-sm text-slate-600">The new Vendor Registration blueprint is now available for use. This replaces the legacy paper-based vendor onboarding process. All procurement-related tasks must use this blueprint starting July 1.</p>
+            <div class="flex items-center gap-4 mt-3 text-[10px]">
+              <span class="text-slate-400">Audience: Procurement, Finance, Legal</span>
+              <span class="text-slate-300">|</span>
+              <span class="text-emerald-600 font-medium">48 read · 8 unread</span>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition cursor-pointer">
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <p class="text-sm font-semibold text-slate-900">Weekly Department Meeting — Agenda (Week 24)</p>
+                    <span class="text-[10px] font-medium text-purple-600 bg-purple-50 px-2 py-0.5 rounded">Meeting</span>
+                  </div>
+                  <p class="text-xs text-slate-400">From: Fahad Al-Otaibi · Jun 3, 2026</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 text-[10px] text-slate-400">
+                <span class="flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg> 15 views</span>
+              </div>
+            </div>
+            <p class="text-sm text-slate-600">Agenda for Monday's weekly review: (1) Legal Review bottleneck update, (2) Q2 Training Budget decision, (3) New hire onboarding status, (4) Eid al-Adha leave coverage plan.</p>
+            <div class="flex items-center gap-4 mt-3 text-[10px]">
+              <span class="text-slate-400">Scheduled: Mon, Jun 8 · 9:00 AM</span>
+              <span class="text-slate-300">|</span>
+              <span class="text-slate-400">Room: 3rd Floor Conference Room</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <p class="text-xs text-slate-500">Showing 1-4 of 24 memos</p>
+          <div class="flex items-center gap-1">
+            <button class="px-3 py-1.5 text-xs border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-500">&laquo;</button>
+            <button class="px-3 py-1.5 text-xs bg-emerald-600 text-white rounded-lg font-medium">1</button>
+            <button class="px-3 py-1.5 text-xs border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-600">2</button>
+            <button class="px-3 py-1.5 text-xs border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-600">3</button>
+            <span class="px-2 text-xs text-slate-400">...</span>
+            <button class="px-3 py-1.5 text-xs border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-600">6</button>
+            <button class="px-3 py-1.5 text-xs border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-500">&raquo;</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
