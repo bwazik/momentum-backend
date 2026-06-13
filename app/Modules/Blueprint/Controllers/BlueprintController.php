@@ -39,7 +39,14 @@ class BlueprintController extends Controller
             $query->where('category_id', $categoryId);
         }
 
-        return BlueprintResource::collection($query->cursorPaginate($request->integer('per_page', 20)));
+        $paginator = $query->cursorPaginate($request->integer('per_page', 20))
+            ->through(fn ($blueprint) => new BlueprintResource($blueprint));
+
+        return response()->json([
+            'data' => $paginator->items(),
+            'next_cursor' => $paginator->nextCursor()?->encode(),
+            'has_more' => $paginator->hasMorePages(),
+        ]);
     }
 
     public function show(Blueprint $blueprint): BlueprintResource

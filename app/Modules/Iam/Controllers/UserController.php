@@ -15,7 +15,6 @@ use App\Traits\AuthenticatedUser;
 use App\Traits\HasRateLimiting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Arr;
 
 class UserController extends Controller
@@ -27,13 +26,18 @@ class UserController extends Controller
         private IamPolicy $policy,
     ) {}
 
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request)
     {
         $this->checkRateLimit(RateLimits::LIST, [$request->user()?->public_id ?? 'guest']);
 
-        $users = $this->userService->list($request->only(['is_active', 'account_type', 'department_id', 'search', 'per_page']));
+        $paginator = $this->userService->list($request->only(['is_active', 'account_type', 'department_id', 'search', 'per_page']))
+            ->through(fn ($user) => new UserResource($user));
 
-        return UserResource::collection($users);
+        return response()->json([
+            'data' => $paginator->items(),
+            'next_cursor' => $paginator->nextCursor()?->encode(),
+            'has_more' => $paginator->hasMorePages(),
+        ]);
     }
 
     public function store(StoreUserRequest $request): JsonResponse

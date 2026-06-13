@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Http\Middleware\CheckTenantStatus;
 use App\Http\Middleware\InitializeTenancyByHeader;
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Tenant Routes
@@ -16,9 +18,6 @@ use App\Http\Middleware\InitializeTenancyByHeader;
 |
 */
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Route;
-
 Route::middleware(['api'])->prefix('v1')->group(function () {
     require __DIR__.'/api/v1/platform.php';
 });
@@ -28,21 +27,13 @@ Route::middleware([
     CheckTenantStatus::class,
     'api',
 ])->prefix('v1')->group(function () {
-
     Route::get('/', function () {
-        return response()->json([
-            'message' => 'This is your multi-tenant application.',
-            'tenant' => [
-                'public_id' => tenant('public_id'),
-                'slug' => tenant('slug'),
-                'name' => tenant('name_en'),
-            ],
-            'database_name' => DB::connection()->getDatabaseName(),
-        ]);
+        return response()->json(['tenant' => ['public_id' => tenancy()->tenant->public_id]]);
     });
 
     require __DIR__.'/api/v1/organization.php';
     require __DIR__.'/api/v1/iam.php';
     require __DIR__.'/api/v1/blueprints.php';
     require __DIR__.'/api/v1/tasks.php';
+    require __DIR__.'/api/v1/tracking.php';
 });

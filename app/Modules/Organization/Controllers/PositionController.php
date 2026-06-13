@@ -15,7 +15,6 @@ use App\Support\RateLimits;
 use App\Traits\HasRateLimiting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class PositionController extends Controller
 {
@@ -25,7 +24,7 @@ class PositionController extends Controller
         private PositionService $positionService,
     ) {}
 
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request)
     {
         $this->checkRateLimit(RateLimits::LIST, [$request->user()?->public_id ?? 'guest']);
 
@@ -45,9 +44,14 @@ class PositionController extends Controller
             $query->where('is_active', $request->boolean('is_active'));
         }
 
-        return PositionResource::collection(
-            $query->orderBy('title_ar')->cursorPaginate($request->integer('per_page', 15))
-        );
+        $paginator = $query->orderBy('title_ar')->cursorPaginate($request->integer('per_page', 15))
+            ->through(fn ($position) => new PositionResource($position));
+
+        return response()->json([
+            'data' => $paginator->items(),
+            'next_cursor' => $paginator->nextCursor()?->encode(),
+            'has_more' => $paginator->hasMorePages(),
+        ]);
     }
 
     public function store(StorePositionRequest $request): JsonResponse

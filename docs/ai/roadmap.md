@@ -9,7 +9,7 @@
 ## Current Focus
 
 **Active Milestone:** M5 — SLA, Escalation & Notifications
-**Active Spec:** `007-sla-escalation`
+**Active Spec:** `008-notifications`
 **Branch:** `main`
 
 Do not implement specs marked ⬜ Not Started unless explicitly instructed.
@@ -24,7 +24,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | M2 | Organization & IAM | 🔄 In Progress | M1 |
 | M3 | Blueprint Engine | ✅ Done | M2 |
 | M4 | Task Execution & Lifecycle | 🔄 In Progress | M3 |
-| M5 | SLA, Escalation & Notifications | ⬜ Not Started | M4 |
+| M5 | SLA, Escalation & Notifications | 🔄 In Progress | M4 |
 | M6 | Analytics, Follow-up & Search | ⬜ Not Started | M5 |
 | M7 | Documents, Audit, Onboarding & Help | ⬜ Not Started | M4 |
 
@@ -43,7 +43,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | `004-blueprint-engine` | M3 | Blueprint | `004-blueprint-builder` | ✅ Done |
 | `005-task-execution` | M4 | Task creation & launch | `002-task-board`, `003-task-details` | ✅ Done |
 | `006-stage-lifecycle` | M4 | Stage/sub-stage progression | `003-task-details`, `005-workflow-visualization` | ✅ Done |
-| `007-sla-escalation` | M5 | Tracking & SLA | `006-follow-up-center` | ⬜ Not Started |
+| `007-sla-escalation` | M5 | Tracking & SLA | `006-follow-up-center` | ✅ Done |
 | `008-notifications` | M5 | Notification | — (backend-only delivery) | ⬜ Not Started |
 | `009-analytics-reporting` | M6 | Analytics | `001-executive-dashboard`, `008-analytics-reporting`, `011-department-manager-dashboard` | ⬜ Not Started |
 | `010-follow-up-board` | M6 | Follow-up & tracking API | `006-follow-up-center` | ⬜ Not Started |
@@ -214,6 +214,48 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 - Routes: all 10 lifecycle routes appended to `routes/api/v1/tasks.php`
 
 **Will establish (remaining):** comments (013), external references (014)
+
+---
+
+## M5 — SLA, Escalation & Notifications
+
+**Status:** 🔄 In Progress
+
+**Specs:** `007` ✅, `008` ⬜
+
+**Established by 007:**
+- **Tracking module** (`app/Modules/Tracking/`) — clean bounded context
+- `sla_timer_instances` table (FKs to tasks, stage/sub-stage instances, SLA policies, working calendars; composite indexes for pause/resume and scheduler scans)
+- `escalations` table (FKs to tasks, stage/sub-stage instances, timers, users, positions; indexed by task+status and target user+status)
+- 3 enums: `SlaTimerStatus` (Running/Warning/Breached/Completed/Paused), `EscalationType` (AutoSlaBreach/Manual), `EscalationStatus` (Open/Resolved)
+- `SlaTimerInstance` and `Escalation` models with casts, relationships, scopes (`active`, `forTask`, `dueWarning`, `dueBreach`, `open`)
+- `SlaTimerService` — timer create/pause/resume/complete with working-calendar-aware deadline calculation
+- `SlaThresholdService` — warning and breach detection via `chunkById` + `lockForUpdate` (safe under concurrent scheduler)
+- `SlaEscalationService` — auto-escalation on breach (Blueprint `escalation_position_id` → assignee `reports_to_position_id`), manual escalation with duplicate check, resolution with ABAC
+- `SlaTimerController` — `taskHealth` (bounded), `index` (cursor-paginated, filtered)
+- `EscalationController` — `index` (cursor-paginated, filtered), `show`, `store`, `resolve`
+- 8 listeners consuming Task events (stage/sub-stage created/completed/returned, task suspended/resumed/completed/cancelled) — all idempotent, all log to `tracking` channel
+- `TrackingServiceProvider` (registers event listeners)
+- `CheckSlaTimersCommand` + `CheckSlaTimersJob` (scheduled per-tenant SLA threshold scanning, `tries=3`, `backoff=[30,60,120]`)
+- 8 domain events implementing `ShouldDispatchAfterCommit`
+- 7 domain exceptions extending `DomainException`
+- 4 form requests: `ListSlaTimersRequest`, `ListEscalationsRequest`, `CreateManualEscalationRequest`, `ResolveEscalationRequest`
+- 4 API resources: `SlaTimerInstanceResource`, `TaskSlaHealthResource`, `EscalationResource`, `EscalationDetailResource`
+- 2 new capabilities: `task.escalate`, `task.resolve_escalations`
+- Route file `routes/api/v1/tracking.php` with 6 endpoints
+- `tracking` logging channel in `config/logging.php`
+- 2 factories (`SlaTimerInstanceFactory`, `EscalationFactory`)
+- 7 feature test files, 20 tests (81 assertions)
+- `WorkingDayCalculator` extended with `addWorkingHours()`, `addWorkingSeconds()`, `workingSecondsBetween()`
+- Pagination response shape aligned with coding-standards: `{data, next_cursor, has_more}` on all list endpoints
+- Responsive cache keys for holiday lookups (tenant-prefixed, cold TTL 3600s)
+
+**Constraints for later milestones:**
+- SLA timer and escalation records are historical and never soft-deleted
+- Warning/breach events emitted once per timer (idempotent via `lockForUpdate`)
+- Scheduled SLA check is safe to run concurrently (per-timer transactions + row locks)
+- No caching on timer/escalation list endpoints (time-sensitive)
+- `resolveWorkingCalendar` currently uses tenant default only; department-level resolution deferred pending `departments.working_calendar_id` column
 
 ---
 

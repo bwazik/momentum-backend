@@ -66,4 +66,93 @@ class WorkingDayCalculator
 
         return $time >= $start && $time <= $end;
     }
+
+    public function addWorkingHours(WorkingCalendar $calendar, Carbon $fromDatetime, int $hours): Carbon
+    {
+        return $this->addWorkingSeconds($calendar, $fromDatetime, $hours * 3600);
+    }
+
+    public function addWorkingSeconds(WorkingCalendar $calendar, Carbon $fromDatetime, int $seconds): Carbon
+    {
+        $remaining = $seconds;
+        $current = $fromDatetime->copy();
+
+        $start = Carbon::createFromTimeString($calendar->working_hours_start);
+        $end = Carbon::createFromTimeString($calendar->working_hours_end);
+        $dailySeconds = $end->diffInSeconds($start);
+
+        while ($remaining > 0) {
+            if (! $this->isWorkingDay($calendar, $current)) {
+                $current->addDay()->setTimeFromTimeString($calendar->working_hours_start);
+
+                continue;
+            }
+
+            $currentTime = $current->format('H:i:s');
+            $endTime = $calendar->working_hours_end;
+
+            if ($currentTime < $calendar->working_hours_start) {
+                $current->setTimeFromTimeString($calendar->working_hours_start);
+                $currentTime = $calendar->working_hours_start;
+            }
+
+            if ($currentTime >= $endTime) {
+                $current->addDay()->setTimeFromTimeString($calendar->working_hours_start);
+
+                continue;
+            }
+
+            $secondsLeftInDay = Carbon::createFromTimeString($endTime)->diffInSeconds(Carbon::createFromTimeString($currentTime));
+
+            if ($remaining <= $secondsLeftInDay) {
+                $current->addSeconds($remaining);
+                $remaining = 0;
+            } else {
+                $remaining -= $secondsLeftInDay;
+                $current->addDay()->setTimeFromTimeString($calendar->working_hours_start);
+            }
+        }
+
+        return $current;
+    }
+
+    public function workingSecondsBetween(WorkingCalendar $calendar, Carbon $from, Carbon $to): int
+    {
+        if ($from->gte($to)) {
+            return 0;
+        }
+
+        $totalSeconds = 0;
+        $current = $from->copy();
+        $start = $calendar->working_hours_start;
+        $end = $calendar->working_hours_end;
+
+        while ($current->lt($to)) {
+            if (! $this->isWorkingDay($calendar, $current)) {
+                $current->addDay()->startOfDay();
+
+                continue;
+            }
+
+            $dayStart = $current->copy()->setTimeFromTimeString($start);
+            $dayEnd = $current->copy()->setTimeFromTimeString($end);
+
+            if ($current->gte($dayEnd)) {
+                $current->addDay()->setTimeFromTimeString($start);
+
+                continue;
+            }
+
+            $effectiveStart = $current->gt($dayStart) ? $current->copy() : $dayStart->copy();
+            $effectiveEnd = $to->lt($dayEnd) ? $to->copy() : $dayEnd->copy();
+
+            if ($effectiveStart->lt($effectiveEnd)) {
+                $totalSeconds += $effectiveEnd->diffInSeconds($effectiveStart);
+            }
+
+            $current = $dayEnd->copy()->addDay()->setTimeFromTimeString($start);
+        }
+
+        return $totalSeconds;
+    }
 }

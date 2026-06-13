@@ -137,6 +137,10 @@ Spec IDs match `../frontend/specs/` where UI exists. Backend establishes API con
 - ⬜ `013-comments-collaboration`
 - ⬜ `014-external-references`
 
+**Milestone 5 — SLA, Escalation & Notifications: 🔄 In Progress**
+- ✅ `007-sla-escalation` — SLA timer engine, warning/breach detection, escalation management
+- ⬜ `008-notifications`
+
 ---
 
 → **Next:** [roadmap.md](roadmap.md)

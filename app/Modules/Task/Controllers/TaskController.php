@@ -34,9 +34,14 @@ class TaskController extends Controller
     public function index(ListTaskRequest $request)
     {
         $this->checkRateLimit(RateLimits::LIST, [$request->user()->public_id]);
-        $tasks = $this->taskService->list($request);
+        $paginator = $this->taskService->list($request)
+            ->through(fn ($task) => new TaskResource($task));
 
-        return TaskResource::collection($tasks);
+        return response()->json([
+            'data' => $paginator->items(),
+            'next_cursor' => $paginator->nextCursor()?->encode(),
+            'has_more' => $paginator->hasMorePages(),
+        ]);
     }
 
     public function show(Request $request, Task $task): TaskDetailResource

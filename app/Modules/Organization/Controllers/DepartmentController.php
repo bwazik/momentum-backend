@@ -23,7 +23,7 @@ class DepartmentController extends Controller
         private DepartmentService $departmentService,
     ) {}
 
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request)
     {
         $this->checkRateLimit(RateLimits::LIST, [$request->user()?->public_id ?? 'guest']);
 
@@ -40,9 +40,14 @@ class DepartmentController extends Controller
                 ->when($parentId === null, fn ($q) => $q->whereRaw('1 = 0'));
         }
 
-        return DepartmentResource::collection(
-            $query->orderBy('name_ar')->cursorPaginate($request->integer('per_page', 15))
-        );
+        $paginator = $query->orderBy('name_ar')->cursorPaginate($request->integer('per_page', 15))
+            ->through(fn ($department) => new DepartmentResource($department));
+
+        return response()->json([
+            'data' => $paginator->items(),
+            'next_cursor' => $paginator->nextCursor()?->encode(),
+            'has_more' => $paginator->hasMorePages(),
+        ]);
     }
 
     public function tree(): AnonymousResourceCollection

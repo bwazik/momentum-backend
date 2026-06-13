@@ -37,6 +37,8 @@ class CapabilitySeeder extends Seeder
         ['key' => 'helpcenter.view', 'name_ar' => 'عرض مركز المساعدة', 'name_en' => 'View Help Center', 'description' => 'Can browse and read published help articles.'],
         ['key' => 'task.manage_priorities', 'name_ar' => 'إدارة أولويات المهام', 'name_en' => 'Manage Task Priorities', 'description' => 'Can create, update, deactivate, and reactivate task priority levels.'],
         ['key' => 'task.manage', 'name_ar' => 'إدارة المهام', 'name_en' => 'Manage Tasks', 'description' => 'Can update or delete other users\' draft tasks.'],
+        ['key' => 'task.escalate', 'name_ar' => 'تصعيد مهمة', 'name_en' => 'Escalate Task', 'description' => 'Create manual escalations for at-risk stages'],
+        ['key' => 'task.resolve_escalations', 'name_ar' => 'حل التصعيدات', 'name_en' => 'Resolve Escalations', 'description' => 'Resolve escalations beyond own assignments'],
     ];
 
     public function run(): void

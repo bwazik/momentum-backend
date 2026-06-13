@@ -44,7 +44,7 @@ it('lists users with pagination', function () {
         ->getJson('/v1/iam/users');
 
     $response->assertOk()
-        ->assertJsonStructure(['data', 'meta']);
+        ->assertJsonStructure(['data', 'next_cursor', 'has_more']);
 });
 
 it('creates a user', function () {
