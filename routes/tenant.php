@@ -36,4 +36,5 @@ Route::middleware([
     require __DIR__.'/api/v1/blueprints.php';
     require __DIR__.'/api/v1/tasks.php';
     require __DIR__.'/api/v1/tracking.php';
+    require __DIR__.'/api/v1/notifications.php';
 });

@@ -2,8 +2,7 @@
 
 > **Spec:** 008-notifications
 > **Date:** 2026-06-13
-> **Status:** draft
-> **Branch:** `feat/008-notifications` · **Base:** `main`
+> **Status:** completed
 
 ---
 
@@ -94,7 +93,7 @@
 
 | File | Change |
 |------|--------|
-| `routes/api.php` | `require __DIR__.'/api/v1/notifications.php';` |
+| `routes/tenant.php` | `require __DIR__.'/api/v1/notifications.php';` |
 | `config/logging.php` | Confirm/add `notification` channel (coding-standards already documents it). |
 | `app/Support/RateLimits.php` | No change if `LIST`/`MUTATE` exist; reuse them. |
 
@@ -440,17 +439,17 @@ public function markAllRead(User $user): void
 
 ## Execution Order
 
-1. **Migration** — create stock `notifications` table (tenant). Depends on: nothing.
-2. **Enums** — `NotificationType`, `NotificationChannel`. Depends on: 1.
-3. **Lang files** — `lang/{ar,en}/notifications.php` keys for all 10 types.
-4. **Notification classes** (10) — `ShouldQueue`, `via()`, `toArray()`, `toMail()`. Depends on: 2,3.
-5. **NotificationRecipientResolver** — read-only resolution helpers. Depends on: Task models.
-6. **Listeners** (10) — resolve + dedupe + dispatch; fan-out ones use `DB::transaction()`. Depends on: 4,5. Auto-discovered.
-7. **NotificationReadService** + **NotificationResource** + **ListNotificationsRequest**. Depends on: 1.
-8. **NotificationController** + **routes** + register in `routes/api.php`. Depends on: 7.
-9. **config/logging.php** — ensure `notification` channel.
-10. **Tests** (delivery, API, localization). Depends on: all.
-11. `vendor/bin/pint --dirty --format agent`, then `php artisan test --filter="Modules\\Notification"`.
+1. ✅ **Migration** — create stock `notifications` table (tenant). Depends on: nothing.
+2. ✅ **Enums** — `NotificationType`, `NotificationChannel`. Depends on: 1.
+3. ✅ **Lang files** — `lang/{ar,en}/notifications.php` keys for all 10 types.
+4. ✅ **Notification classes** (10) — `ShouldQueue`, `via()`, `toArray()`, `toMail()`. Depends on: 2,3.
+5. ✅ **NotificationRecipientResolver** — read-only resolution helpers. Depends on: Task models.
+6. ✅ **Listeners** (10) — resolve + dedupe + dispatch; fan-out ones use `DB::transaction()`. Depends on: 4,5. Auto-discovered.
+7. ✅ **NotificationReadService** + **NotificationResource** + **ListNotificationsRequest**. Depends on: 1.
+8. ✅ **NotificationController** + **routes** + register in `routes/tenant.php`. Depends on: 7.
+9. ✅ **config/logging.php** — added `notification` channel.
+10. ✅ **Tests** (delivery, API, localization). 23 tests, 51 assertions.
+11. ✅ `vendor/bin/pint --dirty --format agent`, then `php artisan test --filter="Modules\\Notification"` — all passing.
 
 ---
 
@@ -482,32 +481,3 @@ Response shapes: list = `{data:[...], next_cursor, has_more}`; unread-count = `{
 11. **Idempotency:** Replay the same domain event (re-run a queued listener) → no duplicate notification row.
 12. **Email failure isolation:** Break SMTP → in-app row still persists; mail job retries 3x then logs `failed()` to `notification` channel.
 13. **Tenant isolation:** Notification created in tenant A absent from tenant B DB.
-
----
-
-## Implementation Prompt (for a coding LLM)
-
-> Implement Spec 008 (Notifications) for the Momentum Backend Laravel app on branch `feat/008-notifications`, following `specs/008-notifications/spec.md` and `specs/008-notifications/plan.md`.
->
-> Use Laravel's native notification system: the stock `notifications` table (`php artisan notifications:table` schema, UUID `id` PK, no `public_id`, no `tenant_id`), the `Notifiable` trait already on `App\Models\User`, and `Illuminate\Notifications\Notification` classes implementing `ShouldQueue` with `via()` returning `['database','mail']`.
->
-> Create the `app/Modules/Notification/` module: `NotificationType` + `NotificationChannel` enums; 10 notification classes (one per type) with bilingual `toArray()` and recipient-language `toMail()`; 10 auto-discovered listeners under `app/Modules/Notification/Listeners/` consuming `StageAssignmentCreated`, `StageInstanceReturned`, `StageInstanceAdvanced`, `SlaWarningTriggered`, `SlaBreached`, `EscalationCreated`, `TaskCompleted`, `TaskCancelled`, `TaskSuspended`, `TaskResumed`; a read-only `NotificationRecipientResolver`; a `NotificationReadService`; `NotificationController` with `index`/`unreadCount`/`markRead`/`markAllRead`; `ListNotificationsRequest`; `NotificationResource`; `routes/api/v1/notifications.php` (registered in `routes/api.php`); `lang/{ar,en}/notifications.php`.
->
-> Rules (`docs/ai/coding-standards.md`, `security-policy.md`, `architecture.md`): cursor pagination + `{data,next_cursor,has_more}`; `RateLimits::LIST` on reads, `RateLimits::MUTATE` on writes via `HasRateLimiting`; `DB::transaction()` for fan-out sends and `read-all`; try/catch + `Log::channel('notification')` structured context in every listener/service; enum classes, never magic numbers; queued notifications `tries=3` `backoff=[30,60,120]`; tenant-prefixed unread-count cache (60s) invalidated on read; Notification module must NEVER write Task/Tracking/IAM/Organization tables (read-only cross-module); user-scoped queries only (a user can only read/mutate their own notifications, 404 otherwise); idempotent listeners via `data->dedupe_key`. Write feature tests for delivery, API, localization, isolation, and idempotency. Run `vendor/bin/pint --dirty --format agent` and `php artisan test --filter="Modules\\Notification"`.
-
----
-
-## Post-Implementation Review Checklist (run after coding)
-
-Produce an issues report covering:
-- **Missing files:** any of the 10 notification classes / 10 listeners / resolver / read service / controller / request / resource / routes / lang / migration absent.
-- **Missing functionality:** a consumed event with no listener; a notification type without `toMail()` localization; missing `read` filter; missing unread-count cache invalidation.
-- **Incorrect logic:** double-notify on advance (completer + new assignee both as assignee); manager re-resolved on breach instead of via `EscalationCreated`; dedupe key not applied; wildcard route swallowing `unread-count`/`read-all`.
-- **Security issues:** `markRead` not scoped to `$user->notifications()` (cross-user access); PII logged in notification bodies; confidential task content in `data` payload beyond minimal metadata.
-- **Architecture/standards violations:** any write to Task/Tracking/IAM tables; offset pagination; route-level `throttle:` instead of `HasRateLimiting`; non-queued mail; events not `ShouldDispatchAfterCommit`; `tenant_id` column added; `public_id` added to notifications table.
-
-Include file paths + recommended fixes so the report can be handed directly to a coding LLM.
-
----
-
-→ **Next:** Review and approve, then implement per the Implementation Prompt.

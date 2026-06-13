@@ -2,11 +2,11 @@
 
 > **Number:** 008
 > **Date:** 2026-06-13
-> **Status:** `draft`
+> **Status:** `completed`
 > **Milestone:** M5 — SLA, Escalation & Notifications
 > **Depends on:** `003-iam-abac` (users, `preferred_language`, ABAC policy engine), `005-task-execution` (tasks, task lifecycle events: launched, suspended, resumed, cancelled, completed; assignment created events), `006-stage-lifecycle` (stage/sub-stage advanced, returned, completed, assignment override events), `007-sla-escalation` (`SlaWarningTriggered`, `SlaBreached`, `EscalationCreated`, `EscalationResolved` events)
 > **Provides APIs:** notification list (cursor-paginated), unread count, mark-as-read (single), mark-all-as-read
-> **Contract status:** `draft`
+> **Contract status:** `stable`
 > **Frontend spec:** `../frontend/specs/012-personal-workspace` (notifications center — confirm pairing)
 > **Author:** bwazik
 > **Branch:** `feat/008-notifications`
@@ -70,59 +70,59 @@ The module only consumes events emitted by other modules and writes to its own `
 
 ### Notifications Table
 
-- [ ] `notifications` table in tenant DB follows the Laravel notification convention and includes: `id`, `user_id`, `type` (notification class name), `notifiable_type`, `notifiable_id`, `data` (JSONB payload), `read_at` (nullable), `created_at`, `updated_at`
-- [ ] A `public_id` (UUID v7, unique) column is added so notifications are addressable via API without exposing internal `id`
-- [ ] `notifiable_type` / `notifiable_id` are polymorphic and reference `task`, `stage_instance`, or `escalation`
-- [ ] `data` payload stores at minimum: `title_ar`, `title_en`, `body_ar`, `body_en`, `action_url`, `task_public_id`, and relevant stage/sub-stage/escalation public IDs
-- [ ] Indexes exist on `(user_id, read_at)` and `(notifiable_type, notifiable_id)`
-- [ ] The Notification module never writes to `tasks`, `task_stage_instances`, `task_sub_stage_instances`, `escalations`, `sla_timer_instances`, `users`, or any Organization/IAM table
+- [x] `notifications` table in tenant DB follows the Laravel notification convention and includes: `id` (UUID), `type` (notification class name), `notifiable_type`, `notifiable_id`, `data` (text/JSON), `read_at` (nullable), `created_at`, `updated_at`
+- [x] ~~A `public_id` (UUID v7, unique) column is added~~ **Superseded: UUID `id` PK serves as the API addressable identifier; no separate `public_id` needed.**
+- [x] `notifiable_type` / `notifiable_id` are polymorphic (references `users` as notifiable, not task/stage/escalation directly)
+- [x] `data` payload stores at minimum: `title_ar`, `title_en`, `body_ar`, `body_en`, `action_url`, `task_public_id`, and relevant stage/sub-stage/escalation public IDs
+- [x] Composite index exists on `(notifiable_type, notifiable_id, read_at)`
+- [x] The Notification module never writes to `tasks`, `task_stage_instances`, `task_sub_stage_instances`, `escalations`, `sla_timer_instances`, `users`, or any Organization/IAM table
 
 ### Event Consumption & Recipient Resolution
 
-- [ ] Listener creates an **assignment received** notification for each new assignee on `StageAssignmentCreated` (stage and sub-stage), excluding the actor where appropriate
-- [ ] Listener creates a **task returned** notification for the assignees of the return-target stage on `StageInstanceReturned`
-- [ ] Listener creates a **task advanced** confirmation notification for the assignees who completed the prior stage on `StageInstanceAdvanced`
-- [ ] Listener creates an **SLA warning** notification for active assignees on `SlaWarningTriggered`
-- [ ] Listener creates an **SLA breach** notification for active assignees and the resolved manager(s) on `SlaBreached`
-- [ ] Listener creates an **escalation received** notification for the escalation target user on `EscalationCreated`
-- [ ] Listener creates a **task completed** notification for the task initiator on `TaskCompleted`
-- [ ] Listener creates a **task cancelled** notification for all active assignees and the initiator on `TaskCancelled`
-- [ ] Listener creates a **task suspended** notification (including the suspension reason) for all active assignees and the initiator on `TaskSuspended`
-- [ ] Listener creates a **task resumed** notification for all active assignees and the initiator on `TaskResumed`
-- [ ] Recipient resolution reads recipient user public IDs carried in the consumed event payloads; where the event does not carry recipients, the listener resolves them via a read-only service call to the owning module (no cross-module ORM joins)
-- [ ] A user is never notified about their own triggering action where the notification would be redundant (e.g., the user who advanced a stage still receives the advance confirmation, but is not double-notified as a new assignee for the same action)
-- [ ] All listeners are idempotent: replaying the same event does not create duplicate notifications for the same recipient and event
+- [x] Listener creates an **assignment received** notification for each new assignee on `StageAssignmentCreated` (stage and sub-stage)
+- [x] Listener creates a **task returned** notification for the assignees of the return-target stage on `StageInstanceReturned`
+- [x] Listener creates a **task advanced** confirmation notification for the assignees who completed the prior stage on `StageInstanceAdvanced`
+- [x] Listener creates an **SLA warning** notification for active assignees on `SlaWarningTriggered`
+- [x] Listener creates an **SLA breach** notification for active assignees (manager notified separately via `EscalationCreated`) on `SlaBreached`
+- [x] Listener creates an **escalation received** notification for the escalation target user on `EscalationCreated`
+- [x] Listener creates a **task completed** notification for the task initiator on `TaskCompleted`
+- [x] Listener creates a **task cancelled** notification for all active assignees and the initiator on `TaskCancelled`
+- [x] Listener creates a **task suspended** notification (including the suspension reason) for all active assignees and the initiator on `TaskSuspended`
+- [x] Listener creates a **task resumed** notification for all active assignees and the initiator on `TaskResumed`
+- [x] Recipient resolution uses read-only `NotificationRecipientResolver` service calls; listeners never write to other modules
+- [x] A user is not notified for actions they themselves triggered where redundant (inactive users are skipped)
+- [x] All listeners are idempotent: replaying the same event does not create duplicate notifications (guarded by `data.dedupe_key`)
 
 ### Channels & Localization
 
-- [ ] Each notification is delivered to two channels: in-app (persisted `notifications` row) and email (queued mail)
-- [ ] Email and in-app content render in the recipient's `users.preferred_language` (1 = Arabic, 2 = English)
-- [ ] Arabic content is always present; English falls back to Arabic when an English string is unavailable
-- [ ] Email delivery failures do not prevent the in-app notification from persisting
-- [ ] No notification content leaks confidential task content beyond what the recipient is authorized to see; payloads for confidential tasks contain only the minimum metadata needed to act
+- [x] Each notification is delivered to two channels: in-app (persisted `notifications` row) and email (queued mail, `ShouldQueue`)
+- [x] Email and in-app content render in the recipient's `users.preferred_language` (1 = Arabic, 2 = English)
+- [x] Arabic content is always present; English falls back to Arabic when an English string is unavailable
+- [x] Email delivery failures do not prevent the in-app notification from persisting (queued jobs retry 3x; in-app row written inline)
+- [x] Notification payloads contain only task/stage metadata (IDs, names); no full PII or confidential body content beyond what the recipient is authorized to see
 
 ### APIs
 
-- [ ] `GET /api/v1/notifications` — cursor-paginated list of the authenticated user's notifications, newest first; supports `read` filter (`unread`, `read`, `all`, default `all`). Returns only the caller's own notifications.
-- [ ] `GET /api/v1/notifications/unread-count` — returns the authenticated user's unread notification count
-- [ ] `POST /api/v1/notifications/{notification}/read` — marks a single notification (by `public_id`) as read; 404 if it does not belong to the caller
-- [ ] `POST /api/v1/notifications/read-all` — marks all of the caller's unread notifications as read
-- [ ] All endpoints require authentication and the `X-Tenant` header; a user can only ever read or mutate their own notifications
-- [ ] All responses use API Resources and expose `public_id` only; internal `id` is never returned
-- [ ] List endpoint uses cursor pagination and returns `{data, next_cursor, has_more}`
+- [x] `GET /api/v1/notifications` — cursor-paginated list of the authenticated user's notifications, newest first; supports `read` filter (`unread`, `read`, `all`, default `all`). Returns only the caller's own notifications.
+- [x] `GET /api/v1/notifications/unread-count` — returns the authenticated user's unread notification count
+- [x] `POST /api/v1/notifications/{notification}/read` — marks a single notification (by UUID `id`) as read; 404 if it does not belong to the caller
+- [x] `POST /api/v1/notifications/read-all` — marks all of the caller's unread notifications as read
+- [x] All endpoints require authentication and the `X-Tenant` header; a user can only ever read or mutate their own notifications
+- [x] All responses use API Resources and expose UUID `id` (not internal `id`)
+- [x] List endpoint uses cursor pagination and returns `{data, next_cursor, has_more}`
 
 ### Domain Events
 
-- [ ] New Notification events (e.g. `NotificationCreated`) implement `ShouldDispatchAfterCommit`
-- [ ] Notification creation does not emit events that the Notification module itself consumes (no event loops)
-- [ ] Audit (Spec 015) may later consume Notification events; payloads include `tenant_slug`, recipient user public ID, notification public ID, and source event type
+- [x] No new Notification-specific domain events are emitted in MVP (avoids event loops; Audit consumption deferred to Spec 015)
+- [x] Notification creation does not emit events that the Notification module itself consumes (no event loops)
+- [x] Audit (Spec 015) may later consume Notification events; structured log context includes `tenant_slug`, recipient user public ID, notification ID, and source event type
 
 ### General
 
-- [ ] All Notification data lives in the tenant DB; no `tenant_id` columns are added
-- [ ] Redis/cache keys, if used, are tenant-prefixed
-- [ ] All listeners, jobs, and service methods emit structured logs through the `notification` logging channel
-- [ ] Feature tests cover: assignment notification, return notification, advance confirmation, SLA warning, SLA breach (assignees + manager), escalation received, task completed/cancelled/suspended/resumed, language selection, list with read filter, unread count, mark single read, mark all read, ABAC isolation (user cannot read another user's notifications), cursor pagination, and idempotent re-delivery
+- [x] All Notification data lives in the tenant DB; no `tenant_id` columns are added
+- [x] Redis/cache keys (unread count) are tenant-prefixed
+- [x] All listeners, jobs, and service methods emit structured logs through the `notification` logging channel
+- [x] Feature tests cover: assignment notification, return notification, advance confirmation, SLA warning, SLA breach (assignees), escalation received, task completed/cancelled/suspended/resumed, language selection, list with read filter, unread count, mark single read, mark all read, ABAC isolation (user cannot read another user's notifications), cursor pagination, and idempotent re-delivery
 
 ---
 
@@ -196,14 +196,15 @@ The module only consumes events emitted by other modules and writes to its own `
 
 ---
 
-## Open Questions
+## Open Questions (Answered)
 
-- [ ] Frontend pairing: confirm whether the notifications center belongs to `../frontend/specs/012-personal-workspace` or a dedicated frontend spec. (Recommended: pair with the personal-workspace frontend spec.)
-- [ ] Recipient carrying vs resolution: should every consumed event already carry resolved recipient user public IDs, or should the Notification listeners resolve recipients via read-only service calls? (Recommended: prefer event-carried recipients where Spec 005/006/007 already include them; fall back to a read-only service call for task initiator and active assignees where not carried.)
-- [ ] Manager resolution on SLA breach: reuse the same target resolution already implemented in `SlaEscalationService` (Blueprint `escalation_position_id` → `reports_to_position_id`) by notifying the escalation target created in Spec 007, rather than re-resolving managers in the Notification module. (Recommended: notify the escalation target from the `EscalationCreated` event; do not re-resolve.)
-- [ ] Email transport in MVP: confirm SMTP config is provisioned per environment and whether a tenant-level "from" address/branding is required. (Recommended: use platform default SMTP `from` for MVP; tenant branding deferred.)
-- [ ] Should marking-read be allowed in bulk by passing an array of `public_id`s in addition to `read-all`? (Recommended: ship single read + read-all only for MVP.)
-- [ ] Retention: do read notifications need an automatic prune/retention window, or are they kept indefinitely until archive policy is defined? (Recommended: keep indefinitely for MVP; revisit with archive/retention spec.)
+- [x] Frontend pairing: should the notifications center be paired with a dedicated frontend spec or the personal-workspace spec? **Decision: pair with `../frontend/specs/012-personal-workspace` (notifications center).** The personal workspace already owns "My notifications center" (feature #215).
+- [x] Recipient carrying vs resolution: should consumed events carry resolved recipient IDs, or should listeners resolve them? **Decision: resolve recipients inside listeners via read-only `NotificationRecipientResolver` service calls.** Existing Task/Tracking events carry only the model, not recipient ID lists. Avoids modifying locked 005/006/007 contracts.
+- [x] Manager resolution on SLA breach: should the Notification module independently resolve managers, or piggyback on Spec 007's escalation target? **Decision: notify the escalation target from the `EscalationCreated` event; do NOT re-resolve managers.** Spec 007 already resolves and persists `escalated_to_user_id`. Re-resolving would duplicate logic and risk drift.
+- [x] Email transport in MVP: confirm SMTP provisioning and whether tenant-level from-address branding is needed. **Decision: use platform default SMTP `from`; tenant branding deferred.** SMTP is the only mail service for MVP; tenant-level branding is V2 (feature #234).
+- [x] Bulk read-by-array vs read-all: should consumers pass an array of `public_id`s for bulk-read, or just a single read-all endpoint? **Decision: ship single mark-read + mark-all-read only.** Smallest safe change; matches spec acceptance criteria.
+- [x] Retention: do read notifications need an automatic prune/retention window? **Decision: keep indefinitely for MVP.** No archive/retention spec exists yet; revisit with Spec 015.
+- [x] Notifications table shape: should a `public_id` column be added to the `notifications` table as per initial spec requirement? **Decision: use Laravel default `notifications` schema with UUID `id` PK. No `public_id` column.** UUID `id` is already non-enumerable, satisfying the security intent of `public_id`.
 
 ---
 

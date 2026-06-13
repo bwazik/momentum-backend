@@ -8,8 +8,8 @@
 
 ## Current Focus
 
-**Active Milestone:** M5 — SLA, Escalation & Notifications
-**Active Spec:** `008-notifications`
+**Active Milestone:** M6 — Analytics, Follow-up & Search
+**Active Spec:** `009-analytics-reporting`
 **Branch:** `main`
 
 Do not implement specs marked ⬜ Not Started unless explicitly instructed.
@@ -24,8 +24,8 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | M2 | Organization & IAM | 🔄 In Progress | M1 |
 | M3 | Blueprint Engine | ✅ Done | M2 |
 | M4 | Task Execution & Lifecycle | 🔄 In Progress | M3 |
-| M5 | SLA, Escalation & Notifications | 🔄 In Progress | M4 |
-| M6 | Analytics, Follow-up & Search | ⬜ Not Started | M5 |
+| M5 | SLA, Escalation & Notifications | ✅ Done | M4 |
+| M6 | Analytics, Follow-up & Search | 🔄 In Progress | M5 |
 | M7 | Documents, Audit, Onboarding & Help | ⬜ Not Started | M4 |
 
 **Legend:** ✅ Done · 🔄 In Progress · ⬜ Not Started · 🚧 Blocked
@@ -44,7 +44,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | `005-task-execution` | M4 | Task creation & launch | `002-task-board`, `003-task-details` | ✅ Done |
 | `006-stage-lifecycle` | M4 | Stage/sub-stage progression | `003-task-details`, `005-workflow-visualization` | ✅ Done |
 | `007-sla-escalation` | M5 | Tracking & SLA | `006-follow-up-center` | ✅ Done |
-| `008-notifications` | M5 | Notification | — (backend-only delivery) | ⬜ Not Started |
+| `008-notifications` | M5 | Notification | — (backend-only delivery) | ✅ Done |
 | `009-analytics-reporting` | M6 | Analytics | `001-executive-dashboard`, `008-analytics-reporting`, `011-department-manager-dashboard` | ⬜ Not Started |
 | `010-follow-up-board` | M6 | Follow-up & tracking API | `006-follow-up-center` | ⬜ Not Started |
 | `011-search-discovery` | M6 | Search | — | ⬜ Not Started |
@@ -219,9 +219,9 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 
 ## M5 — SLA, Escalation & Notifications
 
-**Status:** 🔄 In Progress
+**Status:** ✅ Done
 
-**Specs:** `007` ✅, `008` ⬜
+**Specs:** `007` ✅, `008` ✅
 
 **Established by 007:**
 - **Tracking module** (`app/Modules/Tracking/`) — clean bounded context
@@ -250,12 +250,29 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 - Pagination response shape aligned with coding-standards: `{data, next_cursor, has_more}` on all list endpoints
 - Responsive cache keys for holiday lookups (tenant-prefixed, cold TTL 3600s)
 
+**Established by 008:**
+- **Notification module** (`app/Modules/Notification/`) — clean bounded context consuming Task + Tracking events
+- `notifications` table in tenant DB (UUID `id` PK, `morphs`, `data`, `read_at`, timestamps; composite `(notifiable_type, notifiable_id, read_at)` index)
+- 2 enums: `NotificationType` (string-backed, 10 cases), `NotificationChannel` (int-backed)
+- 10 notification classes implementing `ShouldQueue` with `tries=3` `backoff=[30,60,120]`, `via() = ['database', 'mail']`, bilingual `toArray()` and locale-aware `toMail()`
+- 10 auto-discovered listeners resolving recipients via read-only `NotificationRecipientResolver`, dedupe-guarded via `data.dedupe_key`
+- `NotificationRecipientResolver` — read-only: `activeStageAssignees()`, `activeTaskParticipants()`, `initiator()`
+- `NotificationReadService` — cached unread count (60s, tenant-prefixed), mark single/mark-all with cache invalidation
+- `NotificationController` with `HasRateLimiting`: cursor-paginated list (`LIST` 60/min), unread count (`LIST`), mark read/mark all read (`MUTATE` 30/min)
+- `NotificationResource` exposing UUID `id`, `type`, `data`, `read_at`, `created_at`
+- `ListNotificationsRequest` validating `read` filter (`unread`/`read`/`all`) and `per_page`
+- `routes/api/v1/notifications.php` with 4 endpoints, registered in `routes/tenant.php`
+- Bilingual translation files `lang/{ar,en}/notifications.php` for all 10 types
+- `notification` logging channel in `config/logging.php`
+- 3 feature test files, 23 tests (51 assertions): delivery, API, localization, isolation, idempotency
+
 **Constraints for later milestones:**
 - SLA timer and escalation records are historical and never soft-deleted
 - Warning/breach events emitted once per timer (idempotent via `lockForUpdate`)
 - Scheduled SLA check is safe to run concurrently (per-timer transactions + row locks)
 - No caching on timer/escalation list endpoints (time-sensitive)
 - `resolveWorkingCalendar` currently uses tenant default only; department-level resolution deferred pending `departments.working_calendar_id` column
+- Notification module never writes Task/Tracking/IAM/Organization tables (read-only cross-module)
 
 ---
 
