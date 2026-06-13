@@ -141,6 +141,11 @@ Spec IDs match `../frontend/specs/` where UI exists. Backend establishes API con
 - ✅ `007-sla-escalation` — SLA timer engine, warning/breach detection, escalation management
 - ✅ `008-notifications` — Event-driven notification module, in-app + email delivery, read/mutate APIs
 
+**Milestone 6 — Analytics, Follow-up & Search: 🔄 In Progress**
+- ✅ `009-analytics-reporting` — Read-only executive/department dashboards, bottleneck view, aging report, ABAC-aware queries
+- ⬜ `010-follow-up-board` — Follow-up & tracking API
+- ⬜ `011-search-discovery` — Search
+
 ---
 
 → **Next:** [roadmap.md](roadmap.md)

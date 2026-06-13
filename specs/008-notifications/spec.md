@@ -8,7 +8,7 @@
 > **Provides APIs:** notification list (cursor-paginated), unread count, mark-as-read (single), mark-all-as-read
 > **Contract status:** `stable`
 > **Frontend spec:** `../frontend/specs/012-personal-workspace` (notifications center — confirm pairing)
-> **Author:** bwazik
+> **Author:** Momentum init
 > **Branch:** `feat/008-notifications`
 > **Base branch:** `main`
 

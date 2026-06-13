@@ -148,6 +148,7 @@ Keep these items concise and avoid long prose; mark uncertain details with `<!--
 **Do not start implementing.** This prompt is plan creation only.
 **You can access any files in the current codebase to know about the existing code (ONLY IF NEEDED)**
 **You can access any plan.md from older spec as a reference if you needed to**
+**You may update any part of the spec.md if you discover that it is no longer relevant or does not match the current codebase**
 ```
 
 ---

@@ -9,7 +9,7 @@
 ## Current Focus
 
 **Active Milestone:** M6 — Analytics, Follow-up & Search
-**Active Spec:** `009-analytics-reporting`
+**Active Spec:** `010-follow-up-board`
 **Branch:** `main`
 
 Do not implement specs marked ⬜ Not Started unless explicitly instructed.
@@ -45,7 +45,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | `006-stage-lifecycle` | M4 | Stage/sub-stage progression | `003-task-details`, `005-workflow-visualization` | ✅ Done |
 | `007-sla-escalation` | M5 | Tracking & SLA | `006-follow-up-center` | ✅ Done |
 | `008-notifications` | M5 | Notification | — (backend-only delivery) | ✅ Done |
-| `009-analytics-reporting` | M6 | Analytics | `001-executive-dashboard`, `008-analytics-reporting`, `011-department-manager-dashboard` | ⬜ Not Started |
+| `009-analytics-reporting` | M6 | Analytics | `001-executive-dashboard`, `008-analytics-reporting`, `011-department-manager-dashboard` | ✅ Done |
 | `010-follow-up-board` | M6 | Follow-up & tracking API | `006-follow-up-center` | ⬜ Not Started |
 | `011-search-discovery` | M6 | Search | — | ⬜ Not Started |
 | `012-documents-attachments` | M7 | Document | `003-task-details` | ⬜ Not Started |
@@ -273,6 +273,27 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 - No caching on timer/escalation list endpoints (time-sensitive)
 - `resolveWorkingCalendar` currently uses tenant default only; department-level resolution deferred pending `departments.working_calendar_id` column
 - Notification module never writes Task/Tracking/IAM/Organization tables (read-only cross-module)
+
+---
+
+## M6 — Analytics, Follow-up & Search
+
+**Status:** 🔄 In Progress
+
+**Specs:** `009` ✅, `010` ⬜, `011` ⬜
+
+**Established by 009:**
+- **Analytics module** (`app/Modules/Analytics/`) — pure read-only reporting bounded context
+- `ExecutiveDashboardService`, `DepartmentDashboardService`, `AgingReportService` with shared `IntersectsTaskVisibility` trait
+- `TaskHealth` and `DepartmentHealth` enums
+- 9 analytics endpoints under `/api/v1/analytics`: executive summary, bottlenecks, department health, summary/bottleneck drill-downs, department performance/team/drill-down, task aging
+- `TaskVisibilityScope` applied before aggregation so ABAC/confidentiality rules are preserved
+- Tenant-prefixed cache keys (300s warm tier) for executive summary, department health, department performance, and team metrics; event-driven invalidation via auto-discovered listeners
+- `analytics` logging channel in `config/logging.php`
+- 4 feature test files, 18 tests (54 assertions): executive dashboard, department dashboard, aging report, ABAC/confidentiality
+- `openapi/openapi.json` regenerated and contract marked `stable`
+
+**Remaining M6 specs:** `010` (follow-up board), `011` (search)
 
 ---
 

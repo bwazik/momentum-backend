@@ -93,31 +93,20 @@
                                 "schema": {
                                     "type": "object",
                                     "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "const": "This is your multi-tenant application."
-                                        },
                                         "tenant": {
                                             "type": "object",
                                             "properties": {
-                                                "public_id": {},
-                                                "slug": {},
-                                                "name": {}
+                                                "public_id": {
+                                                    "type": "string"
+                                                }
                                             },
                                             "required": [
-                                                "public_id",
-                                                "slug",
-                                                "name"
+                                                "public_id"
                                             ]
-                                        },
-                                        "database_name": {
-                                            "type": "string"
                                         }
                                     },
                                     "required": [
-                                        "message",
-                                        "tenant",
-                                        "database_name"
+                                        "tenant"
                                     ]
                                 }
                             }
@@ -125,6 +114,133 @@
                     }
                 },
                 "security": []
+            }
+        },
+        "/analytics/tasks/aging": {
+            "get": {
+                "operationId": "agingReport.index",
+                "tags": [
+                    "AgingReport"
+                ],
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/TaskStatus"
+                        }
+                    },
+                    {
+                        "name": "priority_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "department_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "blueprint_category_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "next_cursor": {
+                                            "type": "string"
+                                        },
+                                        "has_more": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "next_cursor",
+                                        "has_more"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
             }
         },
         "/iam/users/{user}/audit-grants": {
@@ -672,7 +788,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Paginated set of `BlueprintResource`",
+                        "description": "",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -684,83 +800,17 @@
                                                 "$ref": "#/components/schemas/BlueprintResource"
                                             }
                                         },
-                                        "links": {
-                                            "type": "object",
-                                            "properties": {
-                                                "first": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "last": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "prev": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "next": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                }
-                                            },
-                                            "required": [
-                                                "first",
-                                                "last",
-                                                "prev",
-                                                "next"
-                                            ]
+                                        "next_cursor": {
+                                            "type": "string"
                                         },
-                                        "meta": {
-                                            "type": "object",
-                                            "properties": {
-                                                "path": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ],
-                                                    "description": "Base path for paginator generated URLs."
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "description": "Number of items shown per page.",
-                                                    "minimum": 0
-                                                },
-                                                "next_cursor": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ],
-                                                    "description": "The \"cursor\" that points to the next set of items."
-                                                },
-                                                "prev_cursor": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ],
-                                                    "description": "The \"cursor\" that points to the previous set of items."
-                                                }
-                                            },
-                                            "required": [
-                                                "path",
-                                                "per_page",
-                                                "next_cursor",
-                                                "prev_cursor"
-                                            ]
+                                        "has_more": {
+                                            "type": "boolean"
                                         }
                                     },
                                     "required": [
                                         "data",
-                                        "links",
-                                        "meta"
+                                        "next_cursor",
+                                        "has_more"
                                     ]
                                 }
                             }
@@ -2546,7 +2596,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Paginated set of `DepartmentResource`",
+                        "description": "",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2558,83 +2608,17 @@
                                                 "$ref": "#/components/schemas/DepartmentResource"
                                             }
                                         },
-                                        "links": {
-                                            "type": "object",
-                                            "properties": {
-                                                "first": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "last": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "prev": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "next": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                }
-                                            },
-                                            "required": [
-                                                "first",
-                                                "last",
-                                                "prev",
-                                                "next"
-                                            ]
+                                        "next_cursor": {
+                                            "type": "string"
                                         },
-                                        "meta": {
-                                            "type": "object",
-                                            "properties": {
-                                                "path": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ],
-                                                    "description": "Base path for paginator generated URLs."
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "description": "Number of items shown per page.",
-                                                    "minimum": 0
-                                                },
-                                                "next_cursor": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ],
-                                                    "description": "The \"cursor\" that points to the next set of items."
-                                                },
-                                                "prev_cursor": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ],
-                                                    "description": "The \"cursor\" that points to the previous set of items."
-                                                }
-                                            },
-                                            "required": [
-                                                "path",
-                                                "per_page",
-                                                "next_cursor",
-                                                "prev_cursor"
-                                            ]
+                                        "has_more": {
+                                            "type": "boolean"
                                         }
                                     },
                                     "required": [
                                         "data",
-                                        "links",
-                                        "meta"
+                                        "next_cursor",
+                                        "has_more"
                                     ]
                                 }
                             }
@@ -2974,6 +2958,1179 @@
                 }
             }
         },
+        "/analytics/departments/{department}/performance": {
+            "get": {
+                "operationId": "departmentDashboard.performance",
+                "tags": [
+                    "DepartmentDashboard"
+                ],
+                "parameters": [
+                    {
+                        "name": "department",
+                        "in": "path",
+                        "required": true,
+                        "description": "The department public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "priority_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "blueprint_category_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`DepartmentPerformanceResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DepartmentPerformanceResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/analytics/departments/{department}/team": {
+            "get": {
+                "operationId": "departmentDashboard.team",
+                "tags": [
+                    "DepartmentDashboard"
+                ],
+                "parameters": [
+                    {
+                        "name": "department",
+                        "in": "path",
+                        "required": true,
+                        "description": "The department public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "priority_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "blueprint_category_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `TeamMetricsResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/TeamMetricsResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/analytics/departments/{department}/performance/drill-down": {
+            "get": {
+                "operationId": "departmentDashboard.drillDown",
+                "tags": [
+                    "DepartmentDashboard"
+                ],
+                "parameters": [
+                    {
+                        "name": "department",
+                        "in": "path",
+                        "required": true,
+                        "description": "The department public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "priority_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "blueprint_category_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TaskListItemResource"
+                                            }
+                                        },
+                                        "next_cursor": {
+                                            "type": "string"
+                                        },
+                                        "has_more": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "next_cursor",
+                                        "has_more"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tracking/escalations": {
+            "get": {
+                "operationId": "escalation.index",
+                "tags": [
+                    "Escalation"
+                ],
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/EscalationStatus"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/EscalationType"
+                        }
+                    },
+                    {
+                        "name": "assigned_to_me",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "boolean",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "task_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "blueprint_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "department_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "created_from",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "created_to",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/EscalationResource"
+                                            }
+                                        },
+                                        "next_cursor": {
+                                            "type": "string"
+                                        },
+                                        "has_more": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "next_cursor",
+                                        "has_more"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "escalation.store",
+                "tags": [
+                    "Escalation"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateManualEscalationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "`EscalationDetailResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EscalationDetailResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tracking/escalations/{escalation}": {
+            "get": {
+                "operationId": "escalation.show",
+                "tags": [
+                    "Escalation"
+                ],
+                "parameters": [
+                    {
+                        "name": "escalation",
+                        "in": "path",
+                        "required": true,
+                        "description": "The escalation public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`EscalationDetailResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EscalationDetailResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/tracking/escalations/{escalation}/resolve": {
+            "post": {
+                "operationId": "escalation.resolve",
+                "tags": [
+                    "Escalation"
+                ],
+                "parameters": [
+                    {
+                        "name": "escalation",
+                        "in": "path",
+                        "required": true,
+                        "description": "The escalation public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ResolveEscalationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`EscalationDetailResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EscalationDetailResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/analytics/executive/summary": {
+            "get": {
+                "operationId": "executiveDashboard.summary",
+                "tags": [
+                    "ExecutiveDashboard"
+                ],
+                "parameters": [
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "priority_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "department_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "blueprint_category_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`ExecutiveSummaryResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExecutiveSummaryResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/analytics/executive/bottlenecks": {
+            "get": {
+                "operationId": "executiveDashboard.bottlenecks",
+                "tags": [
+                    "ExecutiveDashboard"
+                ],
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "department_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `BottleneckResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/BottleneckResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/analytics/executive/department-health": {
+            "get": {
+                "operationId": "executiveDashboard.departmentHealth",
+                "tags": [
+                    "ExecutiveDashboard"
+                ],
+                "parameters": [
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "priority_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "department_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "blueprint_category_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `DepartmentHealthResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/DepartmentHealthResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/analytics/executive/summary/drill-down/{metric}": {
+            "get": {
+                "operationId": "executiveDashboard.summaryDrillDown",
+                "tags": [
+                    "ExecutiveDashboard"
+                ],
+                "parameters": [
+                    {
+                        "name": "metric",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "priority_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "department_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "blueprint_category_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TaskListItemResource"
+                                            }
+                                        },
+                                        "next_cursor": {
+                                            "type": "string"
+                                        },
+                                        "has_more": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "next_cursor",
+                                        "has_more"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/analytics/executive/bottlenecks/{stageType}/drill-down": {
+            "get": {
+                "operationId": "executiveDashboard.bottleneckDrillDown",
+                "tags": [
+                    "ExecutiveDashboard"
+                ],
+                "parameters": [
+                    {
+                        "name": "stageType",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "department_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TaskListItemResource"
+                                            }
+                                        },
+                                        "next_cursor": {
+                                            "type": "string"
+                                        },
+                                        "has_more": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "next_cursor",
+                                        "has_more"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
         "/iam/users/{user}/monitoring-scopes": {
             "get": {
                 "operationId": "monitoringScopeGrant.index",
@@ -3119,6 +4276,186 @@
                     },
                     "404": {
                         "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/notifications/unread-count": {
+            "get": {
+                "operationId": "notification.unreadCount",
+                "tags": [
+                    "Notification"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "unread_count": {
+                                            "type": "integer",
+                                            "minimum": 0
+                                        }
+                                    },
+                                    "required": [
+                                        "unread_count"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/notifications/read-all": {
+            "post": {
+                "operationId": "notification.markAllRead",
+                "tags": [
+                    "Notification"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/notifications": {
+            "get": {
+                "operationId": "notification.index",
+                "tags": [
+                    "Notification"
+                ],
+                "parameters": [
+                    {
+                        "name": "read",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "unread",
+                                "read",
+                                "all"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {}
+                                        },
+                                        "next_cursor": {
+                                            "type": "string"
+                                        },
+                                        "has_more": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "next_cursor",
+                                        "has_more"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/notifications/{notification}/read": {
+            "post": {
+                "operationId": "notification.markRead",
+                "tags": [
+                    "Notification"
+                ],
+                "parameters": [
+                    {
+                        "name": "notification",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
                     },
                     "401": {
                         "$ref": "#/components/responses/AuthenticationException"
@@ -4257,7 +5594,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Paginated set of `PositionResource`",
+                        "description": "",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4269,83 +5606,17 @@
                                                 "$ref": "#/components/schemas/PositionResource"
                                             }
                                         },
-                                        "links": {
-                                            "type": "object",
-                                            "properties": {
-                                                "first": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "last": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "prev": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "next": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                }
-                                            },
-                                            "required": [
-                                                "first",
-                                                "last",
-                                                "prev",
-                                                "next"
-                                            ]
+                                        "next_cursor": {
+                                            "type": "string"
                                         },
-                                        "meta": {
-                                            "type": "object",
-                                            "properties": {
-                                                "path": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ],
-                                                    "description": "Base path for paginator generated URLs."
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "description": "Number of items shown per page.",
-                                                    "minimum": 0
-                                                },
-                                                "next_cursor": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ],
-                                                    "description": "The \"cursor\" that points to the next set of items."
-                                                },
-                                                "prev_cursor": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ],
-                                                    "description": "The \"cursor\" that points to the previous set of items."
-                                                }
-                                            },
-                                            "required": [
-                                                "path",
-                                                "per_page",
-                                                "next_cursor",
-                                                "prev_cursor"
-                                            ]
+                                        "has_more": {
+                                            "type": "boolean"
                                         }
                                     },
                                     "required": [
                                         "data",
-                                        "links",
-                                        "meta"
+                                        "next_cursor",
+                                        "has_more"
                                     ]
                                 }
                             }
@@ -5482,6 +6753,931 @@
                 }
             }
         },
+        "/tracking/sla/tasks/{task}": {
+            "get": {
+                "operationId": "slaTimer.taskHealth",
+                "tags": [
+                    "SlaTimer"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/SlaTimerStatus"
+                        }
+                    },
+                    {
+                        "name": "task_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "blueprint_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "stage_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "assigned_user_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "department_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "deadline_from",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "deadline_to",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`TaskSlaHealthResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskSlaHealthResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tracking/sla/timers": {
+            "get": {
+                "operationId": "slaTimer.index",
+                "tags": [
+                    "SlaTimer"
+                ],
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/SlaTimerStatus"
+                        }
+                    },
+                    {
+                        "name": "task_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "blueprint_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "stage_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "assigned_user_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "department_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "deadline_from",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "deadline_to",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/SlaTimerInstanceResource"
+                                            }
+                                        },
+                                        "next_cursor": {
+                                            "type": "string"
+                                        },
+                                        "has_more": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "next_cursor",
+                                        "has_more"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/{task}/stages": {
+            "get": {
+                "operationId": "stageLifecycle.stages",
+                "tags": [
+                    "StageLifecycle"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `TaskStageInstanceResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/TaskStageInstanceResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/tasks/{task}/stages/{stageInstance}": {
+            "get": {
+                "operationId": "stageLifecycle.showStage",
+                "tags": [
+                    "StageLifecycle"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "stageInstance",
+                        "in": "path",
+                        "required": true,
+                        "description": "The stage instance ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`TaskStageInstanceResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskStageInstanceResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/tasks/{task}/stages/{stageInstance}/complete": {
+            "post": {
+                "operationId": "stageLifecycle.completeStage",
+                "tags": [
+                    "StageLifecycle"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "stageInstance",
+                        "in": "path",
+                        "required": true,
+                        "description": "The stage instance ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CompleteStageRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TaskStageInstanceResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskStageInstanceResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/{task}/stages/{stageInstance}/return": {
+            "post": {
+                "operationId": "stageLifecycle.returnStage",
+                "tags": [
+                    "StageLifecycle"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "stageInstance",
+                        "in": "path",
+                        "required": true,
+                        "description": "The stage instance ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReturnStageRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TaskStageInstanceResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskStageInstanceResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/{task}/stages/{stageInstance}/override-assignment": {
+            "post": {
+                "operationId": "stageLifecycle.overrideStageAssignment",
+                "tags": [
+                    "StageLifecycle"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "stageInstance",
+                        "in": "path",
+                        "required": true,
+                        "description": "The stage instance ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OverrideAssignmentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TaskStageInstanceResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskStageInstanceResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/{task}/sub-stages/{subStageInstance}/complete": {
+            "post": {
+                "operationId": "stageLifecycle.completeSubStage",
+                "tags": [
+                    "StageLifecycle"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "subStageInstance",
+                        "in": "path",
+                        "required": true,
+                        "description": "The sub stage instance ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CompleteStageRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TaskStageInstanceResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskStageInstanceResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/{task}/sub-stages/{subStageInstance}/return": {
+            "post": {
+                "operationId": "stageLifecycle.returnSubStage",
+                "tags": [
+                    "StageLifecycle"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "subStageInstance",
+                        "in": "path",
+                        "required": true,
+                        "description": "The sub stage instance ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReturnSubStageRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TaskStageInstanceResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskStageInstanceResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/{task}/sub-stages/{subStageInstance}/override-assignment": {
+            "post": {
+                "operationId": "stageLifecycle.overrideSubStageAssignment",
+                "tags": [
+                    "StageLifecycle"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "subStageInstance",
+                        "in": "path",
+                        "required": true,
+                        "description": "The sub stage instance ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OverrideAssignmentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TaskStageInstanceResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskStageInstanceResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/{task}/returns": {
+            "get": {
+                "operationId": "stageLifecycle.returns",
+                "tags": [
+                    "StageLifecycle"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `StageReturnResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StageReturnResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/tasks/{task}/timeline": {
+            "get": {
+                "operationId": "stageLifecycle.timeline",
+                "tags": [
+                    "StageLifecycle"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `TaskTimelineResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/TaskTimelineResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
         "/blueprints/stage-types": {
             "get": {
                 "operationId": "stageType.index",
@@ -5789,7 +7985,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Paginated set of `TaskResource`",
+                        "description": "",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5801,83 +7997,17 @@
                                                 "$ref": "#/components/schemas/TaskResource"
                                             }
                                         },
-                                        "links": {
-                                            "type": "object",
-                                            "properties": {
-                                                "first": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "last": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "prev": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "next": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                }
-                                            },
-                                            "required": [
-                                                "first",
-                                                "last",
-                                                "prev",
-                                                "next"
-                                            ]
+                                        "next_cursor": {
+                                            "type": "string"
                                         },
-                                        "meta": {
-                                            "type": "object",
-                                            "properties": {
-                                                "path": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ],
-                                                    "description": "Base path for paginator generated URLs."
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "description": "Number of items shown per page.",
-                                                    "minimum": 0
-                                                },
-                                                "next_cursor": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ],
-                                                    "description": "The \"cursor\" that points to the next set of items."
-                                                },
-                                                "prev_cursor": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ],
-                                                    "description": "The \"cursor\" that points to the previous set of items."
-                                                }
-                                            },
-                                            "required": [
-                                                "path",
-                                                "per_page",
-                                                "next_cursor",
-                                                "prev_cursor"
-                                            ]
+                                        "has_more": {
+                                            "type": "boolean"
                                         }
                                     },
                                     "required": [
                                         "data",
-                                        "links",
-                                        "meta"
+                                        "next_cursor",
+                                        "has_more"
                                     ]
                                 }
                             }
@@ -6572,7 +8702,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Paginated set of `UserResource`",
+                        "description": "",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -6584,83 +8714,17 @@
                                                 "$ref": "#/components/schemas/UserResource"
                                             }
                                         },
-                                        "links": {
-                                            "type": "object",
-                                            "properties": {
-                                                "first": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "last": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "prev": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                },
-                                                "next": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
-                                                }
-                                            },
-                                            "required": [
-                                                "first",
-                                                "last",
-                                                "prev",
-                                                "next"
-                                            ]
+                                        "next_cursor": {
+                                            "type": "string"
                                         },
-                                        "meta": {
-                                            "type": "object",
-                                            "properties": {
-                                                "path": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ],
-                                                    "description": "Base path for paginator generated URLs."
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "description": "Number of items shown per page.",
-                                                    "minimum": 0
-                                                },
-                                                "next_cursor": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ],
-                                                    "description": "The \"cursor\" that points to the next set of items."
-                                                },
-                                                "prev_cursor": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ],
-                                                    "description": "The \"cursor\" that points to the previous set of items."
-                                                }
-                                            },
-                                            "required": [
-                                                "path",
-                                                "per_page",
-                                                "next_cursor",
-                                                "prev_cursor"
-                                            ]
+                                        "has_more": {
+                                            "type": "boolean"
                                         }
                                     },
                                     "required": [
                                         "data",
-                                        "links",
-                                        "meta"
+                                        "next_cursor",
+                                        "has_more"
                                     ]
                                 }
                             }
@@ -8038,6 +10102,38 @@
                 ],
                 "title": "BlueprintTransitionResource"
             },
+            "BottleneckResource": {
+                "type": "object",
+                "properties": {
+                    "stage_type": {
+                        "type": "string"
+                    },
+                    "department": {
+                        "type": "string"
+                    },
+                    "overdue_count": {
+                        "type": "string"
+                    },
+                    "at_risk_count": {
+                        "type": "string"
+                    },
+                    "score": {
+                        "type": "string"
+                    },
+                    "average_time_at_stage_seconds": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "stage_type",
+                    "department",
+                    "overdue_count",
+                    "at_risk_count",
+                    "score",
+                    "average_time_at_stage_seconds"
+                ],
+                "title": "BottleneckResource"
+            },
             "CancelTaskRequest": {
                 "type": "object",
                 "properties": {
@@ -8100,6 +10196,19 @@
                 ],
                 "title": "ClassificationLevel"
             },
+            "CompleteStageRequest": {
+                "type": "object",
+                "properties": {
+                    "completion_note": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 5000
+                    }
+                },
+                "title": "CompleteStageRequest"
+            },
             "CompletionRule": {
                 "type": "integer",
                 "enum": [
@@ -8108,6 +10217,45 @@
                     3
                 ],
                 "title": "CompletionRule"
+            },
+            "CreateManualEscalationRequest": {
+                "type": "object",
+                "properties": {
+                    "task_id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "stage_instance_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "uuid"
+                    },
+                    "sub_stage_instance_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "uuid"
+                    },
+                    "reason": {
+                        "type": "string",
+                        "maxLength": 5000
+                    },
+                    "escalated_to_position_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "task_id",
+                    "reason"
+                ],
+                "title": "CreateManualEscalationRequest"
             },
             "DelegationResource": {
                 "type": "object",
@@ -8192,6 +10340,74 @@
                     4
                 ],
                 "title": "DelegationScopeType"
+            },
+            "DepartmentHealthResource": {
+                "type": "object",
+                "properties": {
+                    "department_public_id": {
+                        "type": "string"
+                    },
+                    "department_name_ar": {
+                        "type": "string"
+                    },
+                    "department_name_en": {
+                        "type": "string"
+                    },
+                    "health": {
+                        "type": "string"
+                    },
+                    "health_label": {
+                        "type": "string"
+                    },
+                    "active_tasks": {
+                        "type": "string"
+                    },
+                    "overdue_tasks": {
+                        "type": "string"
+                    },
+                    "at_risk_tasks": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "department_public_id",
+                    "department_name_ar",
+                    "department_name_en",
+                    "health",
+                    "health_label",
+                    "active_tasks",
+                    "overdue_tasks",
+                    "at_risk_tasks"
+                ],
+                "title": "DepartmentHealthResource"
+            },
+            "DepartmentPerformanceResource": {
+                "type": "object",
+                "properties": {
+                    "department_public_id": {
+                        "type": "string"
+                    },
+                    "active_tasks": {
+                        "type": "string"
+                    },
+                    "overdue_tasks": {
+                        "type": "string"
+                    },
+                    "at_risk_tasks": {
+                        "type": "string"
+                    },
+                    "average_stage_delay_seconds": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "department_public_id",
+                    "active_tasks",
+                    "overdue_tasks",
+                    "at_risk_tasks",
+                    "average_stage_delay_seconds"
+                ],
+                "title": "DepartmentPerformanceResource"
             },
             "DepartmentResource": {
                 "type": "object",
@@ -8301,6 +10517,298 @@
                     }
                 },
                 "title": "EndPositionRequest"
+            },
+            "EscalationDetailResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "task_id": {
+                        "type": "string"
+                    },
+                    "stage_instance_id": {
+                        "type": "string"
+                    },
+                    "sub_stage_instance_id": {
+                        "type": "string"
+                    },
+                    "sla_timer": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "properties": {
+                            "public_id": {
+                                "type": "string"
+                            },
+                            "status": {
+                                "type": "string"
+                            },
+                            "started_at": {
+                                "type": "string"
+                            },
+                            "deadline_at": {
+                                "type": "string"
+                            },
+                            "warning_at": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "public_id",
+                            "status",
+                            "started_at",
+                            "deadline_at",
+                            "warning_at"
+                        ]
+                    },
+                    "escalation_type": {
+                        "type": "string"
+                    },
+                    "escalated_to_user": {
+                        "type": "object",
+                        "properties": {
+                            "public_id": {
+                                "type": "string"
+                            },
+                            "name_ar": {
+                                "type": "string"
+                            },
+                            "name_en": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "public_id",
+                            "name_ar",
+                            "name_en"
+                        ]
+                    },
+                    "escalated_to_position": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "properties": {
+                            "public_id": {
+                                "type": "string"
+                            },
+                            "name_ar": {
+                                "type": "string"
+                            },
+                            "name_en": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "public_id",
+                            "name_ar",
+                            "name_en"
+                        ]
+                    },
+                    "escalated_by_user": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "properties": {
+                            "public_id": {
+                                "type": "string"
+                            },
+                            "name_ar": {
+                                "type": "string"
+                            },
+                            "name_en": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "public_id",
+                            "name_ar",
+                            "name_en"
+                        ]
+                    },
+                    "reason": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "resolution_note": {
+                        "type": "string"
+                    },
+                    "resolved_at": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "task_id",
+                    "stage_instance_id",
+                    "sub_stage_instance_id",
+                    "sla_timer",
+                    "escalation_type",
+                    "escalated_to_user",
+                    "escalated_to_position",
+                    "escalated_by_user",
+                    "reason",
+                    "status",
+                    "resolution_note",
+                    "resolved_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "EscalationDetailResource"
+            },
+            "EscalationResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "task_id": {
+                        "type": "string"
+                    },
+                    "stage_instance_id": {
+                        "type": "string"
+                    },
+                    "sub_stage_instance_id": {
+                        "type": "string"
+                    },
+                    "escalation_type": {
+                        "type": "string"
+                    },
+                    "escalated_to_user": {
+                        "type": "object",
+                        "properties": {
+                            "public_id": {
+                                "type": "string"
+                            },
+                            "name_ar": {
+                                "type": "string"
+                            },
+                            "name_en": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "public_id",
+                            "name_ar",
+                            "name_en"
+                        ]
+                    },
+                    "escalated_by_user": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "properties": {
+                            "public_id": {
+                                "type": "string"
+                            },
+                            "name_ar": {
+                                "type": "string"
+                            },
+                            "name_en": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "public_id",
+                            "name_ar",
+                            "name_en"
+                        ]
+                    },
+                    "reason": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "resolution_note": {
+                        "type": "string"
+                    },
+                    "resolved_at": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "task_id",
+                    "stage_instance_id",
+                    "sub_stage_instance_id",
+                    "escalation_type",
+                    "escalated_to_user",
+                    "escalated_by_user",
+                    "reason",
+                    "status",
+                    "resolution_note",
+                    "resolved_at",
+                    "created_at"
+                ],
+                "title": "EscalationResource"
+            },
+            "EscalationStatus": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2
+                ],
+                "title": "EscalationStatus"
+            },
+            "EscalationType": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2
+                ],
+                "title": "EscalationType"
+            },
+            "ExecutiveSummaryResource": {
+                "type": "object",
+                "properties": {
+                    "active": {
+                        "type": "string"
+                    },
+                    "overdue": {
+                        "type": "string"
+                    },
+                    "at_risk": {
+                        "type": "string"
+                    },
+                    "suspended": {
+                        "type": "string"
+                    },
+                    "completed": {
+                        "type": "string"
+                    },
+                    "cancelled": {
+                        "type": "string"
+                    },
+                    "completion_rate": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "active",
+                    "overdue",
+                    "at_risk",
+                    "suspended",
+                    "completed",
+                    "cancelled",
+                    "completion_rate"
+                ],
+                "title": "ExecutiveSummaryResource"
             },
             "GrantAuditGrantRequest": {
                 "type": "object",
@@ -8528,6 +11036,41 @@
                     "revoked_at"
                 ],
                 "title": "MonitoringScopeGrantResource"
+            },
+            "OverrideAssignmentRequest": {
+                "type": "object",
+                "properties": {
+                    "reason": {
+                        "type": "string",
+                        "maxLength": 2000
+                    },
+                    "assignments": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "current_user_id": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                },
+                                "new_user_id": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                }
+                            },
+                            "required": [
+                                "current_user_id",
+                                "new_user_id"
+                            ]
+                        },
+                        "minItems": 1
+                    }
+                },
+                "required": [
+                    "reason",
+                    "assignments"
+                ],
+                "title": "OverrideAssignmentRequest"
             },
             "PlatformAdminResource": {
                 "type": "object",
@@ -9005,6 +11548,55 @@
                 ],
                 "title": "ReorderSubStagesRequest"
             },
+            "ResolveEscalationRequest": {
+                "type": "object",
+                "properties": {
+                    "resolution_note": {
+                        "type": "string",
+                        "maxLength": 5000
+                    }
+                },
+                "required": [
+                    "resolution_note"
+                ],
+                "title": "ResolveEscalationRequest"
+            },
+            "ReturnStageRequest": {
+                "type": "object",
+                "properties": {
+                    "target_stage_id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "reason": {
+                        "type": "string",
+                        "maxLength": 2000
+                    }
+                },
+                "required": [
+                    "target_stage_id",
+                    "reason"
+                ],
+                "title": "ReturnStageRequest"
+            },
+            "ReturnSubStageRequest": {
+                "type": "object",
+                "properties": {
+                    "target_sub_stage_id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "reason": {
+                        "type": "string",
+                        "maxLength": 2000
+                    }
+                },
+                "required": [
+                    "target_sub_stage_id",
+                    "reason"
+                ],
+                "title": "ReturnSubStageRequest"
+            },
             "ScopeType": {
                 "type": "integer",
                 "enum": [
@@ -9061,6 +11653,101 @@
                 ],
                 "title": "SlaPolicyResource"
             },
+            "SlaTimerInstanceResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "task_id": {
+                        "type": "string"
+                    },
+                    "stage_instance_id": {
+                        "type": "string"
+                    },
+                    "sub_stage_instance_id": {
+                        "type": "string"
+                    },
+                    "sla_policy": {
+                        "type": "object",
+                        "properties": {
+                            "public_id": {
+                                "type": "string"
+                            },
+                            "name_ar": {
+                                "type": "string"
+                            },
+                            "name_en": {
+                                "type": "string"
+                            },
+                            "sla_value": {
+                                "type": "string"
+                            },
+                            "sla_unit": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "public_id",
+                            "name_ar",
+                            "name_en",
+                            "sla_value",
+                            "sla_unit"
+                        ]
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "started_at": {
+                        "type": "string"
+                    },
+                    "deadline_at": {
+                        "type": "string"
+                    },
+                    "warning_at": {
+                        "type": "string"
+                    },
+                    "paused_at": {
+                        "type": "string"
+                    },
+                    "completed_at": {
+                        "type": "string"
+                    },
+                    "elapsed_before_pause": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "task_id",
+                    "stage_instance_id",
+                    "sub_stage_instance_id",
+                    "sla_policy",
+                    "status",
+                    "started_at",
+                    "deadline_at",
+                    "warning_at",
+                    "paused_at",
+                    "completed_at",
+                    "elapsed_before_pause",
+                    "created_at"
+                ],
+                "title": "SlaTimerInstanceResource"
+            },
+            "SlaTimerStatus": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "title": "SlaTimerStatus"
+            },
             "SlaUnit": {
                 "type": "integer",
                 "enum": [
@@ -9068,6 +11755,63 @@
                     2
                 ],
                 "title": "SlaUnit"
+            },
+            "StageReturnResource": {
+                "type": "object",
+                "properties": {
+                    "blueprint_stage": {
+                        "type": "object",
+                        "properties": {
+                            "public_id": {
+                                "type": "string"
+                            },
+                            "name_ar": {
+                                "type": "string"
+                            },
+                            "name_en": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "sequence_order": {
+                        "type": "string"
+                    },
+                    "return_reason": {
+                        "type": "string"
+                    },
+                    "exited_at": {
+                        "type": "string"
+                    },
+                    "returned_by": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "properties": {
+                            "user_id": {
+                                "type": "string"
+                            },
+                            "user_name_ar": {
+                                "type": "string"
+                            },
+                            "user_name_en": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "user_id",
+                            "user_name_ar",
+                            "user_name_en"
+                        ]
+                    }
+                },
+                "required": [
+                    "blueprint_stage",
+                    "sequence_order",
+                    "return_reason",
+                    "exited_at"
+                ],
+                "title": "StageReturnResource"
             },
             "StageTypeResource": {
                 "type": "object",
@@ -10014,6 +12758,59 @@
                 ],
                 "title": "TaskDetailResource"
             },
+            "TaskListItemResource": {
+                "type": "object",
+                "properties": {
+                    "task_public_id": {
+                        "type": "string"
+                    },
+                    "title_ar": {
+                        "type": "string"
+                    },
+                    "title_en": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "priority_public_id": {
+                        "type": "string"
+                    },
+                    "current_stage_name_ar": {
+                        "type": "string"
+                    },
+                    "current_stage_name_en": {
+                        "type": "string"
+                    },
+                    "owning_department_public_id": {
+                        "type": "string"
+                    },
+                    "sla_health": {
+                        "type": "string",
+                        "const": "none"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "completed_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "task_public_id",
+                    "title_ar",
+                    "title_en",
+                    "status",
+                    "priority_public_id",
+                    "current_stage_name_ar",
+                    "current_stage_name_en",
+                    "owning_department_public_id",
+                    "sla_health",
+                    "created_at",
+                    "completed_at"
+                ],
+                "title": "TaskListItemResource"
+            },
             "TaskPriorityResource": {
                 "type": "object",
                 "properties": {
@@ -10145,6 +12942,35 @@
                 ],
                 "title": "TaskResource"
             },
+            "TaskSlaHealthResource": {
+                "type": "object",
+                "properties": {
+                    "task_id": {
+                        "type": "string"
+                    },
+                    "overall_health": {
+                        "type": "string",
+                        "enum": [
+                            "none",
+                            "on_track",
+                            "warning",
+                            "breached"
+                        ]
+                    },
+                    "timers": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SlaTimerInstanceResource"
+                        }
+                    }
+                },
+                "required": [
+                    "task_id",
+                    "overall_health",
+                    "timers"
+                ],
+                "title": "TaskSlaHealthResource"
+            },
             "TaskStageAssignmentResource": {
                 "type": "object",
                 "properties": {
@@ -10174,6 +13000,18 @@
                     },
                     "completed_at": {
                         "type": "string"
+                    },
+                    "completion_note": {
+                        "type": "string"
+                    },
+                    "reassigned_at": {
+                        "type": "string"
+                    },
+                    "reassigned_by_user_id": {
+                        "type": "string"
+                    },
+                    "reassignment_reason": {
+                        "type": "string"
                     }
                 },
                 "required": [
@@ -10185,7 +13023,11 @@
                     "assignment_role",
                     "is_completed",
                     "assigned_at",
-                    "completed_at"
+                    "completed_at",
+                    "completion_note",
+                    "reassigned_at",
+                    "reassigned_by_user_id",
+                    "reassignment_reason"
                 ],
                 "title": "TaskStageAssignmentResource"
             },
@@ -10327,6 +13169,116 @@
                     "completion_note"
                 ],
                 "title": "TaskSubStageInstanceResource"
+            },
+            "TaskTimelineResource": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "stage_name_ar": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "stage_name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "user_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "user_name_ar": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "user_name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "return_reason": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "reassignment_reason": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "completion_note": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "status": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "sequence_order": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "type",
+                    "timestamp",
+                    "stage_name_ar",
+                    "stage_name_en",
+                    "user_id",
+                    "user_name_ar",
+                    "user_name_en",
+                    "return_reason",
+                    "reassignment_reason",
+                    "completion_note",
+                    "status",
+                    "sequence_order"
+                ],
+                "title": "TaskTimelineResource"
+            },
+            "TeamMetricsResource": {
+                "type": "object",
+                "properties": {
+                    "user_public_id": {
+                        "type": "string"
+                    },
+                    "active_assignments": {
+                        "type": "string"
+                    },
+                    "overdue_assignments": {
+                        "type": "string"
+                    },
+                    "completed_stages": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "user_public_id",
+                    "active_assignments",
+                    "overdue_assignments",
+                    "completed_stages"
+                ],
+                "title": "TeamMetricsResource"
             },
             "Tenant": {
                 "type": "object",
