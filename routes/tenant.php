@@ -38,4 +38,5 @@ Route::middleware([
     require __DIR__.'/api/v1/tracking.php';
     require __DIR__.'/api/v1/notifications.php';
     require __DIR__.'/api/v1/analytics.php';
+    require __DIR__.'/api/v1/follow-up.php';
 });

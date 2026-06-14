@@ -143,7 +143,7 @@ Spec IDs match `../frontend/specs/` where UI exists. Backend establishes API con
 
 **Milestone 6 — Analytics, Follow-up & Search: 🔄 In Progress**
 - ✅ `009-analytics-reporting` — Read-only executive/department dashboards, bottleneck view, aging report, ABAC-aware queries
-- ⬜ `010-follow-up-board` — Follow-up & tracking API
+- ✅ `010-follow-up-board` — Follow-up board, overdue/at-risk lists, bottleneck indicator, follow-up action log
 - ⬜ `011-search-discovery` — Search
 
 ---

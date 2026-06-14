@@ -9,7 +9,7 @@
 ## Current Focus
 
 **Active Milestone:** M6 — Analytics, Follow-up & Search
-**Active Spec:** `010-follow-up-board`
+**Active Spec:** `011-search-discovery`
 **Branch:** `main`
 
 Do not implement specs marked ⬜ Not Started unless explicitly instructed.
@@ -46,7 +46,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | `007-sla-escalation` | M5 | Tracking & SLA | `006-follow-up-center` | ✅ Done |
 | `008-notifications` | M5 | Notification | — (backend-only delivery) | ✅ Done |
 | `009-analytics-reporting` | M6 | Analytics | `001-executive-dashboard`, `008-analytics-reporting`, `011-department-manager-dashboard` | ✅ Done |
-| `010-follow-up-board` | M6 | Follow-up & tracking API | `006-follow-up-center` | ⬜ Not Started |
+| `010-follow-up-board` | M6 | Follow-up & tracking API | `006-follow-up-center` | ✅ Done |
 | `011-search-discovery` | M6 | Search | — | ⬜ Not Started |
 | `012-documents-attachments` | M7 | Document | `003-task-details` | ⬜ Not Started |
 | `013-comments-collaboration` | M4 | Comments | `003-task-details` | ⬜ Not Started |
@@ -280,7 +280,20 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 
 **Status:** 🔄 In Progress
 
-**Specs:** `009` ✅, `010` ⬜, `011` ⬜
+**Specs:** `009` ✅, `010` ✅, `011` ⬜
+
+**Established by 010:**
+- **FollowUp module** (`app/Modules/FollowUp/`) — read-heavy operational layer for follow-up specialists
+- `follow_up_actions` table (append-only log: `public_id`, FKs to `tasks`/`users`, `action_type`, `note_ar`, `note_en`, `contact_name`, timestamps)
+- 4 enums: `FollowUpActionType`, `SlaHealth`, `BoardSortField`, `BoardSortDirection`
+- `FollowUpBoardService` — ABAC-filtered board query with filters (status, stage type, assignee, department, priority, category, date range, search), sort options, and SLA health / time-at-stage enrichment
+- `FollowUpActionService` — create/list follow-up actions with `TaskVisibilityScope` and capability checks
+- 6 endpoints under `/api/v1/follow-up`: `board`, `overdue`, `at-risk`, `bottlenecks`, `tasks/{task}/actions` (GET/POST)
+- `FollowUpActionCreated` event implementing `ShouldDispatchAfterCommit`
+- Bottleneck cache at `{tenant_slug}:followup:bottlenecks:{user_public_id}:{department_id}:{limit}` TTL 300s, invalidated by Task/Tracking lifecycle listeners
+- `followup` logging channel in `config/logging.php`
+- 2 feature test files, 29 tests (87 assertions)
+- `openapi/openapi.json` regenerated with follow-up endpoints
 
 **Established by 009:**
 - **Analytics module** (`app/Modules/Analytics/`) — pure read-only reporting bounded context
@@ -293,7 +306,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 - 4 feature test files, 18 tests (54 assertions): executive dashboard, department dashboard, aging report, ABAC/confidentiality
 - `openapi/openapi.json` regenerated and contract marked `stable`
 
-**Remaining M6 specs:** `010` (follow-up board), `011` (search)
+**Remaining M6 specs:** `011` (search)
 
 ---
 

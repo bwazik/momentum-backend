@@ -3,6 +3,8 @@
 namespace App\Modules\Analytics\Services\Concerns;
 
 use App\Models\User;
+use App\Modules\Task\Enums\StageInstanceStatus;
+use App\Modules\Task\Enums\SubStageInstanceStatus;
 use App\Modules\Task\Enums\TaskStatus;
 use App\Modules\Task\Models\Task;
 use App\Modules\Task\Scopes\TaskVisibilityScope;
@@ -39,15 +41,21 @@ trait IntersectsTaskVisibility
     protected function applyFilters(Builder $query, array $filters): void
     {
         if (! empty($filters['priority_id'])) {
-            $query->whereHas('priority', fn ($q) => $q->where('public_id', $filters['priority_id']));
+            $ids = (array) $filters['priority_id'];
+            $query->whereHas('priority', fn ($q) => $q->whereIn('public_id', $ids));
         }
 
         if (! empty($filters['department_id'])) {
             $query->where(function ($q) use ($filters) {
                 $q->whereHas('stageInstances', function ($sq) use ($filters) {
-                    $sq->whereHas('owningDepartment', fn ($dq) => $dq->where('public_id', $filters['department_id']));
-                })->orWhereHas('stageInstances.subStageInstances', function ($ssq) use ($filters) {
-                    $ssq->whereHas('owningDepartment', fn ($dq) => $dq->where('public_id', $filters['department_id']));
+                    $sq->where('status', StageInstanceStatus::Active)
+                        ->whereHas('owningDepartment', fn ($dq) => $dq->where('public_id', $filters['department_id']));
+                })->orWhereHas('stageInstances', function ($sq) use ($filters) {
+                    $sq->where('status', StageInstanceStatus::Active)
+                        ->whereHas('subStageInstances', function ($ssq) use ($filters) {
+                            $ssq->where('status', SubStageInstanceStatus::Active)
+                                ->whereHas('owningDepartment', fn ($dq) => $dq->where('public_id', $filters['department_id']));
+                        });
                 });
             });
         }
