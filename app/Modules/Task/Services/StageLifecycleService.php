@@ -80,6 +80,8 @@ class StageLifecycleService
                     'is_completed' => true,
                     'completed_at' => now(),
                     'completion_note' => $completionNote,
+                    'completion_note_ar' => $completionNote,
+                    'completion_note_en' => $completionNote,
                 ]);
 
                 event(new StageAssignmentCompleted($assignment));
@@ -188,7 +190,7 @@ class StageLifecycleService
                     ->whereIn('status', [SubStageInstanceStatus::Active->value, SubStageInstanceStatus::Pending->value])
                     ->update(['status' => SubStageInstanceStatus::Returned->value, 'exited_at' => now()]);
 
-                event(new StageInstanceReturned($stageInstance, $reason));
+                event(new StageInstanceReturned($stageInstance, $reason, $user));
 
                 $newStageInstance = $this->advanceToStage($task, $stageInstance, $targetBlueprintStage);
 
@@ -236,6 +238,8 @@ class StageLifecycleService
                     'is_completed' => true,
                     'completed_at' => now(),
                     'completion_note' => $completionNote,
+                    'completion_note_ar' => $completionNote,
+                    'completion_note_en' => $completionNote,
                 ]);
 
                 event(new SubStageAssignmentCompleted($assignment));

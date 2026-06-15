@@ -80,7 +80,7 @@ This repository is the **Laravel REST API** only. The Next.js frontend lives in 
 | **Analytics** | Read-only dashboards and reports |
 | **Document** | Attachment metadata (files in object storage) |
 | **Audit** | Immutable append-only event log |
-| **Search** | PostgreSQL FTS |
+| **Search** | PostgreSQL FTS, task search, recent activity |
 | **Onboarding** | Access-profile journeys, quizzes |
 | **Help Center** | Article CMS |
 
@@ -129,8 +129,16 @@ Spec IDs match `../frontend/specs/` where UI exists. Backend establishes API con
 ## Current Focus
 
 **Milestone 1 — Platform & Core Foundation: ✅ Done** (including 001-platform-admin supplement)
-**Milestone 2 — Organization & IAM: ✅ Done**
+**Milestone 2 — Organization & IAM: 🔄 In Progress**
+- ✅ `002-organization-structure` — Departments, positions, authority grades, working calendar
+- ✅ `003-iam-abac` — Users, ABAC policy engine, capabilities, delegation, OOO
+- ⬜ `016-delegation-oof` — Delegation supplement
+- ⬜ `017-confidentiality-access` — Confidential task access model
+- ⬜ `018-localization-calendar` — Hijri date helpers, working calendar
+
 **Milestone 3 — Blueprint Engine: ✅ Done**
+- ✅ `004-blueprint-engine` — Blueprint, stages, sub-stages, transitions, SLA policies
+
 **Milestone 4 — Task Execution & Lifecycle: 🔄 In Progress**
 - ✅ `005-task-execution` — Task creation, launch, assignment resolution, lifecycle
 - ✅ `006-stage-lifecycle` — Stage/sub-stage progression, return, override, history
@@ -141,10 +149,10 @@ Spec IDs match `../frontend/specs/` where UI exists. Backend establishes API con
 - ✅ `007-sla-escalation` — SLA timer engine, warning/breach detection, escalation management
 - ✅ `008-notifications` — Event-driven notification module, in-app + email delivery, read/mutate APIs
 
-**Milestone 6 — Analytics, Follow-up & Search: 🔄 In Progress**
+**Milestone 6 — Analytics, Follow-up & Search: ✅ Done**
 - ✅ `009-analytics-reporting` — Read-only executive/department dashboards, bottleneck view, aging report, ABAC-aware queries
 - ✅ `010-follow-up-board` — Follow-up board, overdue/at-risk lists, bottleneck indicator, follow-up action log
-- ⬜ `011-search-discovery` — Search
+- ✅ `011-search-discovery` — PostgreSQL full-text task search, structured filters, recent activity
 
 ---
 

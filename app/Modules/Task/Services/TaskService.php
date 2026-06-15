@@ -19,6 +19,7 @@ use App\Modules\Task\Events\TaskLaunched;
 use App\Modules\Task\Events\TaskResumed;
 use App\Modules\Task\Events\TaskSuspended;
 use App\Modules\Task\Events\TaskUpdated;
+use App\Modules\Task\Events\TaskViewed;
 use App\Modules\Task\Exceptions\BlueprintHasNoStagesException;
 use App\Modules\Task\Exceptions\BlueprintNotActiveException;
 use App\Modules\Task\Exceptions\InvalidTaskStateTransitionException;
@@ -185,6 +186,36 @@ class TaskService
             Log::channel('task')->error('Failed to delete task', [
                 'tenant_slug' => tenant()?->slug ?? 'central',
                 'action' => 'task.delete',
+                'entity_type' => 'task',
+                'entity_id' => $task->public_id,
+                'performed_by' => $user->public_id,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    public function findVisible(Task $task, User $user): Task
+    {
+        try {
+            $visibleTask = $this->taskVisibilityScope->apply(
+                Task::query()->where('id', $task->id),
+                $user
+            )->firstOrFail();
+
+            $visibleTask->load([
+                'priority', 'blueprint.category', 'initiator',
+                'stageInstances.assignments.user',
+                'stageInstances.subStageInstances',
+            ]);
+
+            event(new TaskViewed($visibleTask, $user));
+
+            return $visibleTask;
+        } catch (\Throwable $e) {
+            Log::channel('task')->error('Failed to load visible task', [
+                'tenant_slug' => tenant()?->slug ?? 'central',
+                'action' => 'task.find_visible',
                 'entity_type' => 'task',
                 'entity_id' => $task->public_id,
                 'performed_by' => $user->public_id,

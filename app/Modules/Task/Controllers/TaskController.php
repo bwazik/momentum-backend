@@ -46,18 +46,10 @@ class TaskController extends Controller
 
     public function show(Request $request, Task $task): TaskDetailResource
     {
-        $visibleTask = $this->taskVisibilityScope->apply(
-            Task::query()->where('id', $task->id),
-            $request->user()
-        )->firstOrFail();
+        $this->checkRateLimit(RateLimits::LIST, [$request->user()->public_id]);
+        $task = $this->taskService->findVisible($task, $request->user());
 
-        $visibleTask->load([
-            'priority', 'blueprint.category', 'initiator',
-            'stageInstances.assignments.user',
-            'stageInstances.subStageInstances',
-        ]);
-
-        return new TaskDetailResource($visibleTask);
+        return new TaskDetailResource($task);
     }
 
     public function store(StoreTaskRequest $request): TaskResource

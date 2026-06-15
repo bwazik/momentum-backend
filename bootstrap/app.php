@@ -17,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
         apiPrefix: '',
         health: '/up',
     )
+    ->withCommands([
+        __DIR__.'/../app/Modules',
+    ])
     ->withEvents(discover: [
         __DIR__.'/../app/Modules/*/Listeners',
     ])

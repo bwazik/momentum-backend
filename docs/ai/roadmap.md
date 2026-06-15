@@ -8,8 +8,8 @@
 
 ## Current Focus
 
-**Active Milestone:** M6 — Analytics, Follow-up & Search
-**Active Spec:** `011-search-discovery`
+**Active Milestone:** M7 — Documents, Audit, Onboarding & Help
+**Active Spec:** `012-documents-attachments`
 **Branch:** `main`
 
 Do not implement specs marked ⬜ Not Started unless explicitly instructed.
@@ -25,7 +25,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | M3 | Blueprint Engine | ✅ Done | M2 |
 | M4 | Task Execution & Lifecycle | 🔄 In Progress | M3 |
 | M5 | SLA, Escalation & Notifications | ✅ Done | M4 |
-| M6 | Analytics, Follow-up & Search | 🔄 In Progress | M5 |
+| M6 | Analytics, Follow-up & Search | ✅ Done | M5 |
 | M7 | Documents, Audit, Onboarding & Help | ⬜ Not Started | M4 |
 
 **Legend:** ✅ Done · 🔄 In Progress · ⬜ Not Started · 🚧 Blocked
@@ -47,7 +47,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | `008-notifications` | M5 | Notification | — (backend-only delivery) | ✅ Done |
 | `009-analytics-reporting` | M6 | Analytics | `001-executive-dashboard`, `008-analytics-reporting`, `011-department-manager-dashboard` | ✅ Done |
 | `010-follow-up-board` | M6 | Follow-up & tracking API | `006-follow-up-center` | ✅ Done |
-| `011-search-discovery` | M6 | Search | — | ⬜ Not Started |
+| `011-search-discovery` | M6 | Search | — | ✅ Done |
 | `012-documents-attachments` | M7 | Document | `003-task-details` | ⬜ Not Started |
 | `013-comments-collaboration` | M4 | Comments | `003-task-details` | ⬜ Not Started |
 | `014-external-references` | M4 | External refs | `002-task-board` | ⬜ Not Started |
@@ -278,9 +278,9 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 
 ## M6 — Analytics, Follow-up & Search
 
-**Status:** 🔄 In Progress
+**Status:** ✅ Done
 
-**Specs:** `009` ✅, `010` ✅, `011` ⬜
+**Specs:** `009` ✅, `010` ✅, `011` ✅
 
 **Established by 010:**
 - **FollowUp module** (`app/Modules/FollowUp/`) — read-heavy operational layer for follow-up specialists
@@ -306,7 +306,33 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 - 4 feature test files, 18 tests (54 assertions): executive dashboard, department dashboard, aging report, ABAC/confidentiality
 - `openapi/openapi.json` regenerated and contract marked `stable`
 
-**Remaining M6 specs:** `011` (search)
+**Established by 011:**
+- **Search module** (`app/Modules/Search/`) — pure read-only bounded context for full-text task discovery
+- `SearchActivityType` enum: `TaskViewed` (1), `StageCompleted` (2), `StageReturned` (3), `CommentAdded` (4) — int-backed, stored as TINYINT
+- `task_search_index` table: denormalized completion notes per task with `tsvector` generated columns (`search_vector_notes_ar`, `search_vector_notes_en`) and GIN indexes
+- `user_recent_activity` table: append-only activity log with composite index on `(user_id, occurred_at DESC)`
+- 3 additive tenant migrations: search vectors on `tasks`, `task_search_index`, `user_recent_activity`
+- `SearchService` — `searchTasks()` uses PostgreSQL `ts_rank`/`to_tsquery` full-text search across bilingual title, description, and denormalized notes; `recentActivity()` uses `DISTINCT ON (task_id)` with LIMIT 20
+- `TaskViewed` domain event in Task module (`ShouldDispatchAfterCommit`)
+- `TaskService::findVisible()` — centralized visibility-scoped task lookup that emits `TaskViewed`
+- `TaskController::show()` — delegates to `findVisible()`, adds `RateLimits::LIST` (60/min)
+- `StageInstanceReturned` event extended with `User $returnedByUser` parameter
+- 4 queued listeners (`ShouldQueue`, `$tries=3`, `$backoff=[30,60,120]`): `UpdateSearchIndexOnStageAssignmentCompleted`, `RecordActivityOnTaskViewed`, `RecordActivityOnStageAssignmentCompleted`, `RecordActivityOnStageInstanceReturned`
+- `SearchIndexService` — idempotent upsert of completion notes aggregated from `task_stage_assignments`
+- `SearchActivityService` — append activity rows with 5-minute `TaskViewed` deduplication window
+- `SearchTasksRequest` — validation for `q` (required, 2–200 chars), status, priority_id, date range, department_id, blueprint_id, blueprint_category_id, external_reference, per_page
+- `SearchTaskResource` — enriched response with `public_id`, bilingual title, status, priority, classification_level, current_stage, department, blueprint_category, due_date, created_at, snippet fields
+- `RecentActivityResource` — exposes `activity_type` name and `occurred_at` alongside task metadata
+- `SearchController` — `tasks()`, `search()` (alias), `recent()` endpoints with `HasRateLimiting` trait
+- `PruneRecentActivityCommand` — scheduled daily (`search:prune-recent-activity`, configurable `--days=90`)
+- 2 domain exceptions: `SearchQueryTooShortException` (422), `ExternalReferenceSearchNotAvailableException` (422)
+- `search` logging channel in `config/logging.php` (daily, 14-day retention)
+- Routes: `GET /v1/search`, `GET /v1/search/tasks`, `GET /v1/search/recent` under `auth:sanctum` middleware
+- 20 feature tests (44 assertions): search validation, text matching, filters, ABAC, pagination, recent activity dedup, tenant isolation, prune command
+- OpenAPI spec regenerated at `openapi/openapi.json`
+- Comment indexing deferred to Spec 013; external reference search returns 422 until Spec 014
+- `withCommands()` auto-discovery in `bootstrap/app.php` scans all module command directories
+- SQLite fallback in `SearchService` for test/dev environments (LIKE-based search instead of FTS)
 
 ---
 
@@ -316,21 +342,21 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 M1: Platform & Core
   └── TenantResolver ─────────────────────────────────┐
   └── Central tenants registry ───────────────┐       │
-                                             ↓       ↓
+                                              ↓       ↓
 M2: Organization & IAM ─────────────────────────────────────────┐
   └── ABAC PolicyEngine ────────────────────────┐               │
   └── Positions / Departments ──────────┐       │               │
-                                       ↓       ↓               ↓
+                                        ↓       ↓               ↓
 M3: Blueprint Engine ─────────────────────────────────────────┤
   └── Blueprint definitions + lock ────────────────┐           │
-                                                    ↓           │
+                                                     ↓           │
 M4: Task Execution ─────────────────────────────────────────────┤
   └── Task + StageInstance services ────────────────┐          │
-                                                     ↓          │
+                                                      ↓          │
 M5: SLA & Notifications ────────────────────────────────────────┤
-                                                     ↓          │
+                                                      ↓          │
 M6: Analytics & Follow-up ──────────────────────────────────────┤
-                                                     ↓          │
+                                                      ↓          │
 M7: Documents, Audit, Help, Onboarding ─────────────────────────
 ```
 

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'task_id', 'stage_instance_id', 'sub_stage_instance_id', 'user_id',
     'position_id', 'delegated_from_user_id', 'assignment_role',
     'is_completed', 'assigned_at', 'completed_at', 'completion_note',
+    'completion_note_ar', 'completion_note_en',
     'reassigned_at', 'reassigned_by_user_id', 'reassignment_reason',
 ])]
 class TaskStageAssignment extends Model

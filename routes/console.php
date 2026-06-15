@@ -9,3 +9,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('tracking:check-sla-timers')->everyMinute();
+
+Schedule::command('search:prune-recent-activity')->daily();

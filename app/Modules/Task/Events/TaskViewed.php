@@ -3,17 +3,16 @@
 namespace App\Modules\Task\Events;
 
 use App\Models\User;
-use App\Modules\Task\Models\TaskStageInstance;
+use App\Modules\Task\Models\Task;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
-class StageInstanceReturned implements ShouldDispatchAfterCommit
+class TaskViewed implements ShouldDispatchAfterCommit
 {
     use Dispatchable;
 
     public function __construct(
-        public TaskStageInstance $returnedStageInstance,
-        public string $reason,
-        public User $returnedByUser,
+        public Task $task,
+        public User $user,
     ) {}
 }

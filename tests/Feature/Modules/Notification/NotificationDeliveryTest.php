@@ -378,7 +378,7 @@ it('creates notification on StageInstanceReturned for return-target assignees', 
         'assigned_at' => now(),
     ]);
 
-    event(new StageInstanceReturned($returnedStage, 'Return reason'));
+    event(new StageInstanceReturned($returnedStage, 'Return reason', $user));
 
     expect($user->notifications()->count())->toBe(1);
     expect($user->notifications()->first()->data['notification_type'])->toBe('task_returned');
