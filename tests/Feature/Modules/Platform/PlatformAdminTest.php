@@ -16,12 +16,7 @@ beforeEach(function () {
         'is_active' => true,
     ]);
 
-    $loginResponse = $this->postJson('/v1/platform/auth/login', [
-        'email' => 'main@momentum.test',
-        'password' => 'password',
-    ]);
-
-    $this->token = $loginResponse->json('token');
+    $this->actingAs($this->admin);
 });
 
 it('can list platform admins', function () {
@@ -29,7 +24,7 @@ it('can list platform admins', function () {
         'account_type' => AccountType::PLATFORM_ADMIN,
     ]);
 
-    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+    $response = $this
         ->getJson('/v1/platform/admins');
 
     $response->assertOk()
@@ -37,7 +32,7 @@ it('can list platform admins', function () {
 });
 
 it('can create a platform admin', function () {
-    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+    $response = $this
         ->postJson('/v1/platform/admins', [
             'name_ar' => 'مشرف جديد',
             'name_en' => 'New Admin',
@@ -55,7 +50,7 @@ it('can create a platform admin', function () {
 });
 
 it('cannot create platform admin with duplicate email', function () {
-    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+    $response = $this
         ->postJson('/v1/platform/admins', [
             'name_ar' => 'مكرر',
             'name_en' => 'Duplicate',
@@ -71,7 +66,7 @@ it('can show a platform admin', function () {
         'account_type' => AccountType::PLATFORM_ADMIN,
     ]);
 
-    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+    $response = $this
         ->getJson("/v1/platform/admins/{$target->public_id}");
 
     $response->assertOk()
@@ -84,7 +79,7 @@ it('can update a platform admin', function () {
         'name_ar' => 'قديم',
     ]);
 
-    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+    $response = $this
         ->putJson("/v1/platform/admins/{$target->public_id}", [
             'name_ar' => 'محدث',
         ]);
@@ -99,13 +94,13 @@ it('can deactivate and reactivate a platform admin', function () {
         'is_active' => true,
     ]);
 
-    $deactivateResponse = $this->withHeader('Authorization', "Bearer {$this->token}")
+    $deactivateResponse = $this
         ->postJson("/v1/platform/admins/{$target->public_id}/deactivate");
 
     $deactivateResponse->assertOk();
     expect($target->fresh()->is_active)->toBeFalse();
 
-    $reactivateResponse = $this->withHeader('Authorization', "Bearer {$this->token}")
+    $reactivateResponse = $this
         ->postJson("/v1/platform/admins/{$target->public_id}/reactivate");
 
     $reactivateResponse->assertOk();
@@ -113,7 +108,7 @@ it('can deactivate and reactivate a platform admin', function () {
 });
 
 it('cannot deactivate self', function () {
-    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+    $response = $this
         ->postJson("/v1/platform/admins/{$this->admin->public_id}/deactivate");
 
     $response->assertStatus(422);

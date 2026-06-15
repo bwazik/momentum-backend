@@ -30,7 +30,7 @@ class AuthController extends Controller
             $request->ip(),
         ]);
 
-        $result = $this->authService->login(
+        $user = $this->authService->login(
             $request->input('email'),
             $request->input('password'),
         );
@@ -40,15 +40,12 @@ class AuthController extends Controller
             $request->ip(),
         ]);
 
-        return new AuthTokenResource($result['user'], $result['token']);
+        return new AuthTokenResource($user);
     }
 
     public function logout(Request $request): JsonResponse
     {
-        $this->authService->logout(
-            $request->user(),
-            (bool) $request->boolean('all'),
-        );
+        $this->authService->logout($request->user());
 
         if ($request->hasSession()) {
             Auth::guard('web')->logout();

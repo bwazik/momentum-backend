@@ -8,6 +8,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -24,6 +25,10 @@ return Application::configure(basePath: dirname(__DIR__))
         __DIR__.'/../app/Modules/*/Listeners',
     ])
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->api(prepend: [
+            EnsureFrontendRequestsAreStateful::class,
+        ]);
+
         $middleware->alias([
             'capability' => RequireCapability::class,
             'platform.admin' => RequirePlatformAdmin::class,

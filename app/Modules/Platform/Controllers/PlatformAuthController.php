@@ -28,7 +28,7 @@ class PlatformAuthController extends Controller
             $request->ip(),
         ]);
 
-        $result = $this->authService->login(
+        $user = $this->authService->login(
             $request->input('email'),
             $request->input('password'),
             $request->ip(),
@@ -39,14 +39,13 @@ class PlatformAuthController extends Controller
             $request->ip(),
         ]);
 
-        return new PlatformAuthResource($result);
+        return new PlatformAuthResource($user);
     }
 
     public function logout(Request $request): JsonResponse
     {
         $this->authService->logout(
             $request->user(),
-            (bool) $request->boolean('all_devices'),
             $request->ip(),
         );
 

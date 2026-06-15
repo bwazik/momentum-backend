@@ -24,7 +24,7 @@ it('can login with valid platform admin credentials', function () {
     ]);
 
     $response->assertOk()
-        ->assertJsonStructure(['user' => ['public_id', 'name_ar', 'email'], 'token']);
+        ->assertJsonStructure(['user' => ['public_id', 'name_ar', 'email']]);
 });
 
 it('cannot login with invalid credentials', function () {
@@ -51,31 +51,19 @@ it('cannot login with tenant admin account', function () {
     $response->assertStatus(422);
 });
 
-it('can access me endpoint with valid token', function () {
-    $loginResponse = $this->postJson('/v1/platform/auth/login', [
-        'email' => 'admin@momentum.test',
-        'password' => 'password',
-    ]);
+it('can access me endpoint with valid session', function () {
+    $this->actingAs($this->admin);
 
-    $token = $loginResponse->json('token');
-
-    $response = $this->withHeader('Authorization', "Bearer $token")
-        ->getJson('/v1/platform/auth/me');
+    $response = $this->getJson('/v1/platform/auth/me');
 
     $response->assertOk()
         ->assertJsonPath('public_id', $this->admin->public_id);
 });
 
 it('can logout', function () {
-    $loginResponse = $this->postJson('/v1/platform/auth/login', [
-        'email' => 'admin@momentum.test',
-        'password' => 'password',
-    ]);
+    $this->actingAs($this->admin);
 
-    $token = $loginResponse->json('token');
-
-    $response = $this->withHeader('Authorization', "Bearer $token")
-        ->postJson('/v1/platform/auth/logout');
+    $response = $this->postJson('/v1/platform/auth/logout');
 
     $response->assertOk();
 });

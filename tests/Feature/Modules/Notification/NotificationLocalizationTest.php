@@ -28,15 +28,8 @@ beforeEach(function () {
         'preferred_language' => PreferredLanguage::ARABIC,
     ]);
 
-    $loginResponse = $this->withHeaders(['X-Tenant' => $this->tenant->public_id])
-        ->postJson('/v1/iam/auth/login', [
-            'email' => $this->loginUser->email,
-            'password' => 'password',
-        ]);
-
-    $this->token = $loginResponse->json('token');
+    $this->actingAs($this->loginUser);
     $this->authHeaders = [
-        'Authorization' => "Bearer {$this->token}",
         'X-Tenant' => $this->tenant->public_id,
     ];
 });

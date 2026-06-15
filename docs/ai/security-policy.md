@@ -11,7 +11,8 @@
 
 - **Mechanism:** Laravel Sanctum SPA (HttpOnly session cookies)
 - **Cross-origin:** API and frontend live on separate domains. CSRF requires proper Sanctum configuration.
-- **Flow:** `GET /sanctum/csrf-cookie` → `POST /api/v1/login` → cookie on subsequent requests
+- **Flow:** `GET /sanctum/csrf-cookie` → `POST /api/v1/iam/auth/login` → cookie on subsequent requests
+- **Impersonation:** Uses time-limited Sanctum tokens (1hr, `impersonated` ability) — only exception to session-only auth, required because platform admin operates on central DB while impersonated user lives in tenant DB
 - **Session storage:** Redis with tenant key prefix (`{slug}_session_*`)
 - **Identity isolation:** Same email may exist in different tenants as separate accounts
 - **SSO:** Not MVP; architecture must allow per-tenant SSO later

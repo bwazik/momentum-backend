@@ -34,7 +34,7 @@ it('can login with valid credentials', function () {
         ]);
 
     $response->assertOk()
-        ->assertJsonStructure(['user' => ['public_id', 'name_ar', 'email'], 'token']);
+        ->assertJsonStructure(['public_id', 'name_ar', 'email']);
 });
 
 it('cannot login with invalid password', function () {
@@ -82,16 +82,9 @@ it('cannot login with platform admin account type', function () {
 it('can logout', function () {
     $user = User::factory()->create(['password' => bcrypt('password')]);
 
-    $loginResponse = $this->withHeaders(['X-Tenant' => $this->tenant->public_id])
-        ->postJson('/v1/iam/auth/login', [
-            'email' => $user->email,
-            'password' => 'password',
-        ]);
-
-    $token = $loginResponse->json('token');
+    $this->actingAs($user);
 
     $response = $this->withHeaders([
-        'Authorization' => "Bearer $token",
         'X-Tenant' => $this->tenant->public_id,
     ])->postJson('/v1/iam/auth/logout');
 
@@ -101,16 +94,9 @@ it('can logout', function () {
 it('returns current user profile via me endpoint', function () {
     $user = User::factory()->create(['password' => bcrypt('password')]);
 
-    $loginResponse = $this->withHeaders(['X-Tenant' => $this->tenant->public_id])
-        ->postJson('/v1/iam/auth/login', [
-            'email' => $user->email,
-            'password' => 'password',
-        ]);
-
-    $token = $loginResponse->json('token');
+    $this->actingAs($user);
 
     $response = $this->withHeaders([
-        'Authorization' => "Bearer $token",
         'X-Tenant' => $this->tenant->public_id,
     ])->getJson('/v1/iam/auth/me');
 

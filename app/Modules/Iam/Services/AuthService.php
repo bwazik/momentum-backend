@@ -14,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 
 class AuthService
 {
-    public function login(string $email, string $password): array
+    public function login(string $email, string $password): User
     {
         try {
             $user = User::withTrashed()
@@ -43,9 +43,7 @@ class AuthService
 
             event(new UserLoggedIn($user));
 
-            $token = $user->createToken('auth-token')->plainTextToken;
-
-            return ['user' => $user, 'token' => $token];
+            return $user;
         } catch (ValidationException $e) {
             throw $e;
         } catch (\Throwable $e) {
@@ -58,19 +56,9 @@ class AuthService
         }
     }
 
-    public function logout(User $user, bool $allDevices): void
+    public function logout(User $user): void
     {
         try {
-            if ($allDevices) {
-                $user->tokens()->delete();
-            } else {
-                $token = $user->currentAccessToken();
-
-                if ($token && method_exists($token, 'delete')) {
-                    $token->delete();
-                }
-            }
-
             event(new UserLoggedOut($user));
         } catch (\Throwable $e) {
             Log::channel('iam')->error('IAM logout failed', [

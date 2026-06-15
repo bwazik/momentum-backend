@@ -39,15 +39,8 @@ beforeEach(function () {
     $this->user = User::factory()->tenantAdmin()->create(['password' => bcrypt('password')]);
     $this->priority = TaskPriority::where('is_default', true)->first();
 
-    $loginResponse = $this->withHeaders(['X-Tenant' => $this->tenant->public_id])
-        ->postJson('/v1/iam/auth/login', [
-            'email' => $this->user->email,
-            'password' => 'password',
-        ]);
-
-    $this->token = $loginResponse->json('token');
+    $this->actingAs($this->user);
     $this->authHeaders = [
-        'Authorization' => "Bearer {$this->token}",
         'X-Tenant' => $this->tenant->public_id,
     ];
 });
@@ -239,11 +232,9 @@ it('rejects override without task.override_assignment capability', function () {
 
     // User without override_assignment capability
     $noCapUser = User::factory()->create(['is_active' => true]);
-    $noCapLogin = $this->withHeaders(['X-Tenant' => $this->tenant->public_id])
-        ->postJson('/v1/iam/auth/login', ['email' => $noCapUser->email, 'password' => 'password']);
-    $noCapToken = $noCapLogin->json('token');
+
+    $this->actingAs($noCapUser, 'web');
     $noCapHeaders = [
-        'Authorization' => "Bearer {$noCapToken}",
         'X-Tenant' => $this->tenant->public_id,
     ];
 

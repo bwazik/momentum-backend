@@ -10,8 +10,7 @@ class PlatformAuthResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'user' => new PlatformAdminResource($this->resource['user']),
-            'token' => $this->resource['token'],
+            'user' => new PlatformAdminResource($this->resource),
         ];
     }
 }

@@ -19,12 +19,7 @@ beforeEach(function () {
         'is_active' => true,
     ]);
 
-    $loginResponse = $this->postJson('/v1/platform/auth/login', [
-        'email' => 'audit@momentum.test',
-        'password' => 'password',
-    ]);
-
-    $this->token = $loginResponse->json('token');
+    $this->actingAs($this->admin);
 });
 
 it('can list audit events with cursor pagination', function () {
@@ -37,7 +32,7 @@ it('can list audit events with cursor pagination', function () {
         'payload' => ['ip_address' => '127.0.0.1'],
     ]);
 
-    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+    $response = $this
         ->getJson('/v1/platform/audit-events');
 
     $response->assertOk()
@@ -53,7 +48,7 @@ it('can filter audit events by action', function () {
         'entity_id' => $this->admin->public_id,
     ]);
 
-    $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+    $response = $this
         ->getJson('/v1/platform/audit-events?action='.AuditAction::PlatformAdminCreate->value);
 
     $response->assertOk();

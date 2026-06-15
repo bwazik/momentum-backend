@@ -17,15 +17,8 @@ beforeEach(function () {
 
     $this->adminUser = User::factory()->tenantAdmin()->create(['password' => bcrypt('password')]);
 
-    $loginResponse = $this->withHeaders(['X-Tenant' => $this->tenant->public_id])
-        ->postJson('/v1/iam/auth/login', [
-            'email' => $this->adminUser->email,
-            'password' => 'password',
-        ]);
-
-    $this->token = $loginResponse->json('token');
+    $this->actingAs($this->adminUser);
     $this->authHeaders = [
-        'Authorization' => "Bearer {$this->token}",
         'X-Tenant' => $this->tenant->public_id,
     ];
 });

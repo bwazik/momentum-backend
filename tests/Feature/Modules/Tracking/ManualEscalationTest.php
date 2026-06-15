@@ -53,15 +53,8 @@ beforeEach(function () {
 
     $this->user = User::factory()->tenantAdmin()->create(['password' => bcrypt('password')]);
 
-    $loginResponse = $this->withHeaders(['X-Tenant' => $this->tenant->public_id])
-        ->postJson('/v1/iam/auth/login', [
-            'email' => $this->user->email,
-            'password' => 'password',
-        ]);
-
-    $this->token = $loginResponse->json('token');
+    $this->actingAs($this->user);
     $this->authHeaders = [
-        'Authorization' => "Bearer {$this->token}",
         'X-Tenant' => $this->tenant->public_id,
     ];
 
@@ -172,13 +165,8 @@ it('denies unauthorized user from resolving escalation', function () {
         'reason' => 'Test task visibility grant',
     ]);
 
-    $loginResponse = $this->withHeaders(['X-Tenant' => $this->tenant->public_id])
-        ->postJson('/v1/iam/auth/login', [
-            'email' => $otherUser->email,
-            'password' => 'password',
-        ]);
+    $this->actingAs($otherUser);
     $otherHeaders = [
-        'Authorization' => "Bearer {$loginResponse->json('token')}",
         'X-Tenant' => $this->tenant->public_id,
     ];
 

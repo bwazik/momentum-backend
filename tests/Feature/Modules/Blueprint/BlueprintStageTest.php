@@ -31,15 +31,8 @@ beforeEach(function () {
     ]);
     $this->stageType = StageType::first();
 
-    $loginResponse = $this->withHeaders(['X-Tenant' => $this->tenant->public_id])
-        ->postJson('/v1/iam/auth/login', [
-            'email' => $this->user->email,
-            'password' => 'password',
-        ]);
-
-    $this->token = $loginResponse->json('token');
+    $this->actingAs($this->user);
     $this->authHeaders = [
-        'Authorization' => "Bearer {$this->token}",
         'X-Tenant' => $this->tenant->public_id,
     ];
 });

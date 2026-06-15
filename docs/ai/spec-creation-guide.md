@@ -65,7 +65,6 @@ Create a new feature spec for the following feature:
    - Explicit out-of-scope items
    - Any open questions that need answering before implementation
 7. Do NOT create `plan.md` yet — that comes after the spec is reviewed and approved.
-8. After creating the file, show me its contents for review.
 
 **Do not start implementing.** This prompt is spec creation only.
 **You can know the next spec from the roadmap.md**
@@ -143,7 +142,6 @@ Keep these items concise and avoid long prose; mark uncertain details with `<!--
    - Architecture or standards violations
 
    Include file paths and recommended fixes so the report can be given directly to another coding LLM for remediation.
-10. After creating the file, show me its contents for review.
 
 **Do not start implementing.** This prompt is plan creation only.
 **You can access any files in the current codebase to know about the existing code (ONLY IF NEEDED)**

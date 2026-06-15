@@ -14,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 
 class PlatformAuthService
 {
-    public function login(string $email, string $password, string $ip): array
+    public function login(string $email, string $password, string $ip): User
     {
         try {
             $user = User::withTrashed()
@@ -41,11 +41,9 @@ class PlatformAuthService
 
             Auth::guard('web')->login($user);
 
-            $token = $user->createToken('platform-admin')->plainTextToken;
-
             event(new PlatformAdminLoggedIn($user, $ip));
 
-            return ['user' => $user, 'token' => $token];
+            return $user;
         } catch (ValidationException $e) {
             throw $e;
         } catch (\Throwable $e) {
@@ -60,25 +58,14 @@ class PlatformAuthService
         }
     }
 
-    public function logout(User $user, bool $allDevices, string $ip): void
+    public function logout(User $user, string $ip): void
     {
         try {
-            if ($allDevices) {
-                $user->tokens()->delete();
-            } else {
-                $token = $user->currentAccessToken();
-
-                if ($token && method_exists($token, 'delete')) {
-                    $token->delete();
-                }
-            }
-
-            event(new PlatformAdminLoggedOut($user, $ip, $allDevices));
+            event(new PlatformAdminLoggedOut($user, $ip, false));
         } catch (\Throwable $e) {
             Log::channel('platform')->error('Platform admin logout failed', [
                 'action' => 'platform_admin.logout',
                 'entity_id' => $user->public_id,
-                'all_devices' => $allDevices,
                 'ip' => $ip,
                 'error' => $e->getMessage(),
             ]);
