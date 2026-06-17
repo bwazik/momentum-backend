@@ -4,6 +4,7 @@ use App\Exceptions\DomainException;
 use App\Exceptions\ThrottleException;
 use App\Http\Middleware\RequireCapability;
 use App\Http\Middleware\RequirePlatformAdmin;
+use App\Http\Middleware\SetLocaleFromHeader;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -25,6 +26,9 @@ return Application::configure(basePath: dirname(__DIR__))
         __DIR__.'/../app/Modules/*/Listeners',
     ])
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->api(append: [
+            SetLocaleFromHeader::class,
+        ]);
         $middleware->api(prepend: [
             EnsureFrontendRequestsAreStateful::class,
         ]);
@@ -32,6 +36,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'capability' => RequireCapability::class,
             'platform.admin' => RequirePlatformAdmin::class,
+        ]);
+
+        $middleware->validateCsrfTokens(except: [
+            'v1/iam/auth/login',
+            'v1/iam/auth/logout',
+            'v1/notifications/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -11046,40 +11046,28 @@
             "AuthTokenResource": {
                 "type": "object",
                 "properties": {
-                    "user": {
-                        "type": "object",
-                        "properties": {
-                            "public_id": {
-                                "type": "string"
-                            },
-                            "name_ar": {
-                                "type": "string"
-                            },
-                            "name_en": {
-                                "type": "string"
-                            },
-                            "email": {
-                                "type": "string"
-                            },
-                            "account_type": {
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "public_id",
-                            "name_ar",
-                            "name_en",
-                            "email",
-                            "account_type"
-                        ]
+                    "public_id": {
+                        "type": "string"
                     },
-                    "token": {
+                    "name_ar": {
+                        "type": "string"
+                    },
+                    "name_en": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "account_type": {
                         "type": "string"
                     }
                 },
                 "required": [
-                    "user",
-                    "token"
+                    "public_id",
+                    "name_ar",
+                    "name_en",
+                    "email",
+                    "account_type"
                 ],
                 "title": "AuthTokenResource"
             },
@@ -12702,14 +12690,10 @@
                 "properties": {
                     "user": {
                         "$ref": "#/components/schemas/PlatformAdminResource"
-                    },
-                    "token": {
-                        "type": "string"
                     }
                 },
                 "required": [
-                    "user",
-                    "token"
+                    "user"
                 ],
                 "title": "PlatformAuthResource"
             },

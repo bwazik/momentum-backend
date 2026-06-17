@@ -15,13 +15,13 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*', 'v1/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000'), 'http://localhost:5173'],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => ['/^https?:\/\/.*\.momentum\.test$/'],
 
     'allowed_headers' => ['*'],
 

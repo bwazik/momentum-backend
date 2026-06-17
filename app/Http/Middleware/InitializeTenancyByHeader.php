@@ -18,7 +18,13 @@ class InitializeTenancyByHeader
         }
 
         if ($tenantId) {
-            $tenant = config('tenancy.tenant_model')::where('public_id', $tenantId)->first();
+            $model = config('tenancy.tenant_model');
+
+            // Look up by slug first, then by public_id (UUID)
+            $tenant = $model::where('slug', $tenantId)->first();
+            if (! $tenant) {
+                $tenant = $model::where('public_id', $tenantId)->first();
+            }
 
             if ($tenant) {
                 $this->tenancy->initialize($tenant);
