@@ -12,7 +12,7 @@ class ThrottleException extends Exception
         public readonly int $retryAfterSeconds,
     ) {
         parent::__construct(
-            __('Too many requests. Please try again in :seconds seconds.', ['seconds' => $retryAfterSeconds])
+            __('auth.throttle', ['seconds' => $retryAfterSeconds])
         );
     }
 

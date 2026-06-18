@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Tenant;
 use App\Models\User;
 use App\Services\Platform\TenantProvisioningService;
 use Illuminate\Database\Seeder;
@@ -37,7 +38,7 @@ class DevTenantsSeeder extends Seeder
             ],
         ];
 
-        $this->command->info('Dropping existing tenant databases...');
+        $this->command->info('Dropping existing tenant databases & records...');
 
         foreach ($tenants as $data) {
             $dbName = $prefix.$data['slug'];
@@ -47,13 +48,15 @@ class DevTenantsSeeder extends Seeder
             $this->command->info("  Dropped database: {$dbName}");
         }
 
+        $slugs = array_column($tenants, 'slug');
+        Tenant::whereIn('slug', $slugs)->forceDelete();
+
         foreach ($tenants as $data) {
             $tenant = $provisioner->provision($data);
 
             tenancy()->initialize($tenant);
 
             $this->call(CapabilitySeeder::class, false, []);
-            $this->call(TenantDatabaseSeeder::class, false, []);
 
             User::create([
                 'name_ar' => 'مدير النظام',
@@ -63,6 +66,8 @@ class DevTenantsSeeder extends Seeder
                 'account_type' => 2,
                 'is_active' => true,
             ]);
+
+            $this->call(TenantDatabaseSeeder::class, false, []);
 
             tenancy()->end();
 

@@ -28,7 +28,15 @@ Route::middleware([
     'api',
 ])->prefix('v1')->group(function () {
     Route::get('/', function () {
-        return response()->json(['tenant' => ['public_id' => tenancy()->tenant->public_id]]);
+        $tenant = tenancy()->tenant;
+
+        return response()->json([
+            'tenant' => [
+                'public_id' => $tenant->public_id,
+                'name_ar' => $tenant->name_ar,
+                'name_en' => $tenant->name_en ?? $tenant->name_ar,
+            ],
+        ]);
     });
 
     require __DIR__.'/api/v1/organization.php';
