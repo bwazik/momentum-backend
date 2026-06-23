@@ -13,7 +13,7 @@ class TaskPriorityResource extends JsonResource
             'public_id' => $this->public_id,
             'name_ar' => $this->name_ar,
             'name_en' => $this->name_en ?? $this->name_ar,
-            'severity_rank' => $this->severity_rank,
+            'severity_rank' => $this->apiValue(),
             'color_code' => $this->color_code,
             'is_default' => $this->is_default,
             'is_active' => $this->is_active,

@@ -16,6 +16,7 @@ class SearchTaskResource extends JsonResource
 
         return [
             'public_id' => $task->public_id,
+            'display_id' => $task->display_id,
             'title_ar' => $task->title_ar,
             'title_en' => $task->title_en ?? $task->title_ar,
             'status' => $task->status,

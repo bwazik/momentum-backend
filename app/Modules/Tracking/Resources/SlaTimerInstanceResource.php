@@ -12,6 +12,7 @@ class SlaTimerInstanceResource extends JsonResource
         return [
             'public_id' => $this->public_id,
             'task_id' => $this->task?->public_id,
+            'task_display_id' => $this->task?->display_id,
             'stage_instance_id' => $this->stageInstance?->public_id,
             'sub_stage_instance_id' => $this->subStageInstance?->public_id,
             'sla_policy' => [
@@ -21,7 +22,7 @@ class SlaTimerInstanceResource extends JsonResource
                 'sla_value' => $this->slaPolicy?->sla_value,
                 'sla_unit' => $this->slaPolicy?->sla_unit,
             ],
-            'status' => $this->status,
+            'status' => $this->status?->apiValue(),
             'started_at' => $this->started_at?->toIso8601String(),
             'deadline_at' => $this->deadline_at?->toIso8601String(),
             'warning_at' => $this->warning_at?->toIso8601String(),

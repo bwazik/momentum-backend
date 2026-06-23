@@ -15,6 +15,7 @@ class CompleteStageRequest extends FormRequest
     {
         return [
             'completion_note' => ['nullable', 'string', 'max:5000'],
+            'target_stage_id' => ['nullable', 'string', 'exists:blueprint_stages,public_id'],
         ];
     }
 }

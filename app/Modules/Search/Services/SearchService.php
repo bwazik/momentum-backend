@@ -53,11 +53,12 @@ class SearchService
                 ) as combined_rank", [$tsqueryAr, $tsqueryEn, $tsqueryAr, $tsqueryEn])
                     ->selectRaw("ts_headline('simple', coalesce(tasks.title_ar,'') || ' ' || coalesce(tasks.description_ar,'') || ' ' || coalesce(task_search_index.notes_ar,''), to_tsquery('simple', ?), 'StartSel=<mark>,StopSel=</mark>,MaxWords=35,MinWords=15') as snippet_ar", [$tsqueryAr])
                     ->selectRaw("ts_headline('english', coalesce(tasks.title_en,'') || ' ' || coalesce(tasks.description_en,'') || ' ' || coalesce(task_search_index.notes_en,''), to_tsquery('english', ?), 'StartSel=<mark>,StopSel=</mark>,MaxWords=35,MinWords=15') as snippet_en", [$tsqueryEn])
-                    ->where(function (Builder $q) use ($tsqueryAr, $tsqueryEn) {
+                    ->where(function (Builder $q) use ($tsqueryAr, $tsqueryEn, $filters) {
                         $q->whereRaw('tasks.search_vector_ar @@ to_tsquery(\'simple\', ?)', [$tsqueryAr])
                             ->orWhereRaw('tasks.search_vector_en @@ to_tsquery(\'english\', ?)', [$tsqueryEn])
                             ->orWhereRaw('task_search_index.search_vector_notes_ar @@ to_tsquery(\'simple\', ?)', [$tsqueryAr])
-                            ->orWhereRaw('task_search_index.search_vector_notes_en @@ to_tsquery(\'english\', ?)', [$tsqueryEn]);
+                            ->orWhereRaw('task_search_index.search_vector_notes_en @@ to_tsquery(\'english\', ?)', [$tsqueryEn])
+                            ->orWhere('tasks.display_id', 'ilike', '%'.$filters['q'].'%');
                     });
             } elseif (app()->runningUnitTests()) {
                 $q = $filters['q'];
@@ -67,6 +68,7 @@ class SearchService
                             ->orWhere('tasks.title_en', 'like', '%'.$q.'%')
                             ->orWhere('tasks.description_ar', 'like', '%'.$q.'%')
                             ->orWhere('tasks.description_en', 'like', '%'.$q.'%')
+                            ->orWhere('tasks.display_id', 'like', '%'.$q.'%')
                             ->orWhere('task_search_index.notes_ar', 'like', '%'.$q.'%')
                             ->orWhere('task_search_index.notes_en', 'like', '%'.$q.'%');
                     });

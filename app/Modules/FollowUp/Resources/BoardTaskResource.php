@@ -19,15 +19,18 @@ class BoardTaskResource extends JsonResource
 
         return [
             'public_id' => $task->public_id,
+            'display_id' => $task->display_id,
             'title_ar' => $task->title_ar,
             'title_en' => $task->title_en,
-            'status' => $task->status,
+            'status' => $task->status->apiValue(),
             'priority' => $task->priority ? [
                 'public_id' => $task->priority->public_id,
                 'name_ar' => $task->priority->name_ar,
                 'name_en' => $task->priority->name_en,
+                'severity_rank' => strtolower($task->priority->name_en ?? $task->priority->name_ar),
+                'color_code' => $task->priority->color_code,
             ] : null,
-            'classification_level' => $task->classification_level,
+            'classification_level' => $task->classification_level?->apiValue(),
             'current_stage' => [
                 'public_id' => $subStageInstance?->blueprintSubStage?->public_id ?? $stageInstance?->blueprintStage?->public_id,
                 'name_ar' => $subStageInstance?->blueprintSubStage?->name_ar ?? $stageInstance?->blueprintStage?->name_ar,

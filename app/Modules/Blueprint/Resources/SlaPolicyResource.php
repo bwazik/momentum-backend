@@ -14,7 +14,7 @@ class SlaPolicyResource extends JsonResource
             'name_ar' => $this->name_ar,
             'name_en' => $this->name_en ?? $this->name_ar,
             'sla_value' => $this->sla_value,
-            'sla_unit' => $this->sla_unit,
+            'sla_unit' => $this->sla_unit?->apiValue(),
             'warning_threshold_percentage' => $this->warning_threshold_percentage,
             'is_active' => $this->is_active,
             'created_at' => $this->created_at?->toIso8601String(),

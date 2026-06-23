@@ -204,9 +204,12 @@ class TaskService
             )->firstOrFail();
 
             $visibleTask->load([
-                'priority', 'blueprint.category', 'initiator',
+                'priority', 'blueprint.category', 'blueprint.stages', 'initiator',
+                'stageInstances.blueprintStage.stageType',
                 'stageInstances.assignments.user',
-                'stageInstances.subStageInstances',
+                'stageInstances.subStageInstances.blueprintSubStage',
+                'stageInstances.subStageInstances.assignments.user',
+                'stageInstances.owningDepartment',
             ]);
 
             event(new TaskViewed($visibleTask, $user));
@@ -358,7 +361,7 @@ class TaskService
 
                 event(new TaskLaunched($task));
 
-                return $task->fresh(['stageInstances.assignments', 'priority', 'blueprint']);
+                return $task->fresh(['stageInstances.assignments', 'stageInstances.owningDepartment', 'priority', 'blueprint']);
             });
         } catch (TaskNotDraftException|BlueprintNotActiveException|BlueprintHasNoStagesException|
             UnresolvableAssignmentException|

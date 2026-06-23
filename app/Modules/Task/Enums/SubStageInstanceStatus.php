@@ -8,4 +8,9 @@ enum SubStageInstanceStatus: int
     case Active = 2;
     case Completed = 3;
     case Returned = 4;
+
+    public function apiValue(): string
+    {
+        return strtolower($this->name);
+    }
 }

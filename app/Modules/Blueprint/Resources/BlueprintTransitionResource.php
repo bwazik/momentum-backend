@@ -14,7 +14,7 @@ class BlueprintTransitionResource extends JsonResource
             'blueprint_id' => $this->blueprint->public_id,
             'from_stage_id' => $this->fromStage?->public_id,
             'to_stage_id' => $this->toStage?->public_id,
-            'transition_type' => $this->transition_type,
+            'transition_type' => $this->transition_type->apiValue(),
             'return_reason_required' => $this->return_reason_required,
             'created_at' => $this->created_at?->toIso8601String(),
         ];

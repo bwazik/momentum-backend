@@ -16,6 +16,8 @@ class TaskTimelineResource extends JsonResource
             'timestamp' => $data['timestamp']?->toIso8601String(),
             'stage_name_ar' => $data['stage_name_ar'] ?? null,
             'stage_name_en' => $data['stage_name_en'] ?? null,
+            'parent_stage_name_ar' => $data['parent_stage_name_ar'] ?? null,
+            'parent_stage_name_en' => $data['parent_stage_name_en'] ?? null,
             'user_id' => $data['user_id'] ?? null,
             'user_name_ar' => $data['user_name_ar'] ?? null,
             'user_name_en' => $data['user_name_en'] ?? null,

@@ -28,4 +28,9 @@ enum TaskStatus: int
     {
         return in_array($target, $this->allowedTransitions(), true);
     }
+
+    public function apiValue(): string
+    {
+        return strtolower($this->name);
+    }
 }

@@ -169,9 +169,10 @@ class FollowUpBoardService
                     ->with([
                         'blueprintStage.stageType',
                         'owningDepartment',
-                        'assignments.user.position',
+                        'assignments.user',
+                        'assignments.position',
                         'subStageInstances' => fn ($sq) => $sq->where('status', SubStageInstanceStatus::Active)
-                            ->with(['blueprintSubStage', 'assignments.user.position', 'owningDepartment']),
+                            ->with(['blueprintSubStage', 'assignments.user', 'assignments.position', 'owningDepartment']),
                     ]),
             ])
             ->leftJoin('task_stage_instances', function ($join) {
@@ -182,7 +183,8 @@ class FollowUpBoardService
             ->leftJoin('stage_types', 'blueprint_stages.stage_type_id', '=', 'stage_types.id')
             ->leftJoin('departments', 'task_stage_instances.owning_department_id', '=', 'departments.id')
             ->leftJoin('task_priorities', 'tasks.priority_id', '=', 'task_priorities.id')
-            ->select('tasks.*');
+            ->select('tasks.*')
+            ->selectRaw('COALESCE(task_stage_instances.entered_at, \'1970-01-01\') as entered_at_sort');
 
         return $query;
     }
@@ -283,7 +285,7 @@ class FollowUpBoardService
         $direction = BoardSortDirection::tryFrom($filters['sort_direction'] ?? BoardSortDirection::Desc->value)?->value ?? 'desc';
 
         if ($status === 'overdue') {
-            $query->orderBy('task_stage_instances.entered_at', 'asc');
+            $query->orderBy('entered_at_sort', 'asc');
             $query->orderBy('tasks.id');
 
             return;
@@ -294,7 +296,7 @@ class FollowUpBoardService
                 $join->on('task_stage_instances.id', '=', 'sla_sort.stage_instance_id')
                     ->whereIn('sla_sort.status', [SlaTimerStatus::Warning->value]);
             });
-            $query->orderBy('sla_sort.deadline_at', 'asc');
+            $query->orderByRaw('COALESCE(sla_sort.deadline_at, \'9999-12-31\') asc');
             $query->orderBy('tasks.id');
 
             return;
@@ -306,14 +308,14 @@ class FollowUpBoardService
 
         match ($field) {
             BoardSortField::TimeAtStage => $query->orderBy(
-                'task_stage_instances.entered_at',
+                'entered_at_sort',
                 $direction === 'asc' ? 'desc' : 'asc'
             ),
-            BoardSortField::Priority => $query->orderBy('task_priorities.severity_rank', $direction),
+            BoardSortField::Priority => $query->orderByRaw("COALESCE(task_priorities.severity_rank, 999) {$direction}"),
             BoardSortField::DueDate => $query->orderBy('tasks.due_date', $direction),
             BoardSortField::CreatedAt => $query->orderBy('tasks.created_at', $direction),
-            BoardSortField::Department => $query->orderBy('departments.name_ar', $direction),
-            BoardSortField::StageType => $query->orderBy('stage_types.name_ar', $direction),
+            BoardSortField::Department => $query->orderByRaw("COALESCE(departments.name_ar, '') {$direction}"),
+            BoardSortField::StageType => $query->orderByRaw("COALESCE(stage_types.name_ar, '') {$direction}"),
         };
 
         $query->orderBy('tasks.id');

@@ -1,7 +1,7 @@
 {
     "openapi": "3.1.0",
     "info": {
-        "title": "Laravel",
+        "title": "Momentum",
         "version": "0.0.1"
     },
     "servers": [
@@ -98,10 +98,18 @@
                                             "properties": {
                                                 "public_id": {
                                                     "type": "string"
+                                                },
+                                                "name_ar": {
+                                                    "type": "string"
+                                                },
+                                                "name_en": {
+                                                    "type": "string"
                                                 }
                                             },
                                             "required": [
-                                                "public_id"
+                                                "public_id",
+                                                "name_ar",
+                                                "name_en"
                                             ]
                                         }
                                     },
@@ -9974,6 +9982,56 @@
                 ],
                 "parameters": [
                     {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 255
+                        }
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "boolean",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "account_type",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/AccountType"
+                        }
+                    },
+                    {
+                        "name": "department_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
                         "name": "X-Tenant",
                         "in": "header",
                         "required": true,
@@ -10015,6 +10073,9 @@
                     },
                     "401": {
                         "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
                     }
                 }
             },
@@ -11176,6 +11237,19 @@
                     "is_active": {
                         "type": "string"
                     },
+                    "stages_count": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "integer",
+                                "enum": [
+                                    0
+                                ]
+                            }
+                        ]
+                    },
                     "stages": {
                         "type": "array",
                         "items": {
@@ -11431,6 +11505,9 @@
                     "public_id": {
                         "type": "string"
                     },
+                    "display_id": {
+                        "type": "string"
+                    },
                     "title_ar": {
                         "type": "string"
                     },
@@ -11454,12 +11531,20 @@
                             },
                             "name_en": {
                                 "type": "string"
+                            },
+                            "severity_rank": {
+                                "type": "string"
+                            },
+                            "color_code": {
+                                "type": "string"
                             }
                         },
                         "required": [
                             "public_id",
                             "name_ar",
-                            "name_en"
+                            "name_en",
+                            "severity_rank",
+                            "color_code"
                         ]
                     },
                     "classification_level": {
@@ -11592,6 +11677,7 @@
                 },
                 "required": [
                     "public_id",
+                    "display_id",
                     "title_ar",
                     "title_en",
                     "status",
@@ -11712,6 +11798,12 @@
                             "null"
                         ],
                         "maxLength": 5000
+                    },
+                    "target_stage_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     }
                 },
                 "title": "CompleteStageRequest"
@@ -12034,6 +12126,9 @@
                     "task_id": {
                         "type": "string"
                     },
+                    "task_display_id": {
+                        "type": "string"
+                    },
                     "stage_instance_id": {
                         "type": "string"
                     },
@@ -12158,6 +12253,7 @@
                 "required": [
                     "public_id",
                     "task_id",
+                    "task_display_id",
                     "stage_instance_id",
                     "sub_stage_instance_id",
                     "sla_timer",
@@ -12181,6 +12277,9 @@
                         "type": "string"
                     },
                     "task_id": {
+                        "type": "string"
+                    },
+                    "task_display_id": {
                         "type": "string"
                     },
                     "stage_instance_id": {
@@ -12252,6 +12351,7 @@
                 "required": [
                     "public_id",
                     "task_id",
+                    "task_display_id",
                     "stage_instance_id",
                     "sub_stage_instance_id",
                     "escalation_type",
@@ -13098,7 +13198,7 @@
                             "type": "object",
                             "properties": {
                                 "public_id": {
-                                    "type": "integer"
+                                    "type": "string"
                                 },
                                 "sequence_order": {
                                     "type": "integer",
@@ -13128,7 +13228,7 @@
                             "type": "object",
                             "properties": {
                                 "public_id": {
-                                    "type": "integer"
+                                    "type": "string"
                                 },
                                 "sequence_order": {
                                     "type": "integer",
@@ -13263,6 +13363,9 @@
                     "task_id": {
                         "type": "string"
                     },
+                    "task_display_id": {
+                        "type": "string"
+                    },
                     "stage_instance_id": {
                         "type": "string"
                     },
@@ -13324,6 +13427,7 @@
                 "required": [
                     "public_id",
                     "task_id",
+                    "task_display_id",
                     "stage_instance_id",
                     "sub_stage_instance_id",
                     "sla_policy",
@@ -13541,14 +13645,14 @@
                         ]
                     },
                     "category_id": {
-                        "type": "integer"
+                        "type": "string"
                     },
                     "scope": {
                         "$ref": "#/components/schemas/BlueprintScope"
                     },
                     "department_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     }
@@ -13587,11 +13691,11 @@
                         ]
                     },
                     "stage_type_id": {
-                        "type": "integer"
+                        "type": "string"
                     },
                     "sla_policy_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
@@ -13608,13 +13712,13 @@
                     },
                     "assigned_position_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
                     "assigned_department_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
@@ -13626,7 +13730,7 @@
                     },
                     "escalation_position_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     }
@@ -13666,7 +13770,7 @@
                     },
                     "sla_policy_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
@@ -13689,13 +13793,13 @@
                     },
                     "assigned_position_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
                     "assigned_department_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
@@ -13716,10 +13820,10 @@
                 "type": "object",
                 "properties": {
                     "from_stage_id": {
-                        "type": "integer"
+                        "type": "string"
                     },
                     "to_stage_id": {
-                        "type": "integer"
+                        "type": "string"
                     },
                     "transition_type": {
                         "$ref": "#/components/schemas/TransitionType"
@@ -14308,6 +14412,9 @@
                     "public_id": {
                         "type": "string"
                     },
+                    "display_id": {
+                        "type": "string"
+                    },
                     "blueprint": {
                         "$ref": "#/components/schemas/BlueprintResource"
                     },
@@ -14333,6 +14440,12 @@
                         "type": "string"
                     },
                     "initiator_id": {
+                        "type": "string"
+                    },
+                    "initiator_name_ar": {
+                        "type": "string"
+                    },
+                    "initiator_name_en": {
                         "type": "string"
                     },
                     "due_date": {
@@ -14371,6 +14484,7 @@
                 },
                 "required": [
                     "public_id",
+                    "display_id",
                     "title_ar",
                     "title_en",
                     "description_ar",
@@ -14378,6 +14492,8 @@
                     "classification_level",
                     "status",
                     "initiator_id",
+                    "initiator_name_ar",
+                    "initiator_name_en",
                     "due_date",
                     "created_at",
                     "launched_at",
@@ -14394,6 +14510,9 @@
                 "type": "object",
                 "properties": {
                     "task_public_id": {
+                        "type": "string"
+                    },
+                    "display_id": {
                         "type": "string"
                     },
                     "title_ar": {
@@ -14430,6 +14549,7 @@
                 },
                 "required": [
                     "task_public_id",
+                    "display_id",
                     "title_ar",
                     "title_en",
                     "status",
@@ -14497,6 +14617,9 @@
                     "public_id": {
                         "type": "string"
                     },
+                    "display_id": {
+                        "type": "string"
+                    },
                     "blueprint_id": {
                         "type": "string"
                     },
@@ -14554,6 +14677,7 @@
                 },
                 "required": [
                     "public_id",
+                    "display_id",
                     "blueprint_id",
                     "title_ar",
                     "title_en",
@@ -14580,6 +14704,9 @@
                     "task_id": {
                         "type": "string"
                     },
+                    "display_id": {
+                        "type": "string"
+                    },
                     "overall_health": {
                         "type": "string",
                         "enum": [
@@ -14598,6 +14725,7 @@
                 },
                 "required": [
                     "task_id",
+                    "display_id",
                     "overall_health",
                     "timers"
                 ],
@@ -14666,6 +14794,12 @@
             "TaskStageInstanceResource": {
                 "type": "object",
                 "properties": {
+                    "instance_id": {
+                        "type": "string"
+                    },
+                    "public_id": {
+                        "type": "string"
+                    },
                     "blueprint_stage": {
                         "type": "object",
                         "properties": {
@@ -14677,6 +14811,28 @@
                             },
                             "name_en": {
                                 "type": "string"
+                            },
+                            "stage_type": {
+                                "type": [
+                                    "object",
+                                    "null"
+                                ],
+                                "properties": {
+                                    "public_id": {
+                                        "type": "string"
+                                    },
+                                    "name_ar": {
+                                        "type": "string"
+                                    },
+                                    "name_en": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "public_id",
+                                    "name_ar",
+                                    "name_en"
+                                ]
                             }
                         }
                     },
@@ -14684,6 +14840,12 @@
                         "type": "string"
                     },
                     "owning_department_id": {
+                        "type": "string"
+                    },
+                    "department_name_ar": {
+                        "type": "string"
+                    },
+                    "department_name_en": {
                         "type": "string"
                     },
                     "completion_rule": {
@@ -14718,6 +14880,8 @@
                     }
                 },
                 "required": [
+                    "instance_id",
+                    "public_id",
                     "blueprint_stage",
                     "sequence_order",
                     "owning_department_id",
@@ -14744,6 +14908,9 @@
             "TaskSubStageInstanceResource": {
                 "type": "object",
                 "properties": {
+                    "instance_id": {
+                        "type": "string"
+                    },
                     "blueprint_sub_stage": {
                         "type": "object",
                         "properties": {
@@ -14790,6 +14957,7 @@
                     }
                 },
                 "required": [
+                    "instance_id",
                     "blueprint_sub_stage",
                     "sequence_order",
                     "owning_department_id",
@@ -14818,6 +14986,18 @@
                         ]
                     },
                     "stage_name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "parent_stage_name_ar": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "parent_stage_name_en": {
                         "type": [
                             "string",
                             "null"
@@ -14877,6 +15057,8 @@
                     "timestamp",
                     "stage_name_ar",
                     "stage_name_en",
+                    "parent_stage_name_ar",
+                    "parent_stage_name_en",
                     "user_id",
                     "user_name_ar",
                     "user_name_en",
@@ -15115,13 +15297,13 @@
                     },
                     "category_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
                     "department_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     }
@@ -15159,13 +15341,13 @@
                     },
                     "stage_type_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
                     "sla_policy_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
@@ -15174,13 +15356,13 @@
                     },
                     "assigned_position_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
                     "assigned_department_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
@@ -15192,7 +15374,7 @@
                     },
                     "escalation_position_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     }
@@ -15230,7 +15412,7 @@
                     },
                     "sla_policy_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
@@ -15253,13 +15435,13 @@
                     },
                     "assigned_position_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
                     "assigned_department_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
@@ -15277,13 +15459,13 @@
                 "properties": {
                     "from_stage_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
                     "to_stage_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },

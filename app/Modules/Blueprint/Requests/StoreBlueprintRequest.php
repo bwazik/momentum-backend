@@ -20,9 +20,9 @@ class StoreBlueprintRequest extends FormRequest
             'name_en' => ['nullable', 'string', 'max:255'],
             'description_ar' => ['nullable', 'string'],
             'description_en' => ['nullable', 'string'],
-            'category_id' => ['required', 'exists:blueprint_categories,public_id'],
+            'category_id' => ['required', 'string', 'exists:blueprint_categories,public_id'],
             'scope' => ['required', Rule::enum(BlueprintScope::class)],
-            'department_id' => ['required_if:scope,'.BlueprintScope::Department->value, 'nullable', 'exists:departments,public_id'],
+            'department_id' => ['required_if:scope,'.BlueprintScope::Department->value, 'nullable', 'string', 'exists:departments,public_id'],
         ];
     }
 }

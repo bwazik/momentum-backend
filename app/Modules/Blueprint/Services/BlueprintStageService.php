@@ -7,12 +7,14 @@ use App\Modules\Blueprint\Events\StageDeleted;
 use App\Modules\Blueprint\Events\StageReordered;
 use App\Modules\Blueprint\Events\StageUpdated;
 use App\Modules\Blueprint\Exceptions\BlueprintLockedException;
+use App\Modules\Blueprint\Exceptions\StageInUseException;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Blueprint\Models\BlueprintStage;
 use App\Modules\Blueprint\Models\SlaPolicy;
 use App\Modules\Blueprint\Models\StageType;
 use App\Modules\Organization\Models\Department;
 use App\Modules\Organization\Models\Position;
+use App\Modules\Task\Models\TaskStageInstance;
 use App\Traits\AuthenticatedUser;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -98,29 +100,31 @@ class BlueprintStageService
                 'completion_rule' => $data['completion_rule'] ?? $stage->completion_rule,
             ];
 
-            if (isset($data['stage_type_id'])) {
-                $updateData['stage_type_id'] = StageType::where('public_id', $data['stage_type_id'])->value('id');
+            if (array_key_exists('stage_type_id', $data)) {
+                $updateData['stage_type_id'] = ! empty($data['stage_type_id'])
+                    ? StageType::where('public_id', $data['stage_type_id'])->value('id')
+                    : null;
             }
 
-            if (isset($data['sla_policy_id'])) {
+            if (array_key_exists('sla_policy_id', $data)) {
                 $updateData['sla_policy_id'] = ! empty($data['sla_policy_id'])
                     ? SlaPolicy::where('public_id', $data['sla_policy_id'])->value('id')
                     : null;
             }
 
-            if (isset($data['assigned_position_id'])) {
+            if (array_key_exists('assigned_position_id', $data)) {
                 $updateData['assigned_position_id'] = ! empty($data['assigned_position_id'])
                     ? Position::where('public_id', $data['assigned_position_id'])->value('id')
                     : null;
             }
 
-            if (isset($data['assigned_department_id'])) {
+            if (array_key_exists('assigned_department_id', $data)) {
                 $updateData['assigned_department_id'] = ! empty($data['assigned_department_id'])
                     ? Department::where('public_id', $data['assigned_department_id'])->value('id')
                     : null;
             }
 
-            if (isset($data['escalation_position_id'])) {
+            if (array_key_exists('escalation_position_id', $data)) {
                 $updateData['escalation_position_id'] = ! empty($data['escalation_position_id'])
                     ? Position::where('public_id', $data['escalation_position_id'])->value('id')
                     : null;
@@ -154,11 +158,15 @@ class BlueprintStageService
                 throw new BlueprintLockedException;
             }
 
+            if (TaskStageInstance::where('blueprint_stage_id', $stage->id)->exists()) {
+                throw new StageInUseException;
+            }
+
             $stage->delete();
 
             $this->clearCache($blueprint);
             event(new StageDeleted($stage));
-        } catch (BlueprintLockedException $e) {
+        } catch (BlueprintLockedException|StageInUseException $e) {
             throw $e;
         } catch (\Throwable $e) {
             Log::channel('blueprint')->error('Failed to delete stage', [
@@ -183,7 +191,11 @@ class BlueprintStageService
             DB::transaction(function () use ($stages) {
                 foreach ($stages as $item) {
                     BlueprintStage::where('public_id', $item['public_id'])
-                        ->update(['sequence_order' => $item['sequence_order']]);
+                        ->update(['sequence_order' => -(1000 + (int) $item['sequence_order'])]);
+                }
+                foreach ($stages as $item) {
+                    BlueprintStage::where('public_id', $item['public_id'])
+                        ->update(['sequence_order' => (int) $item['sequence_order']]);
                 }
             });
 

@@ -15,7 +15,7 @@ class ReorderStagesRequest extends FormRequest
     {
         return [
             'stages' => ['required', 'array', 'min:1'],
-            'stages.*.public_id' => ['required', 'exists:blueprint_stages,public_id'],
+            'stages.*.public_id' => ['required', 'string', 'exists:blueprint_stages,public_id'],
             'stages.*.sequence_order' => ['required', 'integer', 'min:0', 'max:32767'],
         ];
     }

@@ -18,8 +18,8 @@ class UpdateBlueprintRequest extends FormRequest
             'name_en' => ['nullable', 'string', 'max:255'],
             'description_ar' => ['nullable', 'string'],
             'description_en' => ['nullable', 'string'],
-            'category_id' => ['nullable', 'exists:blueprint_categories,public_id'],
-            'department_id' => ['nullable', 'exists:departments,public_id'],
+            'category_id' => ['nullable', 'string', 'exists:blueprint_categories,public_id'],
+            'department_id' => ['nullable', 'string', 'exists:departments,public_id'],
         ];
     }
 }

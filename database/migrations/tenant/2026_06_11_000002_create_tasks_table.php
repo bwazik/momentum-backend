@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->uuid('public_id')->unique();
+            $table->string('display_id', 20)->nullable()->unique()->after('public_id');
             $table->foreignId('blueprint_id')->constrained('blueprints');
             $table->foreignId('priority_id')->constrained('task_priorities');
             $table->string('title_ar');

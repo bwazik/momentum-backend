@@ -5,6 +5,7 @@ namespace App\Modules\Task\Services;
 use App\Models\User;
 use App\Modules\Blueprint\Enums\AssignmentCardinality;
 use App\Modules\Blueprint\Enums\AssignmentType;
+use App\Modules\Blueprint\Enums\CompletionRule;
 use App\Modules\Blueprint\Models\BlueprintStage;
 use App\Modules\Blueprint\Models\BlueprintSubStage;
 use App\Modules\Iam\Models\UserPositionAssignment;
@@ -38,7 +39,7 @@ class AssignmentResolutionService
 
             $resolvedUsers = $this->resolveUsers($blueprintStage, $manualAssignments);
 
-            foreach ($resolvedUsers as $resolvedUser) {
+            foreach ($resolvedUsers as $i => $resolvedUser) {
                 $effectiveUser = $this->iamPolicy->resolveAssignee($resolvedUser);
                 $delegatedFrom = $effectiveUser->id !== $resolvedUser->id ? $resolvedUser->id : null;
                 $positionId = $resolvedUser->currentPositionAssignment?->position_id;
@@ -50,7 +51,9 @@ class AssignmentResolutionService
                     'user_id' => $effectiveUser->id,
                     'position_id' => $positionId,
                     'delegated_from_user_id' => $delegatedFrom,
-                    'assignment_role' => AssignmentRole::Required->value,
+                    'assignment_role' => $i === 0 && $blueprintStage->completion_rule === CompletionRule::LeadAssignee
+                        ? AssignmentRole::Lead->value
+                        : AssignmentRole::Required->value,
                     'is_completed' => false,
                     'assigned_at' => now(),
                 ]);
@@ -96,7 +99,7 @@ class AssignmentResolutionService
             $assignments = collect();
             $resolvedUsers = $this->resolveUsersForSubStage($blueprintSubStage, $manualAssignments);
 
-            foreach ($resolvedUsers as $resolvedUser) {
+            foreach ($resolvedUsers as $i => $resolvedUser) {
                 $effectiveUser = $this->iamPolicy->resolveAssignee($resolvedUser);
                 $delegatedFrom = $effectiveUser->id !== $resolvedUser->id ? $resolvedUser->id : null;
                 $positionId = $resolvedUser->currentPositionAssignment?->position_id;
@@ -108,7 +111,9 @@ class AssignmentResolutionService
                     'user_id' => $effectiveUser->id,
                     'position_id' => $positionId,
                     'delegated_from_user_id' => $delegatedFrom,
-                    'assignment_role' => AssignmentRole::Required->value,
+                    'assignment_role' => $i === 0 && $blueprintSubStage->completion_rule === CompletionRule::LeadAssignee
+                        ? AssignmentRole::Lead->value
+                        : AssignmentRole::Required->value,
                     'is_completed' => false,
                     'assigned_at' => now(),
                 ]);
@@ -273,7 +278,7 @@ class AssignmentResolutionService
 
         if (! $stageAssignments || empty($stageAssignments['user_ids'])) {
             throw new MissingManualAssignmentException(
-                "Stage '{$stage->name_ar}' requires manual assignment but none were provided."
+                __('task.manual_assignment_required', ['name' => $stage->name_en ?? $stage->name_ar])
             );
         }
 
@@ -297,7 +302,7 @@ class AssignmentResolutionService
 
         if (! $stageAssignments || empty($stageAssignments['user_ids'])) {
             throw new MissingManualAssignmentException(
-                "Sub-stage '{$subStage->name_ar}' requires manual assignment but none were provided."
+                __('task.manual_assignment_required_sub', ['name' => $subStage->name_en ?? $subStage->name_ar])
             );
         }
 

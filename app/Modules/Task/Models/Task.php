@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Fillable([
     'blueprint_id', 'priority_id', 'title_ar', 'title_en',
     'description_ar', 'description_en', 'classification_level',
-    'initiator_user_id', 'status', 'due_date',
+    'initiator_user_id', 'status', 'due_date', 'display_id',
     'launched_at', 'suspended_at', 'suspension_reason',
     'resumed_at', 'completed_at', 'cancelled_at', 'cancellation_reason',
     'archived_at', 'archived_by_user_id',
@@ -24,6 +24,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Task extends TenantModel
 {
     use HasFactory, SoftDeletes;
+
+    protected static function booted(): void
+    {
+        static::created(function (Task $task) {
+            if (! $task->display_id) {
+                $year = $task->created_at->format('Y');
+                $seq = str_pad((string) $task->id, 4, '0', STR_PAD_LEFT);
+                $task->updateQuietly(['display_id' => "T-{$year}-{$seq}"]);
+            }
+        });
+    }
 
     protected function casts(): array
     {

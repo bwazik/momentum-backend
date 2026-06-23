@@ -53,10 +53,10 @@ class StageLifecycleService
         private IamPolicy $iamPolicy,
     ) {}
 
-    public function completeStage(Task $task, TaskStageInstance $stageInstance, User $user, ?string $completionNote = null): TaskStageInstance
+    public function completeStage(Task $task, TaskStageInstance $stageInstance, User $user, ?string $completionNote = null, ?string $targetStageId = null): TaskStageInstance
     {
         try {
-            return DB::transaction(function () use ($task, $stageInstance, $user, $completionNote) {
+            return DB::transaction(function () use ($task, $stageInstance, $user, $completionNote, $targetStageId) {
                 if (! $task->isActive()) {
                     throw new TaskNotActiveException;
                 }
@@ -110,7 +110,7 @@ class StageLifecycleService
 
                 event(new StageInstanceCompleted($stageInstance));
 
-                $nextBlueprintStage = $this->resolveNextStage($task, $stageInstance);
+                $nextBlueprintStage = $this->resolveNextStage($task, $stageInstance, $targetStageId);
 
                 if ($nextBlueprintStage) {
                     $newStageInstance = $this->advanceToStage($task, $stageInstance, $nextBlueprintStage);
@@ -263,16 +263,29 @@ class StageLifecycleService
                     ->first();
 
                 if ($nextBlueprintSubStage) {
-                    $nextSubInstance = TaskSubStageInstance::create([
-                        'task_id' => $task->id,
-                        'parent_stage_instance_id' => $parentStageInstance->id,
-                        'blueprint_sub_stage_id' => $nextBlueprintSubStage->id,
-                        'sequence_order' => $nextBlueprintSubStage->sequence_order,
-                        'is_required' => $nextBlueprintSubStage->is_required,
-                        'completion_rule' => $nextBlueprintSubStage->completion_rule->value,
-                        'status' => SubStageInstanceStatus::Active->value,
-                        'entered_at' => now(),
-                    ]);
+                    $existingSubInstance = TaskSubStageInstance::where('parent_stage_instance_id', $parentStageInstance->id)
+                        ->where('blueprint_sub_stage_id', $nextBlueprintSubStage->id)
+                        ->where('status', SubStageInstanceStatus::Pending)
+                        ->first();
+
+                    if ($existingSubInstance) {
+                        $existingSubInstance->update([
+                            'status' => SubStageInstanceStatus::Active,
+                            'entered_at' => now(),
+                        ]);
+                        $nextSubInstance = $existingSubInstance;
+                    } else {
+                        $nextSubInstance = TaskSubStageInstance::create([
+                            'task_id' => $task->id,
+                            'parent_stage_instance_id' => $parentStageInstance->id,
+                            'blueprint_sub_stage_id' => $nextBlueprintSubStage->id,
+                            'sequence_order' => $nextBlueprintSubStage->sequence_order,
+                            'is_required' => $nextBlueprintSubStage->is_required,
+                            'completion_rule' => $nextBlueprintSubStage->completion_rule->value,
+                            'status' => SubStageInstanceStatus::Active->value,
+                            'entered_at' => now(),
+                        ]);
+                    }
 
                     event(new SubStageInstanceCreated($nextSubInstance));
 
@@ -546,6 +559,7 @@ class StageLifecycleService
                 'assignments.user',
                 'subStageInstances.assignments.user',
                 'subStageInstances.blueprintSubStage',
+                'owningDepartment',
             ])
             ->orderBy('created_at')
             ->get();
@@ -560,6 +574,7 @@ class StageLifecycleService
             'assignments.delegatedFromUser',
             'subStageInstances.assignments.user',
             'subStageInstances.blueprintSubStage',
+            'owningDepartment',
         ]);
     }
 
@@ -567,7 +582,7 @@ class StageLifecycleService
     {
         return $task->stageInstances()
             ->where('status', StageInstanceStatus::Returned->value)
-            ->with(['blueprintStage', 'assignments.user'])
+            ->with(['blueprintStage', 'assignments.user', 'owningDepartment'])
             ->orderBy('exited_at')
             ->get();
     }
@@ -577,8 +592,15 @@ class StageLifecycleService
         $entries = collect();
 
         $stageInstances = $task->stageInstances()
-            ->with(['blueprintStage', 'assignments.user'])
+            ->with([
+                'blueprintStage',
+                'assignments.user',
+                'subStageInstances.blueprintSubStage',
+                'subStageInstances.assignments.user',
+            ])
             ->get();
+
+        $seenAssignments = collect();
 
         foreach ($stageInstances as $si) {
             if ($si->entered_at) {
@@ -603,13 +625,71 @@ class StageLifecycleService
                 ]);
             }
 
+            // Sub-stage lifecycle events
+            foreach ($si->subStageInstances as $ssi) {
+                if ($ssi->entered_at) {
+                    $entries->push([
+                        'type' => 'sub_stage_entered',
+                        'timestamp' => $ssi->entered_at,
+                        'stage_name_ar' => $ssi->blueprintSubStage?->name_ar,
+                        'stage_name_en' => $ssi->blueprintSubStage?->name_en,
+                        'parent_stage_name_ar' => $si->blueprintStage?->name_ar,
+                        'parent_stage_name_en' => $si->blueprintStage?->name_en,
+                        'status' => $ssi->status,
+                        'sequence_order' => $ssi->sequence_order,
+                    ]);
+                }
+
+                if ($ssi->exited_at) {
+                    $entries->push([
+                        'type' => $ssi->status === SubStageInstanceStatus::Returned ? 'sub_stage_returned' : 'sub_stage_completed',
+                        'timestamp' => $ssi->exited_at,
+                        'stage_name_ar' => $ssi->blueprintSubStage?->name_ar,
+                        'stage_name_en' => $ssi->blueprintSubStage?->name_en,
+                        'parent_stage_name_ar' => $si->blueprintStage?->name_ar,
+                        'parent_stage_name_en' => $si->blueprintStage?->name_en,
+                        'completion_note' => $ssi->completion_note,
+                    ]);
+                }
+
+                foreach ($ssi->assignments as $a) {
+                    $dedupKey = $a->user_id.'_'.$a->assignment_role?->value.'_'.$a->is_completed;
+                    if ($seenAssignments->has($dedupKey)) {
+                        continue;
+                    }
+                    $seenAssignments->put($dedupKey, true);
+
+                    $entries->push([
+                        'type' => $a->reassigned_at ? 'assignment_overridden' : ($a->is_completed ? 'assignment_completed' : 'assignment_created'),
+                        'timestamp' => $a->reassigned_at ?? $a->completed_at ?? $a->assigned_at,
+                        'user_id' => $a->user?->public_id,
+                        'user_name_ar' => $a->user?->name_ar,
+                        'user_name_en' => $a->user?->name_en,
+                        'stage_name_ar' => $ssi->blueprintSubStage?->name_ar,
+                        'stage_name_en' => $ssi->blueprintSubStage?->name_en,
+                        'parent_stage_name_ar' => $si->blueprintStage?->name_ar,
+                        'parent_stage_name_en' => $si->blueprintStage?->name_en,
+                        'reassignment_reason' => $a->reassignment_reason,
+                        'completion_note' => $a->completion_note,
+                    ]);
+                }
+            }
+
             foreach ($si->assignments as $a) {
+                $dedupKey = $a->user_id.'_'.$a->assignment_role?->value.'_'.$a->is_completed;
+                if ($seenAssignments->has($dedupKey)) {
+                    continue;
+                }
+                $seenAssignments->put($dedupKey, true);
+
                 $entries->push([
                     'type' => $a->reassigned_at ? 'assignment_overridden' : ($a->is_completed ? 'assignment_completed' : 'assignment_created'),
                     'timestamp' => $a->reassigned_at ?? $a->completed_at ?? $a->assigned_at,
                     'user_id' => $a->user?->public_id,
                     'user_name_ar' => $a->user?->name_ar,
                     'user_name_en' => $a->user?->name_en,
+                    'stage_name_ar' => $si->blueprintStage?->name_ar,
+                    'stage_name_en' => $si->blueprintStage?->name_en,
                     'reassignment_reason' => $a->reassignment_reason,
                     'completion_note' => $a->completion_note,
                 ]);
@@ -642,8 +722,14 @@ class StageLifecycleService
         };
     }
 
-    private function resolveNextStage(Task $task, TaskStageInstance $stageInstance): ?BlueprintStage
+    private function resolveNextStage(Task $task, TaskStageInstance $stageInstance, ?string $targetStageId = null): ?BlueprintStage
     {
+        if ($targetStageId) {
+            return BlueprintStage::where('public_id', $targetStageId)
+                ->where('blueprint_id', $task->blueprint_id)
+                ->first();
+        }
+
         $transition = BlueprintTransition::where('blueprint_id', $task->blueprint_id)
             ->where('from_stage_id', $stageInstance->blueprint_stage_id)
             ->where('transition_type', TransitionType::Advance->value)
@@ -697,6 +783,23 @@ class StageLifecycleService
         }
 
         $manualAssignments = $this->resolveManualAssignmentsForReentry($task, $nextBlueprintStage);
+
+        // If no re-entry history for a ManualAtLaunch stage, fall back to previous stage's assignees
+        if (empty($manualAssignments) && $nextBlueprintStage->assignment_type === AssignmentType::ManualAtLaunch) {
+            $previousAssignees = TaskStageAssignment::where('task_id', $task->id)
+                ->whereNull('reassigned_at')
+                ->whereHas('stageInstance', fn ($q) => $q->where('blueprint_stage_id', $completedInstance->blueprint_stage_id))
+                ->with('user')
+                ->get();
+
+            if ($previousAssignees->isNotEmpty()) {
+                $userIds = $previousAssignees->pluck('user.public_id')->filter()->values()->all();
+                $manualAssignments = [
+                    ['blueprint_stage_id' => $nextBlueprintStage->public_id, 'user_ids' => $userIds],
+                ];
+            }
+        }
+
         $assignments = $this->assignmentResolutionService->resolveStageAssignments(
             $nextBlueprintStage, $task, $newStageInstance, $manualAssignments,
         );
@@ -717,11 +820,31 @@ class StageLifecycleService
             return [];
         }
 
+        $isSubStage = $stage instanceof BlueprintSubStage;
+
         $previousAssignments = TaskStageAssignment::where('task_id', $task->id)
-            ->whereHas('stageInstance', fn ($q) => $q->where('blueprint_stage_id', $stage->id))
             ->whereNull('reassigned_at')
-            ->with('user')
-            ->get();
+            ->with('user');
+
+        if ($isSubStage) {
+            $stageInstanceIds = TaskSubStageInstance::where('task_id', $task->id)
+                ->where('blueprint_sub_stage_id', $stage->id)
+                ->pluck('id');
+
+            if ($stageInstanceIds->isNotEmpty()) {
+                $previousAssignments->whereIn('sub_stage_instance_id', $stageInstanceIds);
+            } else {
+                $previousAssignments->whereHas('stageInstance',
+                    fn ($q) => $q->where('blueprint_stage_id', $stage->blueprint_stage_id)
+                );
+            }
+        } else {
+            $previousAssignments->whereHas('stageInstance',
+                fn ($q) => $q->where('blueprint_stage_id', $stage->id)
+            );
+        }
+
+        $previousAssignments = $previousAssignments->get();
 
         if ($previousAssignments->isEmpty()) {
             return [];
@@ -729,7 +852,7 @@ class StageLifecycleService
 
         $userPublicIds = $previousAssignments->pluck('user.public_id')->filter()->values()->all();
 
-        $key = $stage instanceof BlueprintSubStage ? 'blueprint_sub_stage_id' : 'blueprint_stage_id';
+        $key = $isSubStage ? 'blueprint_sub_stage_id' : 'blueprint_stage_id';
 
         return [
             [

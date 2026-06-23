@@ -12,16 +12,17 @@ class EscalationDetailResource extends JsonResource
         return [
             'public_id' => $this->public_id,
             'task_id' => $this->task?->public_id,
+            'task_display_id' => $this->task?->display_id,
             'stage_instance_id' => $this->stageInstance?->public_id,
             'sub_stage_instance_id' => $this->subStageInstance?->public_id,
             'sla_timer' => $this->slaTimerInstance ? [
                 'public_id' => $this->slaTimerInstance->public_id,
-                'status' => $this->slaTimerInstance->status,
+                'status' => $this->slaTimerInstance->status?->apiValue(),
                 'started_at' => $this->slaTimerInstance->started_at?->toIso8601String(),
                 'deadline_at' => $this->slaTimerInstance->deadline_at?->toIso8601String(),
                 'warning_at' => $this->slaTimerInstance->warning_at?->toIso8601String(),
             ] : null,
-            'escalation_type' => $this->escalation_type,
+            'escalation_type' => $this->escalation_type?->apiValue(),
             'escalated_to_user' => [
                 'public_id' => $this->escalatedToUser?->public_id,
                 'name_ar' => $this->escalatedToUser?->name_ar,
@@ -38,7 +39,7 @@ class EscalationDetailResource extends JsonResource
                 'name_en' => $this->escalatedByUser->name_en ?? $this->escalatedByUser->name_ar,
             ] : null,
             'reason' => $this->reason,
-            'status' => $this->status,
+            'status' => $this->status?->apiValue(),
             'resolution_note' => $this->resolution_note,
             'resolved_at' => $this->resolved_at?->toIso8601String(),
             'created_at' => $this->created_at?->toIso8601String(),

@@ -12,9 +12,10 @@ class EscalationResource extends JsonResource
         return [
             'public_id' => $this->public_id,
             'task_id' => $this->task?->public_id,
+            'task_display_id' => $this->task?->display_id,
             'stage_instance_id' => $this->stageInstance?->public_id,
             'sub_stage_instance_id' => $this->subStageInstance?->public_id,
-            'escalation_type' => $this->escalation_type,
+            'escalation_type' => $this->escalation_type?->apiValue(),
             'escalated_to_user' => [
                 'public_id' => $this->escalatedToUser?->public_id,
                 'name_ar' => $this->escalatedToUser?->name_ar,
@@ -26,7 +27,7 @@ class EscalationResource extends JsonResource
                 'name_en' => $this->escalatedByUser->name_en ?? $this->escalatedByUser->name_ar,
             ] : null,
             'reason' => $this->reason,
-            'status' => $this->status,
+            'status' => $this->status?->apiValue(),
             'resolution_note' => $this->resolution_note,
             'resolved_at' => $this->resolved_at?->toIso8601String(),
             'created_at' => $this->created_at?->toIso8601String(),

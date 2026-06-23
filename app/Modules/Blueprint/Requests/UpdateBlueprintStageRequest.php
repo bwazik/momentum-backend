@@ -22,14 +22,14 @@ class UpdateBlueprintStageRequest extends FormRequest
             'name_en' => ['nullable', 'string', 'max:255'],
             'description_ar' => ['nullable', 'string'],
             'description_en' => ['nullable', 'string'],
-            'stage_type_id' => ['nullable', 'exists:stage_types,public_id'],
-            'sla_policy_id' => ['nullable', 'exists:sla_policies,public_id'],
+            'stage_type_id' => ['nullable', 'string', 'exists:stage_types,public_id'],
+            'sla_policy_id' => ['nullable', 'string', 'exists:sla_policies,public_id'],
             'assignment_type' => ['nullable', Rule::enum(AssignmentType::class)],
-            'assigned_position_id' => ['nullable', 'exists:positions,public_id'],
-            'assigned_department_id' => ['nullable', 'exists:departments,public_id'],
+            'assigned_position_id' => ['nullable', 'string', 'exists:positions,public_id'],
+            'assigned_department_id' => ['nullable', 'string', 'exists:departments,public_id'],
             'assignment_cardinality' => ['nullable', Rule::enum(AssignmentCardinality::class)],
             'completion_rule' => ['nullable', Rule::enum(CompletionRule::class)],
-            'escalation_position_id' => ['nullable', 'exists:positions,public_id'],
+            'escalation_position_id' => ['nullable', 'string', 'exists:positions,public_id'],
         ];
     }
 }

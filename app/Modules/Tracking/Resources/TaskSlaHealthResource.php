@@ -21,6 +21,7 @@ class TaskSlaHealthResource extends JsonResource
     {
         return [
             'task_id' => $this->public_id,
+            'display_id' => $this->display_id,
             'overall_health' => $this->computeOverallHealth(),
             'timers' => SlaTimerInstanceResource::collection($this->timers),
         ];

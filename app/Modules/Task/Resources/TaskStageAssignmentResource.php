@@ -15,7 +15,7 @@ class TaskStageAssignmentResource extends JsonResource
             'user_name_en' => $this->user?->name_en,
             'position_id' => $this->position?->public_id,
             'delegated_from_user_id' => $this->delegatedFromUser?->public_id,
-            'assignment_role' => $this->assignment_role,
+            'assignment_role' => $this->assignment_role?->apiValue(),
             'is_completed' => $this->is_completed,
             'assigned_at' => $this->assigned_at?->toIso8601String(),
             'completed_at' => $this->completed_at?->toIso8601String(),

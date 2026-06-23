@@ -26,4 +26,14 @@ class TaskPriority extends TenantModel
     {
         return $query->where('is_active', true);
     }
+
+    public function apiValue(): string
+    {
+        return match ($this->severity_rank) {
+            1 => 'critical',
+            2 => 'urgent',
+            3 => 'routine',
+            default => 'routine',
+        };
+    }
 }

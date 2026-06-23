@@ -15,9 +15,10 @@ class TaskListItemResource extends JsonResource
 
         return [
             'task_public_id' => $task->public_id,
+            'display_id' => $task->display_id,
             'title_ar' => $task->title_ar,
             'title_en' => $task->title_en,
-            'status' => $task->status?->value,
+            'status' => $task->status?->apiValue(),
             'priority_public_id' => $task->priority?->public_id,
             'current_stage_name_ar' => $currentStep?->blueprintStage?->name_ar ?? $currentStep?->blueprintSubStage?->name_ar,
             'current_stage_name_en' => $currentStep?->blueprintStage?->name_en ?? $currentStep?->blueprintSubStage?->name_en,

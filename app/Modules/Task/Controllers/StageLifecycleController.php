@@ -54,7 +54,7 @@ class StageLifecycleController extends Controller
         $this->authorizeTaskVisibility($request, $task);
 
         $result = $this->stageLifecycleService->completeStage(
-            $task, $stageInstance, $request->user(), $request->validated('completion_note'),
+            $task, $stageInstance, $request->user(), $request->validated('completion_note'), $request->validated('target_stage_id'),
         );
 
         return new TaskStageInstanceResource($result);

@@ -26,7 +26,7 @@ class BlueprintController extends Controller
     {
         $this->checkRateLimit(RateLimits::LIST, [$request->user()?->public_id ?? 'guest']);
 
-        $query = Blueprint::with('category');
+        $query = Blueprint::with('category')->withCount('stages');
 
         if ($request->has('is_active')) {
             $query->where('is_active', $request->boolean('is_active'));
@@ -51,7 +51,7 @@ class BlueprintController extends Controller
 
     public function show(Blueprint $blueprint): BlueprintResource
     {
-        $blueprint->load(['stages.subStages', 'transitions']);
+        $blueprint->load(['category', 'stages.stageType', 'stages.slaPolicy', 'stages.subStages.slaPolicy', 'transitions']);
 
         return new BlueprintResource($blueprint);
     }

@@ -16,8 +16,8 @@ class StoreBlueprintTransitionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'from_stage_id' => ['required', 'exists:blueprint_stages,public_id'],
-            'to_stage_id' => ['required', 'exists:blueprint_stages,public_id'],
+            'from_stage_id' => ['required', 'string', 'exists:blueprint_stages,public_id'],
+            'to_stage_id' => ['required', 'string', 'exists:blueprint_stages,public_id'],
             'transition_type' => ['required', Rule::enum(TransitionType::class)],
             'return_reason_required' => ['nullable', 'boolean'],
         ];

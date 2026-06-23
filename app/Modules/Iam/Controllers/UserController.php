@@ -4,6 +4,7 @@ namespace App\Modules\Iam\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Modules\Iam\Requests\ListUsersRequest;
 use App\Modules\Iam\Requests\StoreUserRequest;
 use App\Modules\Iam\Requests\UpdateUserRequest;
 use App\Modules\Iam\Resources\UserDetailResource;
@@ -26,11 +27,11 @@ class UserController extends Controller
         private IamPolicy $policy,
     ) {}
 
-    public function index(Request $request)
+    public function index(ListUsersRequest $request)
     {
         $this->checkRateLimit(RateLimits::LIST, [$request->user()?->public_id ?? 'guest']);
 
-        $paginator = $this->userService->list($request->only(['is_active', 'account_type', 'department_id', 'search', 'per_page']))
+        $paginator = $this->userService->list($request->validated())
             ->through(fn ($user) => new UserResource($user));
 
         return response()->json([

@@ -19,4 +19,9 @@ enum SlaTimerStatus: int
     {
         return in_array($this, [self::Running, self::Warning], true);
     }
+
+    public function apiValue(): string
+    {
+        return strtolower($this->name);
+    }
 }

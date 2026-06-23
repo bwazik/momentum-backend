@@ -15,6 +15,7 @@ class AgingReportResource extends JsonResource
 
         return [
             'task_public_id' => $task->public_id,
+            'display_id' => $task->display_id,
             'title_ar' => $task->title_ar,
             'title_en' => $task->title_en,
             'priority' => $task->priority?->name_ar,
