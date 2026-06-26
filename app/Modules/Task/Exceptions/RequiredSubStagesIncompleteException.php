@@ -8,6 +8,6 @@ class RequiredSubStagesIncompleteException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Cannot complete stage: required sub-stages are not all completed.');
+        parent::__construct(__('task.exceptions.required_sub_stages_incomplete'));
     }
 }

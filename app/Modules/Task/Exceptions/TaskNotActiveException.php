@@ -8,6 +8,6 @@ class TaskNotActiveException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Task is not in active status.');
+        parent::__construct(__('task.exceptions.task_not_active'));
     }
 }

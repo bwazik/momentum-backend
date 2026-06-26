@@ -28,6 +28,20 @@ class FollowUpActionController extends Controller
         return response()->json(new FollowUpActionResource($action), 201);
     }
 
+    public function recent(ListFollowUpActionsRequest $request)
+    {
+        $this->checkRateLimit(RateLimits::LIST, [$request->user()->public_id]);
+
+        $paginator = $this->actionService->listRecent($request->user(), $request->validated());
+        $items = $paginator->through(fn ($action) => new FollowUpActionResource($action))->items();
+
+        return response()->json([
+            'data' => $items,
+            'next_cursor' => $paginator->nextCursor()?->encode(),
+            'has_more' => $paginator->hasMorePages(),
+        ]);
+    }
+
     public function index(ListFollowUpActionsRequest $request, Task $task)
     {
         $this->checkRateLimit(RateLimits::LIST, [$request->user()->public_id]);

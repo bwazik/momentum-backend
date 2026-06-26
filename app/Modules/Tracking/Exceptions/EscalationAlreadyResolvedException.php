@@ -8,6 +8,6 @@ class EscalationAlreadyResolvedException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('This escalation has already been resolved.');
+        parent::__construct(__('tracking.exceptions.escalation_already_resolved'));
     }
 }

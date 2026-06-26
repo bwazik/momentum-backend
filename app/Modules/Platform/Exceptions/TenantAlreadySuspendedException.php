@@ -8,6 +8,6 @@ class TenantAlreadySuspendedException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('This tenant is already suspended.');
+        parent::__construct(__('platform.exceptions.tenant_already_suspended'));
     }
 }

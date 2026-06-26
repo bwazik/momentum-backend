@@ -147,7 +147,7 @@ class WorkingDayCalculator
             $effectiveEnd = $to->lt($dayEnd) ? $to->copy() : $dayEnd->copy();
 
             if ($effectiveStart->lt($effectiveEnd)) {
-                $totalSeconds += $effectiveEnd->diffInSeconds($effectiveStart);
+                $totalSeconds += $effectiveStart->diffInSeconds($effectiveEnd);
             }
 
             $current = $dayEnd->copy()->addDay()->setTimeFromTimeString($start);

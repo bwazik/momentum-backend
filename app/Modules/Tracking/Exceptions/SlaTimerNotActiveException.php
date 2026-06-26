@@ -8,6 +8,6 @@ class SlaTimerNotActiveException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('SLA timer is not in an actionable state.');
+        parent::__construct(__('tracking.exceptions.sla_timer_not_active'));
     }
 }

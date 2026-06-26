@@ -8,6 +8,6 @@ class InvalidStageSequenceException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Invalid stage sequence order.');
+        parent::__construct(__('blueprints.exceptions.invalid_stage_sequence'));
     }
 }

@@ -8,6 +8,6 @@ class InvalidReturnTargetException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Invalid return target: no return transition defined for this stage.');
+        parent::__construct(__('task.exceptions.invalid_return_target'));
     }
 }

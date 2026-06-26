@@ -8,6 +8,6 @@ class CannotDeleteDefaultCalendarException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Cannot delete the default working calendar.');
+        parent::__construct(__('organization.exceptions.cannot_delete_default_calendar'));
     }
 }

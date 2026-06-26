@@ -13,8 +13,8 @@ class SlaTimerInstanceResource extends JsonResource
             'public_id' => $this->public_id,
             'task_id' => $this->task?->public_id,
             'task_display_id' => $this->task?->display_id,
-            'stage_instance_id' => $this->stageInstance?->public_id,
-            'sub_stage_instance_id' => $this->subStageInstance?->public_id,
+            'stage_instance_id' => $this->stageInstance?->id,
+            'sub_stage_instance_id' => $this->subStageInstance?->id,
             'sla_policy' => [
                 'public_id' => $this->slaPolicy?->public_id,
                 'name_ar' => $this->slaPolicy?->name_ar,

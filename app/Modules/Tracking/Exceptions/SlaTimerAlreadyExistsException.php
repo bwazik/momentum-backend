@@ -8,6 +8,6 @@ class SlaTimerAlreadyExistsException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('An active SLA timer already exists for this stage instance.');
+        parent::__construct(__('tracking.exceptions.sla_timer_already_exists'));
     }
 }

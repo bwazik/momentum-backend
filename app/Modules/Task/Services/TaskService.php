@@ -204,10 +204,10 @@ class TaskService
             )->firstOrFail();
 
             $visibleTask->load([
-                'priority', 'blueprint.category', 'blueprint.stages', 'initiator',
+                'priority', 'blueprint.category', 'blueprint.stages.slaPolicy', 'blueprint.stages.stageType', 'blueprint.transitions', 'initiator',
                 'stageInstances.blueprintStage.stageType',
                 'stageInstances.assignments.user',
-                'stageInstances.subStageInstances.blueprintSubStage',
+                'stageInstances.subStageInstances.blueprintSubStage.slaPolicy',
                 'stageInstances.subStageInstances.assignments.user',
                 'stageInstances.owningDepartment',
             ]);

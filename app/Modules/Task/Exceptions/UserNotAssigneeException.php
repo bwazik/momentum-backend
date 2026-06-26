@@ -8,6 +8,6 @@ class UserNotAssigneeException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('User is not an active assignee of this stage.');
+        parent::__construct(__('task.exceptions.user_not_assignee'));
     }
 }

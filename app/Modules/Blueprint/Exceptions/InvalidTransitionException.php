@@ -6,8 +6,8 @@ use App\Exceptions\DomainException;
 
 class InvalidTransitionException extends DomainException
 {
-    public function __construct(string $message = 'Invalid transition definition.')
+    public function __construct(?string $message = null)
     {
-        parent::__construct($message);
+        parent::__construct($message ?? __('blueprints.exceptions.invalid_transition'));
     }
 }

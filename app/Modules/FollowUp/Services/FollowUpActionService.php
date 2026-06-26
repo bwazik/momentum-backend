@@ -52,6 +52,32 @@ class FollowUpActionService
         }
     }
 
+    public function listRecent(User $user, array $filters): CursorPaginator
+    {
+        try {
+            $visibleTaskIds = $this->taskVisibilityScope->apply(
+                Task::query()->select('tasks.id'),
+                $user
+            );
+
+            return FollowUpAction::whereIn('task_id', $visibleTaskIds)
+                ->with('user')
+                ->orderBy('created_at', 'desc')
+                ->orderBy('id', 'desc')
+                ->cursorPaginate($filters['per_page'] ?? 15);
+        } catch (\Throwable $e) {
+            Log::channel('followup')->error('Failed to list recent follow-up actions', [
+                'tenant_slug' => tenant()->slug,
+                'action' => 'followup.action.recent',
+                'entity_type' => 'follow_up_action',
+                'entity_id' => null,
+                'performed_by' => $user->public_id,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
     public function list(Task $task, User $user, array $filters): CursorPaginator
     {
         try {

@@ -8,6 +8,6 @@ class StageNotActiveException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Stage instance is not in active status.');
+        parent::__construct(__('task.exceptions.stage_not_active'));
     }
 }

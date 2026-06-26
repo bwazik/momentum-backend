@@ -8,6 +8,6 @@ class SearchQueryTooShortException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Search query must be at least 2 characters.');
+        parent::__construct(__('search.exceptions.search_query_too_short'));
     }
 }

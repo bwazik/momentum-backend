@@ -8,6 +8,6 @@ class PrimaryPositionAlreadyAssignedException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('User already has an active primary position assignment. End the current one first.');
+        parent::__construct(__('iam.exceptions.primary_position_already_assigned'));
     }
 }

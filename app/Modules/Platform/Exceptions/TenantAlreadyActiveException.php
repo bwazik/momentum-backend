@@ -8,6 +8,6 @@ class TenantAlreadyActiveException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('This tenant is already active.');
+        parent::__construct(__('platform.exceptions.tenant_already_active'));
     }
 }

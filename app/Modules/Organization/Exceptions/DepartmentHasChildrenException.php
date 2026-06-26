@@ -8,6 +8,6 @@ class DepartmentHasChildrenException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Cannot delete a department that has child departments.');
+        parent::__construct(__('organization.exceptions.department_has_children'));
     }
 }

@@ -8,6 +8,6 @@ class DuplicateOpenEscalationException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('An open escalation already exists for this stage from this user.');
+        parent::__construct(__('tracking.exceptions.duplicate_open_escalation'));
     }
 }

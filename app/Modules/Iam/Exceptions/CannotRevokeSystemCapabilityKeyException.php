@@ -8,6 +8,6 @@ class CannotRevokeSystemCapabilityKeyException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('System-defined capability keys cannot be modified.');
+        parent::__construct(__('iam.exceptions.cannot_revoke_system_capability_key'));
     }
 }

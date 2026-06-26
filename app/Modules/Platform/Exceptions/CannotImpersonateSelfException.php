@@ -8,6 +8,6 @@ class CannotImpersonateSelfException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('You cannot impersonate yourself.');
+        parent::__construct(__('platform.exceptions.cannot_impersonate_self'));
     }
 }

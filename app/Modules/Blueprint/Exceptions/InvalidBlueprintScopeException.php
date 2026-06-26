@@ -8,6 +8,6 @@ class InvalidBlueprintScopeException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Department ID is required when blueprint scope is department.');
+        parent::__construct(__('blueprints.exceptions.invalid_blueprint_scope'));
     }
 }

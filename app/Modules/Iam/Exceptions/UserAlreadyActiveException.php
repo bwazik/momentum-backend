@@ -8,6 +8,6 @@ class UserAlreadyActiveException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('User is already active.');
+        parent::__construct(__('iam.exceptions.user_already_active'));
     }
 }

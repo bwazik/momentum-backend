@@ -278,8 +278,8 @@ class MockDataSeeder extends Seeder
                     ['type' => 'Review', 'ar' => 'التصميم والتطوير', 'en' => 'Design & Development',
                         'assign' => AssignmentType::ManualAtLaunch, 'sla' => 1, 'card' => AssignmentCardinality::Multiple,
                         'subs' => [
-                            ['ar' => 'تصميم النظام', 'en' => 'System Design', 'req' => true],
-                            ['ar' => 'النمذجة الأولية', 'en' => 'Prototyping', 'req' => false],
+                            ['ar' => 'تصميم النظام', 'en' => 'System Design', 'req' => true, 'sla' => 0],
+                            ['ar' => 'النمذجة الأولية', 'en' => 'Prototyping', 'req' => false, 'sla' => 0],
                         ]],
                     ['type' => 'Approval', 'ar' => 'الاختبار والتحقق', 'en' => 'Testing & Verification',
                         'assign' => AssignmentType::DepartmentHead, 'sla' => 0, 'card' => AssignmentCardinality::Single],
@@ -353,9 +353,9 @@ class MockDataSeeder extends Seeder
                     ['type' => 'Review', 'ar' => 'إعداد المواد', 'en' => 'Material Preparation',
                         'assign' => AssignmentType::ManualAtLaunch, 'sla' => 1, 'card' => AssignmentCardinality::Multiple,
                         'subs' => [
-                            ['ar' => 'تصميم المواد التوعوية', 'en' => 'Design Awareness Materials', 'req' => true],
-                            ['ar' => 'المراجعة اللغوية', 'en' => 'Linguistic Review', 'req' => true],
-                            ['ar' => 'اعتماد المحتوى', 'en' => 'Content Approval', 'req' => true],
+                            ['ar' => 'تصميم المواد التوعوية', 'en' => 'Design Awareness Materials', 'req' => true, 'sla' => 1],
+                            ['ar' => 'المراجعة اللغوية', 'en' => 'Linguistic Review', 'req' => true, 'sla' => 1],
+                            ['ar' => 'اعتماد المحتوى', 'en' => 'Content Approval', 'req' => true, 'sla' => 1],
                         ]],
                     ['type' => 'Action', 'ar' => 'التنفيذ', 'en' => 'Execution',
                         'assign' => AssignmentType::ManualAtLaunch, 'sla' => 0, 'card' => AssignmentCardinality::Multiple],
@@ -373,8 +373,8 @@ class MockDataSeeder extends Seeder
                     ['type' => 'Review', 'ar' => 'تصميم البرنامج', 'en' => 'Program Design',
                         'assign' => AssignmentType::ManualAtLaunch, 'sla' => 1, 'card' => AssignmentCardinality::Single,
                         'subs' => [
-                            ['ar' => 'اختيار المدربين', 'en' => 'Select Trainers', 'req' => true],
-                            ['ar' => 'إعداد الجدول', 'en' => 'Schedule Preparation', 'req' => true],
+                            ['ar' => 'اختيار المدربين', 'en' => 'Select Trainers', 'req' => true, 'sla' => 1],
+                            ['ar' => 'إعداد الجدول', 'en' => 'Schedule Preparation', 'req' => true, 'sla' => 1],
                         ]],
                     ['type' => 'Decision', 'ar' => 'التنفيذ والتقييم', 'en' => 'Execution & Evaluation',
                         'assign' => AssignmentType::DepartmentHead, 'sla' => 2, 'card' => AssignmentCardinality::Single],
@@ -500,7 +500,7 @@ class MockDataSeeder extends Seeder
 
                 if (isset($s['subs'])) {
                     foreach ($s['subs'] as $subIdx => $sub) {
-                        $stage->subStages()->create([
+                        $subData = [
                             'name_ar' => $sub['ar'],
                             'name_en' => $sub['en'],
                             'description_ar' => ($stageDesc[$bpIdx][$si] ?? $s['ar'].' - '.$m['ar']).' - '.$sub['ar'],
@@ -510,7 +510,11 @@ class MockDataSeeder extends Seeder
                             'assignment_type' => AssignmentType::ManualAtLaunch,
                             'assignment_cardinality' => AssignmentCardinality::Multiple,
                             'completion_rule' => CompletionRule::AnyAssignee,
-                        ]);
+                        ];
+                        if (isset($sub['sla'])) {
+                            $subData['sla_policy_id'] = $slaPolicies[$sub['sla']]->id;
+                        }
+                        $stage->subStages()->create($subData);
                     }
                 }
             }
@@ -608,10 +612,11 @@ class MockDataSeeder extends Seeder
             return $instances;
         };
 
-        // Helper: create SLA timer
+        // Helper: create SLA timer for stage or sub-stage
         $createSlaTimer = function (
             Task $task, TaskStageInstance $stageInst, SlaPolicy $slaPolicy,
             SlaTimerStatus $status, string $startedAt, int $deadlineDays,
+            ?TaskSubStageInstance $subStageInst = null,
         ) use ($calendar) {
             $start = new \DateTime($startedAt);
             $deadline = (clone $start)->modify("+{$deadlineDays} days");
@@ -619,7 +624,8 @@ class MockDataSeeder extends Seeder
 
             $data = [
                 'task_id' => $task->id,
-                'stage_instance_id' => $stageInst->id,
+                'stage_instance_id' => $subStageInst ? null : $stageInst->id,
+                'sub_stage_instance_id' => $subStageInst?->id,
                 'sla_policy_id' => $slaPolicy->id,
                 'working_calendar_id' => $calendar->id,
                 'status' => $status->value,
@@ -1031,8 +1037,9 @@ class MockDataSeeder extends Seeder
 
                 // Create sub-stage instances if the BP stage has them and this is an active/completed stage
                 $bpSubStages = $bpStage->subStages;
+                $createdSubStageInsts = collect();
                 if ($bpSubStages->isNotEmpty() && $status !== StageInstanceStatus::Pending->value) {
-                    $createSubStageInsts(
+                    $createdSubStageInsts = $createSubStageInsts(
                         $task, $stageInst, $bpSubStages, $status === StageInstanceStatus::Completed->value
                             ? SubStageInstanceStatus::Completed->value
                             : SubStageInstanceStatus::Active->value,
@@ -1048,6 +1055,16 @@ class MockDataSeeder extends Seeder
                     $deadlineDays = $slaCfg['deadline_days'];
 
                     $createSlaTimer($task, $stageInst, $slaPol, $slaStatus, $enteredAt, $deadlineDays);
+
+                    foreach ($createdSubStageInsts as $subInst) {
+                        if ($subInst->status !== SubStageInstanceStatus::Active->value) {
+                            continue;
+                        }
+                        $bpSubStage = $bpSubStages->firstWhere('id', $subInst->blueprint_sub_stage_id);
+                        if ($bpSubStage && $bpSubStage->sla_policy_id) {
+                            $createSlaTimer($task, $stageInst, $slaPolicies[$slaCfg['policy']], $slaStatus, $subInst->entered_at ?? $enteredAt, $deadlineDays, $subInst);
+                        }
+                    }
                 }
 
                 // Track active stage for escalation below

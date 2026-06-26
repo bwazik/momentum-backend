@@ -8,6 +8,6 @@ class PlatformAdminCannotDeactivateSelfException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('You cannot deactivate your own account.');
+        parent::__construct(__('platform.exceptions.platform_admin_cannot_deactivate_self'));
     }
 }

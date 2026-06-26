@@ -9,4 +9,9 @@ enum FollowUpActionType: int
     case Meeting = 3;
     case Email = 4;
     case Other = 5;
+
+    public function apiValue(): string
+    {
+        return strtolower($this->name);
+    }
 }

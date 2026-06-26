@@ -8,6 +8,6 @@ class AssigneeNotFoundForOverrideException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('User is not an active assignee that can be overridden.');
+        parent::__construct(__('task.exceptions.assignee_not_found_for_override'));
     }
 }

@@ -278,7 +278,7 @@ class AssignmentResolutionService
 
         if (! $stageAssignments || empty($stageAssignments['user_ids'])) {
             throw new MissingManualAssignmentException(
-                __('task.manual_assignment_required', ['name' => $stage->name_en ?? $stage->name_ar])
+                __('task.exceptions.manual_assignment_required', ['name' => $stage->name_en ?? $stage->name_ar])
             );
         }
 
@@ -302,7 +302,7 @@ class AssignmentResolutionService
 
         if (! $stageAssignments || empty($stageAssignments['user_ids'])) {
             throw new MissingManualAssignmentException(
-                __('task.manual_assignment_required_sub', ['name' => $subStage->name_en ?? $subStage->name_ar])
+                __('task.exceptions.manual_assignment_required_sub', ['name' => $subStage->name_en ?? $subStage->name_ar])
             );
         }
 

@@ -8,6 +8,6 @@ class CircularReportingLineException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Circular reference detected: a position cannot report to itself or its descendants.');
+        parent::__construct(__('organization.exceptions.circular_reporting_line'));
     }
 }

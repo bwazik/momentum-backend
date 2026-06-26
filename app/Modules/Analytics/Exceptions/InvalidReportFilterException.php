@@ -6,8 +6,8 @@ use App\Exceptions\DomainException;
 
 class InvalidReportFilterException extends DomainException
 {
-    public function __construct(string $message = 'Invalid report filter.')
+    public function __construct(?string $message = null)
     {
-        parent::__construct($message);
+        parent::__construct($message ?? __('analytics.exceptions.invalid_report_filter'));
     }
 }

@@ -11,9 +11,10 @@ class FollowUpActionResource extends JsonResource
     {
         return [
             'public_id' => $this->public_id,
-            'action_type' => $this->action_type->name,
+            'action_type' => $this->action_type->apiValue(),
             'note_ar' => $this->note_ar,
             'note_en' => $this->note_en ?? $this->note_ar,
+            'task_display_id' => $this->task?->display_id,
             'contact_name' => $this->contact_name,
             'created_by' => $this->user ? [
                 'public_id' => $this->user->public_id,

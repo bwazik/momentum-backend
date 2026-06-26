@@ -8,6 +8,6 @@ class InvalidSubStageReturnTargetException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Invalid sub-stage return target: must be an earlier sub-stage in the same parent stage.');
+        parent::__construct(__('task.exceptions.invalid_sub_stage_return_target'));
     }
 }

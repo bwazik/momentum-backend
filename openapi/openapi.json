@@ -4139,6 +4139,74 @@
                 }
             }
         },
+        "/follow-up/actions": {
+            "get": {
+                "operationId": "followUpAction.recent",
+                "tags": [
+                    "FollowUpAction"
+                ],
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/FollowUpActionResource"
+                                            }
+                                        },
+                                        "next_cursor": {
+                                            "type": "string"
+                                        },
+                                        "has_more": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "next_cursor",
+                                        "has_more"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
         "/follow-up/tasks/{task}/actions": {
             "get": {
                 "operationId": "followUpAction.index",
@@ -12432,6 +12500,9 @@
                     "note_en": {
                         "type": "string"
                     },
+                    "task_display_id": {
+                        "type": "string"
+                    },
                     "contact_name": {
                         "type": "string"
                     },
@@ -12466,6 +12537,7 @@
                     "action_type",
                     "note_ar",
                     "note_en",
+                    "task_display_id",
                     "contact_name",
                     "created_by",
                     "created_at"
@@ -14911,6 +14983,9 @@
                     "instance_id": {
                         "type": "string"
                     },
+                    "public_id": {
+                        "type": "string"
+                    },
                     "blueprint_sub_stage": {
                         "type": "object",
                         "properties": {
@@ -14922,6 +14997,28 @@
                             },
                             "name_en": {
                                 "type": "string"
+                            },
+                            "sla_policy": {
+                                "type": [
+                                    "object",
+                                    "null"
+                                ],
+                                "properties": {
+                                    "public_id": {
+                                        "type": "string"
+                                    },
+                                    "sla_value": {
+                                        "type": "string"
+                                    },
+                                    "sla_unit": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "public_id",
+                                    "sla_value",
+                                    "sla_unit"
+                                ]
                             }
                         }
                     },
@@ -14958,6 +15055,7 @@
                 },
                 "required": [
                     "instance_id",
+                    "public_id",
                     "blueprint_sub_stage",
                     "sequence_order",
                     "owning_department_id",

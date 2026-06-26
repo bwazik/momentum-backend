@@ -8,6 +8,6 @@ class BlueprintNotActiveException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Blueprint is not active.');
+        parent::__construct(__('task.exceptions.blueprint_not_active'));
     }
 }

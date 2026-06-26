@@ -8,6 +8,6 @@ class CannotImpersonatePlatformAdminException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Cannot impersonate a platform administrator.');
+        parent::__construct(__('platform.exceptions.cannot_impersonate_platform_admin'));
     }
 }

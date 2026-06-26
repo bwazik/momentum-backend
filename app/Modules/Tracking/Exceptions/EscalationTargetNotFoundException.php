@@ -8,6 +8,6 @@ class EscalationTargetNotFoundException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('No escalation target could be resolved for this stage.');
+        parent::__construct(__('tracking.exceptions.escalation_target_not_found'));
     }
 }

@@ -9,7 +9,7 @@ class AnalyticsScopeDeniedException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('This action requires an analytics capability.');
+        parent::__construct(__('analytics.exceptions.analytics_scope_denied'));
     }
 
     public function render(): JsonResponse

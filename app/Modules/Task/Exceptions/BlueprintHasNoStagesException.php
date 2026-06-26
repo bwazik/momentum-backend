@@ -8,6 +8,6 @@ class BlueprintHasNoStagesException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Blueprint has no stages defined.');
+        parent::__construct(__('task.exceptions.blueprint_has_no_stages'));
     }
 }

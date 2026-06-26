@@ -8,6 +8,6 @@ class AuthorityGradeHasActivePositionsException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Cannot delete an authority grade that is referenced by active positions.');
+        parent::__construct(__('organization.exceptions.authority_grade_has_active_positions'));
     }
 }

@@ -20,9 +20,9 @@ class TenantDatabaseSeeder extends Seeder
         ]);
 
         TaskPriority::insert([
-            ['public_id' => (string) Str::uuid7(), 'name_en' => 'Critical', 'name_ar' => 'حرج', 'severity_rank' => 1, 'color_code' => '#DC2626', 'is_default' => false, 'is_active' => true, 'display_order' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ['public_id' => (string) Str::uuid7(), 'name_en' => 'Urgent', 'name_ar' => 'عاجل', 'severity_rank' => 2, 'color_code' => '#F59E0B', 'is_default' => false, 'is_active' => true, 'display_order' => 2, 'created_at' => now(), 'updated_at' => now()],
-            ['public_id' => (string) Str::uuid7(), 'name_en' => 'Routine', 'name_ar' => 'روتيني', 'severity_rank' => 3, 'color_code' => '#10B981', 'is_default' => true, 'is_active' => true, 'display_order' => 3, 'created_at' => now(), 'updated_at' => now()],
+            ['public_id' => (string) Str::uuid7(), 'name_en' => 'Critical', 'name_ar' => 'حرجة', 'severity_rank' => 1, 'color_code' => '#DC2626', 'is_default' => false, 'is_active' => true, 'display_order' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['public_id' => (string) Str::uuid7(), 'name_en' => 'Urgent', 'name_ar' => 'عاجلة', 'severity_rank' => 2, 'color_code' => '#F59E0B', 'is_default' => false, 'is_active' => true, 'display_order' => 2, 'created_at' => now(), 'updated_at' => now()],
+            ['public_id' => (string) Str::uuid7(), 'name_en' => 'Routine', 'name_ar' => 'روتينية', 'severity_rank' => 3, 'color_code' => '#10B981', 'is_default' => true, 'is_active' => true, 'display_order' => 3, 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         if (app()->environment('local', 'testing')) {

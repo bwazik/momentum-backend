@@ -8,6 +8,6 @@ class UnauthorizedBlueprintScopeException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('You do not have the required capability for the requested blueprint scope.');
+        parent::__construct(__('blueprints.exceptions.unauthorized_blueprint_scope'));
     }
 }

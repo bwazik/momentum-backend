@@ -8,6 +8,6 @@ class TaskAlreadyCancelledException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Task is already cancelled.');
+        parent::__construct(__('task.exceptions.task_already_cancelled'));
     }
 }

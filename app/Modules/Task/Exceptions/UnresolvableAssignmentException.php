@@ -6,8 +6,8 @@ use App\Exceptions\DomainException;
 
 class UnresolvableAssignmentException extends DomainException
 {
-    public function __construct(string $message = 'Cannot resolve assignee for this stage.')
+    public function __construct(?string $message = null)
     {
-        parent::__construct($message);
+        parent::__construct($message ?? __('task.exceptions.unresolvable_assignment'));
     }
 }

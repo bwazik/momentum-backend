@@ -8,8 +8,8 @@ class InvalidBoardFilterException extends DomainException
 {
     protected int $statusCode = 422;
 
-    public function __construct(string $message = 'Invalid board filter value.')
+    public function __construct(?string $message = null)
     {
-        parent::__construct($message);
+        parent::__construct($message ?? __('followup.exceptions.invalid_board_filter'));
     }
 }

@@ -8,6 +8,6 @@ class ExternalReferenceSearchNotAvailableException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('External reference search is not yet available.');
+        parent::__construct(__('search.exceptions.external_reference_search_not_available'));
     }
 }

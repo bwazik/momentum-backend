@@ -8,6 +8,6 @@ class UserAlreadyDeactivatedException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('User is already deactivated.');
+        parent::__construct(__('iam.exceptions.user_already_deactivated'));
     }
 }

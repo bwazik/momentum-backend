@@ -11,10 +11,16 @@ class TaskSubStageInstanceResource extends JsonResource
     {
         return [
             'instance_id' => $this->id,
+            'public_id' => $this->public_id,
             'blueprint_sub_stage' => [
                 'public_id' => $this->whenLoaded('blueprintSubStage', fn () => $this->blueprintSubStage->public_id),
                 'name_ar' => $this->whenLoaded('blueprintSubStage', fn () => $this->blueprintSubStage->name_ar),
                 'name_en' => $this->whenLoaded('blueprintSubStage', fn () => $this->blueprintSubStage->name_en),
+                'sla_policy' => $this->whenLoaded('blueprintSubStage', fn () => $this->blueprintSubStage->slaPolicy ? [
+                    'public_id' => $this->blueprintSubStage->slaPolicy->public_id,
+                    'sla_value' => $this->blueprintSubStage->slaPolicy->sla_value,
+                    'sla_unit' => $this->blueprintSubStage->slaPolicy->sla_unit,
+                ] : null),
             ],
             'sequence_order' => $this->sequence_order,
             'owning_department_id' => $this->owning_department_id,

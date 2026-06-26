@@ -8,6 +8,6 @@ class SlaPolicyMissingException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('SLA policy not found for stage/sub-stage.');
+        parent::__construct(__('tracking.exceptions.sla_policy_missing'));
     }
 }

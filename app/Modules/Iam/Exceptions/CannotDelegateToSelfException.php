@@ -8,6 +8,6 @@ class CannotDelegateToSelfException extends DomainException
 {
     public function __construct()
     {
-        parent::__construct('Cannot delegate authority to yourself.');
+        parent::__construct(__('iam.exceptions.cannot_delegate_to_self'));
     }
 }

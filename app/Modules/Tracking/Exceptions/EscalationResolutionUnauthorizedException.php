@@ -10,6 +10,6 @@ class EscalationResolutionUnauthorizedException extends DomainException
 
     public function __construct()
     {
-        parent::__construct('You are not authorized to resolve this escalation.');
+        parent::__construct(__('tracking.exceptions.escalation_resolution_unauthorized'));
     }
 }

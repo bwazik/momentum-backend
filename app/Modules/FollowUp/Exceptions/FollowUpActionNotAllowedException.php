@@ -10,6 +10,6 @@ class FollowUpActionNotAllowedException extends DomainException
 
     public function __construct()
     {
-        parent::__construct('You do not have permission to log follow-up actions.');
+        parent::__construct(__('followup.exceptions.action_not_allowed'));
     }
 }
