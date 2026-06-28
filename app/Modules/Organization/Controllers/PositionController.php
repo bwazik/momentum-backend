@@ -28,7 +28,7 @@ class PositionController extends Controller
     {
         $this->checkRateLimit(RateLimits::LIST, [$request->user()?->public_id ?? 'guest']);
 
-        $query = Position::query()->with(['department', 'authorityGrade', 'reportsTo']);
+        $query = Position::query()->with(['department', 'authorityGrade', 'reportsTo', 'currentOccupant.user']);
 
         if ($request->has('department_id')) {
             $deptId = Department::where('public_id', $request->input('department_id'))->value('id');

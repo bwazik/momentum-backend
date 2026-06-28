@@ -13105,11 +13105,15 @@
                             },
                             "name_ar": {
                                 "type": "string"
+                            },
+                            "name_en": {
+                                "type": "string"
                             }
                         },
                         "required": [
                             "public_id",
-                            "name_ar"
+                            "name_ar",
+                            "name_en"
                         ]
                     },
                     "title_ar": {
@@ -13132,12 +13136,16 @@
                             },
                             "name_ar": {
                                 "type": "string"
+                            },
+                            "name_en": {
+                                "type": "string"
                             }
                         },
                         "required": [
                             "public_id",
                             "rank",
-                            "name_ar"
+                            "name_ar",
+                            "name_en"
                         ]
                     },
                     "is_department_head": {

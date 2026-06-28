@@ -14,6 +14,7 @@ class PositionResource extends JsonResource
             'department' => [
                 'public_id' => $this->department?->public_id,
                 'name_ar' => $this->department?->name_ar,
+                'name_en' => $this->department?->name_en ?? $this->department?->name_ar,
             ],
             'title_ar' => $this->title_ar,
             'title_en' => $this->title_en ?? $this->title_ar,
@@ -22,6 +23,7 @@ class PositionResource extends JsonResource
                 'public_id' => $this->authorityGrade?->public_id,
                 'rank' => $this->authorityGrade?->rank,
                 'name_ar' => $this->authorityGrade?->name_ar,
+                'name_en' => $this->authorityGrade?->name_en ?? $this->authorityGrade?->name_ar,
             ],
             'is_department_head' => $this->is_department_head,
             'is_active' => $this->is_active,
