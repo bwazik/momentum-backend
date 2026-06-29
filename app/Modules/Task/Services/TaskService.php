@@ -92,6 +92,7 @@ class TaskService
                 'initiator_user_id' => $user->id,
                 'status' => TaskStatus::Draft,
                 'due_date' => $data['due_date'] ?? null,
+                'draft_manual_assignments' => $data['manual_assignments'] ?? null,
             ]);
 
             event(new TaskCreated($task));
@@ -141,14 +142,20 @@ class TaskService
                 }
             }
 
-            $task->update([
+            $updateData = [
                 'title_ar' => $data['title_ar'] ?? $task->title_ar,
                 'title_en' => ! empty($data['title_en']) ? $data['title_en'] : ($data['title_ar'] ?? $task->title_en),
                 'description_ar' => $data['description_ar'] ?? $task->description_ar,
                 'description_en' => ! empty($data['description_en']) ? $data['description_en'] : ($data['description_ar'] ?? $task->description_en),
                 'classification_level' => $data['classification_level'] ?? $task->classification_level,
                 'due_date' => $data['due_date'] ?? $task->due_date,
-            ]);
+            ];
+
+            if (array_key_exists('manual_assignments', $data)) {
+                $updateData['draft_manual_assignments'] = $data['manual_assignments'] ?? null;
+            }
+
+            $task->update($updateData);
 
             event(new TaskUpdated($task));
 
@@ -280,6 +287,10 @@ class TaskService
     public function launch(Task $task, array $manualAssignments = []): Task
     {
         try {
+            if (empty($manualAssignments) && $task->draft_manual_assignments) {
+                $manualAssignments = $task->draft_manual_assignments;
+            }
+
             return DB::transaction(function () use ($task, $manualAssignments) {
                 if (! $task->isDraft()) {
                     throw new TaskNotDraftException;
@@ -357,6 +368,7 @@ class TaskService
                 $task->update([
                     'status' => TaskStatus::Active,
                     'launched_at' => now(),
+                    'draft_manual_assignments' => null,
                 ]);
 
                 event(new TaskLaunched($task));

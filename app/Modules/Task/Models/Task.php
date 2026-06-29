@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'launched_at', 'suspended_at', 'suspension_reason',
     'resumed_at', 'completed_at', 'cancelled_at', 'cancellation_reason',
     'archived_at', 'archived_by_user_id',
+    'draft_manual_assignments',
 ])]
 class Task extends TenantModel
 {
@@ -48,6 +49,7 @@ class Task extends TenantModel
             'completed_at' => 'datetime',
             'cancelled_at' => 'datetime',
             'archived_at' => 'datetime',
+            'draft_manual_assignments' => 'array',
         ];
     }
 

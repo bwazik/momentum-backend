@@ -192,10 +192,13 @@ class FollowUpBoardService
     private function applyStatusFilter(Builder $query, ?string $status): void
     {
         if (! $status) {
+            $query->where('tasks.status', '!=', TaskStatus::Draft);
+
             return;
         }
 
         match ($status) {
+            'draft' => $query->where('tasks.status', TaskStatus::Draft),
             'active' => $query->where('tasks.status', TaskStatus::Active),
             'suspended' => $query->where('tasks.status', TaskStatus::Suspended),
             'completed' => $query->where('tasks.status', TaskStatus::Completed),

@@ -291,6 +291,22 @@ class StageLifecycleService
 
                     if ($nextBlueprintSubStage->assignment_type !== null) {
                         $manualAssignments = $this->resolveManualAssignmentsForReentry($task, $nextBlueprintSubStage);
+
+                        if (empty($manualAssignments) && $nextBlueprintSubStage->assignment_type === AssignmentType::ManualAtLaunch) {
+                            $previousAssignees = TaskStageAssignment::where('task_id', $task->id)
+                                ->whereNull('reassigned_at')
+                                ->where('sub_stage_instance_id', $subStageInstance->id)
+                                ->with('user')
+                                ->get();
+
+                            if ($previousAssignees->isNotEmpty()) {
+                                $userIds = $previousAssignees->pluck('user.public_id')->filter()->values()->all();
+                                $manualAssignments = [
+                                    ['blueprint_sub_stage_id' => $nextBlueprintSubStage->public_id, 'user_ids' => $userIds],
+                                ];
+                            }
+                        }
+
                         $this->assignmentResolutionService->resolveSubStageAssignments(
                             $nextBlueprintSubStage, $task, $nextSubInstance, $manualAssignments,
                         );
@@ -373,6 +389,22 @@ class StageLifecycleService
 
                 if ($targetBlueprintSubStage->assignment_type !== null) {
                     $manualAssignments = $this->resolveManualAssignmentsForReentry($task, $targetBlueprintSubStage);
+
+                    if (empty($manualAssignments) && $targetBlueprintSubStage->assignment_type === AssignmentType::ManualAtLaunch) {
+                        $previousAssignees = TaskStageAssignment::where('task_id', $task->id)
+                            ->whereNull('reassigned_at')
+                            ->where('sub_stage_instance_id', $subStageInstance->id)
+                            ->with('user')
+                            ->get();
+
+                        if ($previousAssignees->isNotEmpty()) {
+                            $userIds = $previousAssignees->pluck('user.public_id')->filter()->values()->all();
+                            $manualAssignments = [
+                                ['blueprint_sub_stage_id' => $targetBlueprintSubStage->public_id, 'user_ids' => $userIds],
+                            ];
+                        }
+                    }
+
                     $this->assignmentResolutionService->resolveSubStageAssignments(
                         $targetBlueprintSubStage, $task, $newSubInstance, $manualAssignments,
                     );
@@ -776,6 +808,22 @@ class StageLifecycleService
 
             if ($index === 0 && $subStage->assignment_type !== null) {
                 $manualAssignments = $this->resolveManualAssignmentsForReentry($task, $subStage);
+
+                if (empty($manualAssignments) && $subStage->assignment_type === AssignmentType::ManualAtLaunch) {
+                    $previousAssignees = TaskStageAssignment::where('task_id', $task->id)
+                        ->whereNull('reassigned_at')
+                        ->whereHas('stageInstance', fn ($q) => $q->where('blueprint_stage_id', $completedInstance->blueprint_stage_id))
+                        ->with('user')
+                        ->get();
+
+                    if ($previousAssignees->isNotEmpty()) {
+                        $userIds = $previousAssignees->pluck('user.public_id')->filter()->values()->all();
+                        $manualAssignments = [
+                            ['blueprint_sub_stage_id' => $subStage->public_id, 'user_ids' => $userIds],
+                        ];
+                    }
+                }
+
                 $this->assignmentResolutionService->resolveSubStageAssignments(
                     $subStage, $task, $subInstance, $manualAssignments,
                 );

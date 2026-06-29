@@ -4360,6 +4360,7 @@
                                 "null"
                             ],
                             "enum": [
+                                "draft",
                                 "active",
                                 "suspended",
                                 "overdue",
@@ -4575,6 +4576,7 @@
                                 "null"
                             ],
                             "enum": [
+                                "draft",
                                 "active",
                                 "suspended",
                                 "overdue",
@@ -4790,6 +4792,7 @@
                                 "null"
                             ],
                             "enum": [
+                                "draft",
                                 "active",
                                 "suspended",
                                 "overdue",
@@ -5005,6 +5008,7 @@
                                 "null"
                             ],
                             "enum": [
+                                "draft",
                                 "active",
                                 "suspended",
                                 "overdue",
@@ -10088,6 +10092,16 @@
                         }
                     },
                     {
+                        "name": "public_ids[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    {
                         "name": "per_page",
                         "in": "query",
                         "schema": {
@@ -14234,11 +14248,11 @@
                 "type": "object",
                 "properties": {
                     "blueprint_id": {
-                        "type": "integer"
+                        "type": "string"
                     },
                     "priority_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
@@ -14555,6 +14569,9 @@
                     "cancellation_reason": {
                         "type": "string"
                     },
+                    "draft_manual_assignments": {
+                        "type": "string"
+                    },
                     "stages": {
                         "type": "array",
                         "items": {
@@ -14582,7 +14599,8 @@
                     "completed_at",
                     "cancelled_at",
                     "suspension_reason",
-                    "cancellation_reason"
+                    "cancellation_reason",
+                    "draft_manual_assignments"
                 ],
                 "title": "TaskDetailResource"
             },

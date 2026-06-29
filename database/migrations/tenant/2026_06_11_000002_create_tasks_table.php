@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreignId('initiator_user_id')->constrained('users');
             $table->unsignedTinyInteger('status')->default(1);
             $table->date('due_date')->nullable();
+            $table->json('draft_manual_assignments')->nullable();
             $table->timestamps();
             $table->timestamp('launched_at')->nullable();
             $table->timestamp('suspended_at')->nullable();

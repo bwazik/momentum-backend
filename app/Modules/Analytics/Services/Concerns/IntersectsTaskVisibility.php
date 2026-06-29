@@ -18,7 +18,6 @@ trait IntersectsTaskVisibility
         $scope = app(TaskVisibilityScope::class);
 
         $query = Task::query()
-            ->where('tasks.status', '!=', TaskStatus::Draft)
             ->whereNull('tasks.archived_at')
             ->whereNull('tasks.deleted_at');
 

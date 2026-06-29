@@ -224,6 +224,10 @@ class UserService
             }
         }
 
+        if (isset($filters['public_ids'])) {
+            $query->whereIn('public_id', $filters['public_ids']);
+        }
+
         if (isset($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {

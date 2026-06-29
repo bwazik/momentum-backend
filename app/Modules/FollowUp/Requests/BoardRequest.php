@@ -17,7 +17,7 @@ class BoardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => ['nullable', 'string', 'in:active,suspended,overdue,at_risk,completed,cancelled'],
+            'status' => ['nullable', 'string', 'in:draft,active,suspended,overdue,at_risk,completed,cancelled'],
             'stage_type_id' => ['nullable', 'string', 'uuid'],
             'assignee_id' => ['nullable', 'string', 'uuid'],
             'department_id' => ['nullable', 'string', 'uuid'],

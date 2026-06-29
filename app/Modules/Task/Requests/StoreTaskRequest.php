@@ -16,8 +16,8 @@ class StoreTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'blueprint_id' => ['required', Rule::exists('blueprints', 'public_id')->where('is_active', true)],
-            'priority_id' => ['nullable', 'exists:task_priorities,public_id'],
+            'blueprint_id' => ['required', 'string', Rule::exists('blueprints', 'public_id')->where('is_active', true)],
+            'priority_id' => ['nullable', 'string', 'exists:task_priorities,public_id'],
             'title_ar' => ['required', 'string', 'max:255'],
             'title_en' => ['nullable', 'string', 'max:255'],
             'description_ar' => ['required', 'string'],

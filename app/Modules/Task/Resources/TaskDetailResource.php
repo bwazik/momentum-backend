@@ -33,6 +33,7 @@ class TaskDetailResource extends JsonResource
             'cancelled_at' => $this->cancelled_at?->toIso8601String(),
             'suspension_reason' => $this->suspension_reason,
             'cancellation_reason' => $this->cancellation_reason,
+            'draft_manual_assignments' => $this->draft_manual_assignments,
             'stages' => TaskStageInstanceResource::collection($this->whenLoaded('stageInstances')),
         ];
     }

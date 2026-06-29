@@ -277,9 +277,7 @@ class AssignmentResolutionService
             ->firstWhere('blueprint_stage_id', $stage->public_id);
 
         if (! $stageAssignments || empty($stageAssignments['user_ids'])) {
-            throw new MissingManualAssignmentException(
-                __('task.exceptions.manual_assignment_required', ['name' => $stage->name_en ?? $stage->name_ar])
-            );
+            throw new MissingManualAssignmentException($stage->name_en ?? $stage->name_ar);
         }
 
         $users = User::whereIn('public_id', $stageAssignments['user_ids'])
@@ -301,9 +299,7 @@ class AssignmentResolutionService
             ->firstWhere('blueprint_sub_stage_id', $subStage->public_id);
 
         if (! $stageAssignments || empty($stageAssignments['user_ids'])) {
-            throw new MissingManualAssignmentException(
-                __('task.exceptions.manual_assignment_required_sub', ['name' => $subStage->name_en ?? $subStage->name_ar])
-            );
+            throw new MissingManualAssignmentException($subStage->name_en ?? $subStage->name_ar, isSubStage: true);
         }
 
         $users = User::whereIn('public_id', $stageAssignments['user_ids'])
