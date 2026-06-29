@@ -69,6 +69,22 @@ function cleanupTenantDatabase(?string $databaseName): void
     }
 }
 
+function cleanupTenantStorage(int|string $tenantId): void
+{
+    $suffixBase = config('tenancy.filesystem.suffix_base', 'tenant');
+    $storageDir = dirname(__DIR__).'/storage/'.$suffixBase.$tenantId;
+    if (is_dir($storageDir)) {
+        $files = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($storageDir, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
+        );
+        foreach ($files as $file) {
+            $file->isDir() ? @rmdir($file->getRealPath()) : @unlink($file->getRealPath());
+        }
+        @rmdir($storageDir);
+    }
+}
+
 function cleanupAllTenantDatabases(): void
 {
     $dbDir = dirname(__DIR__).'/database';

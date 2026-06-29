@@ -39,6 +39,8 @@ class CapabilitySeeder extends Seeder
         ['key' => 'task.manage', 'name_ar' => 'إدارة المهام', 'name_en' => 'Manage Tasks', 'description' => 'Can update or delete other users\' draft tasks.'],
         ['key' => 'task.escalate', 'name_ar' => 'تصعيد مهمة', 'name_en' => 'Escalate Task', 'description' => 'Create manual escalations for at-risk stages'],
         ['key' => 'task.resolve_escalations', 'name_ar' => 'حل التصعيدات', 'name_en' => 'Resolve Escalations', 'description' => 'Resolve escalations beyond own assignments'],
+        ['key' => 'task.manage_documents', 'name_ar' => 'إدارة مرفقات المهام', 'name_en' => 'Manage Task Documents', 'description' => 'Can upload, replace, and delete attachments on visible tasks.'],
+        ['key' => 'task.view_documents', 'name_ar' => 'عرض مرفقات المهام', 'name_en' => 'View Task Documents', 'description' => 'Can view and download attachments for visible tasks.'],
     ];
 
     public function run(): void

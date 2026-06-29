@@ -154,6 +154,12 @@ Spec IDs match `../frontend/specs/` where UI exists. Backend establishes API con
 - ✅ `010-follow-up-board` — Follow-up board, overdue/at-risk lists, bottleneck indicator, follow-up action log
 - ✅ `011-search-discovery` — PostgreSQL full-text task search, structured filters, recent activity
 
+**Milestone 7 — Documents, Audit, Onboarding & Help: 🔄 In Progress**
+- ✅ `012-documents-attachments` — Document module, attachment metadata, file storage, versioning, download/preview
+- ⬜ `015-audit-trail` — Append-only audit event log
+- ⬜ `019-onboarding-training` — Access-profile journeys
+- ⬜ `020-help-center` — Article CMS
+
 ---
 
 → **Next:** [roadmap.md](roadmap.md)

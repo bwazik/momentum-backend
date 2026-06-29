@@ -3,7 +3,7 @@
 > **Number:** 011
 > **Date:** 2026-06-14
 > **Updated:** 2026-06-15
-> **Status:** `stable`
+> **Status:** `completed`
 > **Milestone:** M6 — Analytics, Follow-up & Search
 > **Depends on:** `005-task-execution` (tasks, stage instances, `TaskVisibilityScope`), `006-stage-lifecycle` (stage history, completion notes), `003-iam-abac` (users, ABAC policy engine, capabilities), `002-organization-structure` (departments, positions), `010-follow-up-board` (confirms board provides only ILIKE title filter; this spec provides proper full-text search), `013-comments-collaboration` (comment content must be indexed — dependency noted; MVP search can exclude comments until 013 is implemented), `014-external-references` (external reference lookup — dependency noted; MVP search includes reference number search once 014 is implemented)
 > **Provides APIs:** `GET /api/v1/search` (unified full-text task search), `GET /api/v1/search/tasks` (task search with filters), `GET /api/v1/search/recent` (recent activity — last 20 items viewed or actioned by the caller)

@@ -9,7 +9,7 @@
 ## Current Focus
 
 **Active Milestone:** M7 — Documents, Audit, Onboarding & Help
-**Active Spec:** `012-documents-attachments`
+**Active Spec:** `015-audit-trail`
 **Branch:** `main`
 
 Do not implement specs marked ⬜ Not Started unless explicitly instructed.
@@ -26,7 +26,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | M4 | Task Execution & Lifecycle | 🔄 In Progress | M3 |
 | M5 | SLA, Escalation & Notifications | ✅ Done | M4 |
 | M6 | Analytics, Follow-up & Search | ✅ Done | M5 |
-| M7 | Documents, Audit, Onboarding & Help | ⬜ Not Started | M4 |
+| M7 | Documents, Audit, Onboarding & Help | 🔄 In Progress | M4 |
 
 **Legend:** ✅ Done · 🔄 In Progress · ⬜ Not Started · 🚧 Blocked
 
@@ -48,7 +48,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | `009-analytics-reporting` | M6 | Analytics | `001-executive-dashboard`, `008-analytics-reporting`, `011-department-manager-dashboard` | ✅ Done |
 | `010-follow-up-board` | M6 | Follow-up & tracking API | `006-follow-up-center` | ✅ Done |
 | `011-search-discovery` | M6 | Search | — | ✅ Done |
-| `012-documents-attachments` | M7 | Document | `003-task-details` | ⬜ Not Started |
+| `012-documents-attachments` | M7 | Document | `003-task-details` | ✅ Done |
 | `013-comments-collaboration` | M4 | Comments | `003-task-details` | ⬜ Not Started |
 | `014-external-references` | M4 | External refs | `002-task-board` | ⬜ Not Started |
 | `015-audit-trail` | M7 | Audit | `009-system-administration` | ⬜ Not Started |
@@ -333,6 +333,39 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 - Comment indexing deferred to Spec 013; external reference search returns 422 until Spec 014
 - `withCommands()` auto-discovery in `bootstrap/app.php` scans all module command directories
 - SQLite fallback in `SearchService` for test/dev environments (LIKE-based search instead of FTS)
+
+---
+
+## M7 — Documents, Audit, Onboarding & Help
+
+**Status:** 🔄 In Progress
+
+**Specs:** `012` ✅, `015` ⬜, `019` ⬜, `020` ⬜
+
+**Established by 012:**
+- **Document module** (`app/Modules/Document/`) — clean bounded context for attachment metadata and file storage
+- `documents` tenant table: polymorphic (entity_type/entity_id), version chain (root_document_id/parent_document_id/version_number), soft-deletes, composite indexes on `(entity_type, entity_id)` and `(root_document_id, version_number)`
+- 2 enums: `DocumentEntityType` (Task/Comment/StageOutput/HelpArticle), `DocumentMimeCategory` (Pdf/Image/Word/Excel/Other) with `fromMimeType()` and `supportsPreview()` methods
+- `Document` model extending `TenantModel` with `HasFactory` + `SoftDeletes`, self-referential version relationships, `nextVersion()` / `currentVersions()` scope (returns leaf nodes = latest version)
+- `DocumentStorageService` — filesystem-agnostic wrapper around Laravel `Storage` facade; stores at `{tenant_slug}/documents/{public_id}/` path; no direct S3/MinIO SDK calls
+- `DocumentService` — upload (store before DB create), versioning, list/show, download/preview, soft-delete with task visibility enforcement via `TaskVisibilityScope`
+- 2 controllers: `DocumentAttachmentController` (entity-scoped upload/list) and `DocumentController` (show/download/preview/version/delete)
+- 2 form requests: `UploadDocumentRequest`, `UploadDocumentVersionRequest` — MIME type validation, max size from tenant settings (default 20 MB)
+- 2 API resources: `DocumentResource` (public_id, bilingual uploader, download/preview URLs), `DocumentVersionResource` (version history)
+- 5 domain events (`DocumentUploaded`, `DocumentVersionCreated`, `DocumentDownloaded`, `DocumentPreviewed`, `DocumentDeleted`) all implementing `ShouldDispatchAfterCommit`; `DocumentDeleted` includes `chainRootId`
+- 3 domain exceptions: `DocumentNotFoundException` (404), `UnsupportedPreviewTypeException` (422), `StorageProviderException` (500), auto-rendered via base `DomainException` handler
+- 2 new capabilities seeded: `task.manage_documents`, `task.view_documents`
+- `document` logging channel in `config/logging.php` (daily, 14-day retention)
+- Route file `routes/api/v1/documents.php` with 12 endpoints (6 active + 2 comment routes deferred)
+- `HasRateLimiting` trait on both controllers with `RateLimits::MUTATE` (uploads/versions/deletes) and `RateLimits::LIST` (reads)
+- Cursor pagination (`{data, next_cursor, has_more}`) on all list endpoints
+- No `tenant_id` column on `documents` table (database-per-tenant isolation)
+- Tenant storage cleanup in tests via `cleanupTenantStorage()` helper
+- `route:tenant.php` updated with documents route registration
+- 14 feature tests (53 assertions): upload, list, version, download, preview, soft-delete, capability enforcement, validation, cursor pagination, version chain
+- `storage/tenant*/` added to `.gitignore`
+
+**Will establish (remaining M7):** audit trail (015), onboarding (019), help center (020)
 
 ---
 

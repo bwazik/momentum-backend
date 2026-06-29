@@ -48,4 +48,5 @@ Route::middleware([
     require __DIR__.'/api/v1/analytics.php';
     require __DIR__.'/api/v1/follow-up.php';
     require __DIR__.'/api/v1/search.php';
+    require __DIR__.'/api/v1/documents.php';
 });
