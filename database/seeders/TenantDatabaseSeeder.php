@@ -25,7 +25,7 @@ class TenantDatabaseSeeder extends Seeder
             ['public_id' => (string) Str::uuid7(), 'name_en' => 'Routine', 'name_ar' => 'روتينية', 'severity_rank' => 3, 'color_code' => '#10B981', 'is_default' => true, 'is_active' => true, 'display_order' => 3, 'created_at' => now(), 'updated_at' => now()],
         ]);
 
-        if (app()->environment('local', 'testing')) {
+        if (app()->environment('local')) {
             $this->call(MockDataSeeder::class);
         }
     }

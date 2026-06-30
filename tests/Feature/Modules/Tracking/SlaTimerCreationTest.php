@@ -51,7 +51,6 @@ beforeEach(function () {
 afterEach(function () {
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('creates SLA timer on stage entry when stage has sla policy', function () {

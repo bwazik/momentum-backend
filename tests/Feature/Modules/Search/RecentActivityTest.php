@@ -37,7 +37,6 @@ beforeEach(function () {
 afterEach(function () {
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('returns last 20 distinct tasks for authenticated user', function () {

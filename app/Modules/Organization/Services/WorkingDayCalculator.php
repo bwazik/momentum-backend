@@ -77,9 +77,11 @@ class WorkingDayCalculator
         $remaining = $seconds;
         $current = $fromDatetime->copy();
 
-        $start = Carbon::createFromTimeString($calendar->working_hours_start);
-        $end = Carbon::createFromTimeString($calendar->working_hours_end);
-        $dailySeconds = $end->diffInSeconds($start);
+        $start = $calendar->working_hours_start;
+        $end = $calendar->working_hours_end;
+        $startTime = Carbon::createFromTimeString($start);
+        $endTime = Carbon::createFromTimeString($end);
+        $dailySeconds = $startTime->diffInSeconds($endTime, true);
 
         while ($remaining > 0) {
             if (! $this->isWorkingDay($calendar, $current)) {
@@ -102,7 +104,7 @@ class WorkingDayCalculator
                 continue;
             }
 
-            $secondsLeftInDay = Carbon::createFromTimeString($endTime)->diffInSeconds(Carbon::createFromTimeString($currentTime));
+            $secondsLeftInDay = Carbon::createFromTimeString($currentTime)->diffInSeconds(Carbon::createFromTimeString($endTime), true);
 
             if ($remaining <= $secondsLeftInDay) {
                 $current->addSeconds($remaining);
@@ -147,7 +149,7 @@ class WorkingDayCalculator
             $effectiveEnd = $to->lt($dayEnd) ? $to->copy() : $dayEnd->copy();
 
             if ($effectiveStart->lt($effectiveEnd)) {
-                $totalSeconds += $effectiveStart->diffInSeconds($effectiveEnd);
+                $totalSeconds += $effectiveStart->diffInSeconds($effectiveEnd, true);
             }
 
             $current = $dayEnd->copy()->addDay()->setTimeFromTimeString($start);

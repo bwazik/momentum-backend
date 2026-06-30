@@ -37,7 +37,6 @@ beforeEach(function () {
 afterEach(function () {
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('sends notification in Arabic when preferred_language is Arabic', function () {

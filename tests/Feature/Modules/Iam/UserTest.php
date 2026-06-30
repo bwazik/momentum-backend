@@ -24,10 +24,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    User::whereNotNull('id')->forceDelete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('lists users with pagination', function () {

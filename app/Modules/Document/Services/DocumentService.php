@@ -191,12 +191,12 @@ class DocumentService
         $rootPublicId = Document::where('id', $rootId)->value('public_id') ?? $document->public_id;
 
         try {
-            DB::transaction(function () use ($document, $rootId, $rootPublicId) {
+            DB::transaction(function () use ($document, $user, $rootId, $rootPublicId) {
                 Document::where('id', $rootId)
                     ->orWhere('root_document_id', $rootId)
                     ->delete();
 
-                event(new DocumentDeleted($document, $rootPublicId));
+                event(new DocumentDeleted($document, $user, $rootPublicId));
             });
         } catch (\Throwable $e) {
             Log::channel('document')->error('Failed to delete document', [

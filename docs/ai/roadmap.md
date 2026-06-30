@@ -8,8 +8,8 @@
 
 ## Current Focus
 
-**Active Milestone:** M7 — Documents, Audit, Onboarding & Help
-**Active Spec:** `015-audit-trail`
+**Active Milestone:** M4 — Task Execution & Lifecycle
+**Active Spec:** `013-comments-collaboration`
 **Branch:** `main`
 
 Do not implement specs marked ⬜ Not Started unless explicitly instructed.
@@ -26,7 +26,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | M4 | Task Execution & Lifecycle | 🔄 In Progress | M3 |
 | M5 | SLA, Escalation & Notifications | ✅ Done | M4 |
 | M6 | Analytics, Follow-up & Search | ✅ Done | M5 |
-| M7 | Documents, Audit, Onboarding & Help | 🔄 In Progress | M4 |
+| M7 | Documents, Audit, Onboarding & Help | 🔄 In Progress (2/4 specs done) | M4 |
 
 **Legend:** ✅ Done · 🔄 In Progress · ⬜ Not Started · 🚧 Blocked
 
@@ -51,7 +51,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | `012-documents-attachments` | M7 | Document | `003-task-details` | ✅ Done |
 | `013-comments-collaboration` | M4 | Comments | `003-task-details` | ⬜ Not Started |
 | `014-external-references` | M4 | External refs | `002-task-board` | ⬜ Not Started |
-| `015-audit-trail` | M7 | Audit | `009-system-administration` | ⬜ Not Started |
+| `015-audit-trail` | M7 | Audit | `009-system-administration` | ✅ Done |
 | `016-delegation-oof` | M2 | Delegation | — | ⬜ Not Started |
 | `017-confidentiality-access` | M2 | Confidential tasks | — | ⬜ Not Started |
 | `018-localization-calendar` | M2 | Hijri, working calendar | — | ⬜ Not Started |
@@ -340,7 +340,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 
 **Status:** 🔄 In Progress
 
-**Specs:** `012` ✅, `015` ⬜, `019` ⬜, `020` ⬜
+**Specs:** `012` ✅, `015` ✅, `019` ⬜, `020` ⬜
 
 **Established by 012:**
 - **Document module** (`app/Modules/Document/`) — clean bounded context for attachment metadata and file storage
@@ -365,7 +365,27 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 - 14 feature tests (53 assertions): upload, list, version, download, preview, soft-delete, capability enforcement, validation, cursor pagination, version chain
 - `storage/tenant*/` added to `.gitignore`
 
-**Will establish (remaining M7):** audit trail (015), onboarding (019), help center (020)
+**Established by 015:**
+- **Audit module** (`app/Modules/Audit/`) — clean bounded context for immutable append-only event logging
+- `audit_events` tenant table with `event_type`, `entity_type` (TINYINT enum), `entity_id`, `entity_public_id`, `root_entity_*` denormalized columns, `impersonated_by_public_id`, and 4 composite indexes
+- `App\Modules\Audit\Enums\AuditEntityType` — int-backed enum (31 cases for all entity categories + central entities)
+- `ProvidesAuditData` interface — each auditable event implements `auditData(): AuditEventData`
+- `AuditEventData` DTO — typed data transfer object with all audit fields
+- `RecordAuditEvent` listener (~60 lines) — checks interface, calls `auditData()`, persists row; catches `\Throwable`, never re-throws
+- `AuditServiceProvider` — auto-discovers `ProvidesAuditData` implementors across all tenant modules
+- `AuditEventService` — three read APIs (task trail, system log, my activity) with cursor pagination, ABAC, `TaskVisibilityScope`, and external auditor support
+- `CentralAuditServiceProvider` + `RecordCentralAuditEvent` — central audit aligned with same interface pattern; 13 old dedicated listeners replaced by generic listener
+- All 92+ tenant domain events (Task, IAM, Organization, Blueprint, Document, FollowUp, Tracking) and 13 Platform events now implement `ProvidesAuditData`
+- `audit` logging channel (daily, 30-day retention)
+- 3 read endpoints: `GET /v1/tasks/{task}/audit-trail`, `GET /v1/audit-trail/system`, `GET /v1/audit-trail/me`
+- Rate limiting via `HasRateLimiting` + `RateLimits::LIST` on all endpoints
+- Cursor pagination (`{data, next_cursor, has_more}`) on all list endpoints
+- Central `audit_events` table updated with aligned schema (`event_type`, `entity_type_int`, `root_entity_*`, `impersonated_by_public_id`, `action` made nullable)
+- `Platform\Models\AuditEvent` updated with immutability guards
+- 5 feature test files (26 tests, 70 assertions): happy path, ABAC denials, external auditor, pagination, IP/UA privacy, append-only, listener safety, tenant isolation, impersonation persistence
+- 26 test files cleaned up across all modules (removed redundant `forceDelete`/`delete` in `afterEach`, fixed `MockDataSeeder` self-healing, fixed enum `apiValue()` assertions, fixed SQLite `:memory:` migration conflicts)
+
+**Will establish (remaining M7):** onboarding (019), help center (020)
 
 ---
 

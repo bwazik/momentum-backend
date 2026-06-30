@@ -62,7 +62,6 @@ beforeEach(function () {
 afterEach(function () {
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 // --- Board Basics ---

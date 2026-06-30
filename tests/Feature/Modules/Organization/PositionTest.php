@@ -33,12 +33,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    Position::whereNotNull('id')->forceDelete();
-    AuthorityGrade::whereNotNull('id')->delete();
-    Department::whereNotNull('id')->delete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('creates a position', function () {

@@ -42,7 +42,6 @@ beforeEach(function () {
 afterEach(function () {
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('suspends active task with reason', function () {
@@ -58,7 +57,7 @@ it('suspends active task with reason', function () {
         ]);
 
     $response->assertOk()
-        ->assertJsonPath('status', TaskStatus::Suspended->value);
+        ->assertJsonPath('status', TaskStatus::Suspended->apiValue());
 });
 
 it('cannot suspend draft task', function () {
@@ -87,7 +86,7 @@ it('resumes suspended task', function () {
         ->postJson("/v1/tasks/{$task->public_id}/resume");
 
     $response->assertOk()
-        ->assertJsonPath('status', TaskStatus::Active->value);
+        ->assertJsonPath('status', TaskStatus::Active->apiValue());
 });
 
 it('cannot resume active task', function () {
@@ -116,7 +115,7 @@ it('cancels active task with reason', function () {
         ]);
 
     $response->assertOk()
-        ->assertJsonPath('status', TaskStatus::Cancelled->value);
+        ->assertJsonPath('status', TaskStatus::Cancelled->apiValue());
 });
 
 it('cancels draft task with reason', function () {
@@ -132,7 +131,7 @@ it('cancels draft task with reason', function () {
         ]);
 
     $response->assertOk()
-        ->assertJsonPath('status', TaskStatus::Cancelled->value);
+        ->assertJsonPath('status', TaskStatus::Cancelled->apiValue());
 });
 
 it('cannot cancel completed task', function () {

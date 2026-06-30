@@ -23,12 +23,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    Position::whereNotNull('id')->forceDelete();
-    Department::whereNotNull('id')->delete();
-    AuthorityGrade::whereNotNull('id')->delete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('creates a top-level department', function () {

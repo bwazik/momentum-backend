@@ -22,11 +22,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    Position::whereNotNull('id')->forceDelete();
-    AuthorityGrade::whereNotNull('id')->delete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('creates an authority grade', function () {

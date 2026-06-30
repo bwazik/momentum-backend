@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\User;
-use App\Modules\Iam\Models\AuditGrant;
 use App\Modules\Iam\Services\AuditGrantService;
 use App\Modules\Organization\Models\Department;
 use App\Services\Platform\TenantProvisioningService;
@@ -25,12 +24,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    AuditGrant::whereNotNull('id')->delete();
-    Department::whereNotNull('id')->delete();
-    User::whereNotNull('id')->forceDelete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('grants an audit scope to an external auditor', function () {

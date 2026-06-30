@@ -33,11 +33,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    Blueprint::whereNotNull('id')->forceDelete();
-    BlueprintCategory::whereNotNull('id')->forceDelete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('creates a blueprint with organization scope', function () {
@@ -51,7 +48,7 @@ it('creates a blueprint with organization scope', function () {
 
     $response->assertCreated()
         ->assertJsonPath('name_ar', 'قالب تجريبي')
-        ->assertJsonPath('scope', 1)
+        ->assertJsonPath('scope', 'organization')
         ->assertJsonPath('is_locked', false)
         ->assertJsonPath('is_active', true);
 

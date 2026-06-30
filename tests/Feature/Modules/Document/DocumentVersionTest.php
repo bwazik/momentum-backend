@@ -97,7 +97,6 @@ afterEach(function () {
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
     cleanupTenantStorage($this->tenant->id);
-    $this->tenant->delete();
 });
 
 it('creates a new version of a document', function () {

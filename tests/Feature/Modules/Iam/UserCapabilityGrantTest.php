@@ -3,7 +3,6 @@
 use App\Enums\ScopeType;
 use App\Models\User;
 use App\Modules\Iam\Models\Capability;
-use App\Modules\Iam\Models\UserCapabilityGrant;
 use App\Modules\Iam\Services\GrantService;
 use App\Services\Platform\TenantProvisioningService;
 use Database\Seeders\CapabilitySeeder;
@@ -28,12 +27,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    UserCapabilityGrant::whereNotNull('id')->delete();
-    Capability::whereNotNull('id')->delete();
-    User::whereNotNull('id')->forceDelete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('grants a capability directly to a user', function () {

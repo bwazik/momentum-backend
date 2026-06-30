@@ -2,7 +2,6 @@
 
 use App\Models\User;
 use App\Modules\Iam\Exceptions\CannotDelegateToSelfException;
-use App\Modules\Iam\Models\Delegation;
 use App\Modules\Iam\Services\DelegationService;
 use App\Services\Platform\TenantProvisioningService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -24,11 +23,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    Delegation::whereNotNull('id')->delete();
-    User::whereNotNull('id')->forceDelete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('creates a delegation', function () {

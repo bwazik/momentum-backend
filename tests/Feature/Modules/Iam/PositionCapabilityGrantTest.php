@@ -4,7 +4,6 @@ use App\Enums\ScopeType;
 use App\Models\User;
 use App\Modules\Iam\Exceptions\DuplicateGrantException;
 use App\Modules\Iam\Models\Capability;
-use App\Modules\Iam\Models\PositionCapabilityGrant;
 use App\Modules\Iam\Services\GrantService;
 use App\Modules\Organization\Models\AuthorityGrade;
 use App\Modules\Organization\Models\Department;
@@ -37,15 +36,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    PositionCapabilityGrant::whereNotNull('id')->delete();
-    Position::whereNotNull('id')->forceDelete();
-    AuthorityGrade::whereNotNull('id')->delete();
-    Department::whereNotNull('id')->delete();
-    Capability::whereNotNull('id')->delete();
-    User::whereNotNull('id')->forceDelete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('grants a capability to a position', function () {

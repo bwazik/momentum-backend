@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\User;
-use App\Modules\Iam\Models\UserPositionAssignment;
 use App\Modules\Iam\Services\PositionAssignmentService;
 use App\Modules\Organization\Models\AuthorityGrade;
 use App\Modules\Organization\Models\Department;
@@ -31,14 +30,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    UserPositionAssignment::whereNotNull('id')->delete();
-    Position::whereNotNull('id')->forceDelete();
-    AuthorityGrade::whereNotNull('id')->delete();
-    Department::whereNotNull('id')->delete();
-    User::whereNotNull('id')->forceDelete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('assigns a position to a user', function () {

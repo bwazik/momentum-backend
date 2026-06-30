@@ -30,11 +30,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    Blueprint::whereNotNull('id')->forceDelete();
-    BlueprintCategory::whereNotNull('id')->forceDelete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('lists active blueprint categories', function () {

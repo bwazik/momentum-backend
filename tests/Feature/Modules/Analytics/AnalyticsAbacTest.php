@@ -38,7 +38,6 @@ beforeEach(function () {
 afterEach(function () {
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 function grantCapability(User $user, string $key, ?ScopeType $scopeType = null, ?int $departmentId = null): void

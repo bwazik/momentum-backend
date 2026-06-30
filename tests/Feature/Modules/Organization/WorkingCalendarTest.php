@@ -1,7 +1,6 @@
 <?php
 
 use App\Modules\Organization\Exceptions\CannotDeleteDefaultCalendarException;
-use App\Modules\Organization\Models\PublicHoliday;
 use App\Modules\Organization\Models\WorkingCalendar;
 use App\Modules\Organization\Services\CalendarService;
 use App\Modules\Organization\Services\WorkingDayCalculator;
@@ -25,11 +24,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    PublicHoliday::whereNotNull('id')->delete();
-    WorkingCalendar::whereNotNull('id')->delete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('creates a working calendar', function () {

@@ -33,10 +33,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    SlaPolicy::whereNotNull('id')->forceDelete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('lists SLA policies', function () {

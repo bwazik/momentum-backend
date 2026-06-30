@@ -2,7 +2,6 @@
 
 use App\Enums\ScopeType;
 use App\Models\User;
-use App\Modules\Iam\Models\MonitoringScopeGrant;
 use App\Modules\Iam\Services\MonitoringScopeService;
 use App\Modules\Organization\Models\Department;
 use App\Services\Platform\TenantProvisioningService;
@@ -26,12 +25,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    MonitoringScopeGrant::whereNotNull('id')->delete();
-    Department::whereNotNull('id')->delete();
-    User::whereNotNull('id')->forceDelete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('grants a monitoring scope to a user', function () {

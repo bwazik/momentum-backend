@@ -151,7 +151,19 @@ class MockDataSeeder extends Seeder
         // ──────────────────────────────────────────────
         $tenant = tenant();
         $slug = $tenant?->slug ?? 'central';
-        $admin = User::where('email', 'admin@'.$slug.'.test')->firstOrFail();
+        $admin = User::where('email', 'admin@'.$slug.'.test')->first();
+
+        if (! $admin) {
+            $admin = User::create([
+                'name_ar' => 'مدير النظام',
+                'name_en' => 'System Admin',
+                'email' => 'admin@'.$slug.'.test',
+                'password' => 'password123',
+                'account_type' => AccountType::TENANT_ADMIN,
+                'is_active' => true,
+                'email_verified_at' => now(),
+            ]);
+        }
 
         $userSpecs = [
             ['ar' => 'نورة القحطاني', 'en' => 'Noura Al-Qahtani', 'pos' => 0],

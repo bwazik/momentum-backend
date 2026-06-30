@@ -61,7 +61,6 @@ beforeEach(function () {
 afterEach(function () {
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 // --- Create ---
@@ -76,7 +75,7 @@ it('creates a follow-up action', function () {
         ]);
 
     $response->assertCreated()
-        ->assertJsonPath('action_type', 'PhoneCall')
+        ->assertJsonPath('action_type', 'phonecall')
         ->assertJsonPath('note_ar', 'تم الاتصال بالمسؤول')
         ->assertJsonPath('note_en', 'Called the responsible person')
         ->assertJsonPath('contact_name', 'أحمد');

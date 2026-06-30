@@ -39,17 +39,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    UserPositionAssignment::whereNotNull('id')->delete();
-    PositionCapabilityGrant::whereNotNull('id')->delete();
-    UserCapabilityGrant::whereNotNull('id')->delete();
-    Position::whereNotNull('id')->forceDelete();
-    AuthorityGrade::whereNotNull('id')->delete();
-    Department::whereNotNull('id')->delete();
-    Capability::whereNotNull('id')->delete();
-    User::whereNotNull('id')->forceDelete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('grants access when user has capability via position grant', function () {

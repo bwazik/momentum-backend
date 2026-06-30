@@ -19,11 +19,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    PublicHoliday::whereNotNull('id')->delete();
-    WorkingCalendar::whereNotNull('id')->delete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('creates a holiday via the service', function () {

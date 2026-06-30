@@ -37,7 +37,6 @@ beforeEach(function () {
 afterEach(function () {
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('lists escalations with cursor pagination', function () {
@@ -68,7 +67,7 @@ it('filters escalations by status', function () {
 
     $response->assertOk();
     expect(count($response->json('data')))->toBe(1);
-    expect($response->json('data.0.status'))->toBe(1);
+    expect($response->json('data.0.status'))->toBe('open');
 });
 
 it('shows escalation detail', function () {

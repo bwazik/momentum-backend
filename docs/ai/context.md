@@ -156,7 +156,7 @@ Spec IDs match `../frontend/specs/` where UI exists. Backend establishes API con
 
 **Milestone 7 — Documents, Audit, Onboarding & Help: 🔄 In Progress**
 - ✅ `012-documents-attachments` — Document module, attachment metadata, file storage, versioning, download/preview
-- ⬜ `015-audit-trail` — Append-only audit event log
+- ✅ `015-audit-trail` — Append-only audit event log (interface-based, all 92+ tenant events captured, central audit aligned)
 - ⬜ `019-onboarding-training` — Access-profile journeys
 - ⬜ `020-help-center` — Article CMS
 

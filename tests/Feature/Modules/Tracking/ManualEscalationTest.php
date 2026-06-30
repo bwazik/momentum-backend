@@ -81,7 +81,6 @@ beforeEach(function () {
 afterEach(function () {
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('creates manual escalation with reason', function () {
@@ -131,7 +130,7 @@ it('resolves escalation by target user', function () {
         ]);
 
     $response->assertOk()
-        ->assertJsonPath('status', EscalationStatus::Resolved->value)
+        ->assertJsonPath('status', EscalationStatus::Resolved->apiValue())
         ->assertJsonPath('resolution_note', 'Issue resolved through discussion.');
 });
 

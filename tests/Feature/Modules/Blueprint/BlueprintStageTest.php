@@ -38,12 +38,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    BlueprintStage::whereNotNull('id')->forceDelete();
-    Blueprint::whereNotNull('id')->forceDelete();
-    BlueprintCategory::whereNotNull('id')->forceDelete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('adds a stage to a blueprint', function () {

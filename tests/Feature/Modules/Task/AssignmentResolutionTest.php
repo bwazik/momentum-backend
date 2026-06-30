@@ -43,7 +43,6 @@ beforeEach(function () {
 afterEach(function () {
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('launches with specific position assignment when position occupied', function () {
@@ -86,7 +85,7 @@ it('launches with specific position assignment when position occupied', function
         ->postJson("/v1/tasks/{$task->public_id}/launch");
 
     $response->assertOk()
-        ->assertJsonPath('status', TaskStatus::Active->value);
+        ->assertJsonPath('status', TaskStatus::Active->apiValue());
 
     expect($task->fresh()->status)->toBe(TaskStatus::Active);
 });
@@ -124,7 +123,7 @@ it('launches with manual at launch assignment when users provided', function () 
         ]);
 
     $response->assertOk()
-        ->assertJsonPath('status', TaskStatus::Active->value);
+        ->assertJsonPath('status', TaskStatus::Active->apiValue());
 });
 
 it('launches without manual assignment returns 422', function () {

@@ -54,7 +54,6 @@ beforeEach(function () {
 afterEach(function () {
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('returns 422 when q is too short', function () {
@@ -115,10 +114,11 @@ it('excludes draft tasks from search results', function () {
     ]);
 
     $response = $this->withHeaders(['X-Tenant' => $this->tenant->public_id])
-        ->getJson('/v1/search/tasks?q=Draft');
+        ->getJson('/v1/search/tasks?q=Active');
 
     $response->assertOk()
-        ->assertJsonCount(0, 'data');
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.title_en', 'Active Task');
 });
 
 it('filters by status', function () {

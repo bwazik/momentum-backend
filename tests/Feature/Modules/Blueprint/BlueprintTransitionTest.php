@@ -49,13 +49,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    BlueprintTransition::whereNotNull('id')->forceDelete();
-    BlueprintStage::whereNotNull('id')->forceDelete();
-    Blueprint::whereNotNull('id')->forceDelete();
-    BlueprintCategory::whereNotNull('id')->forceDelete();
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('creates an advance transition', function () {

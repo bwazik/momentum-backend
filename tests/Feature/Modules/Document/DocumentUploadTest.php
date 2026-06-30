@@ -92,7 +92,6 @@ afterEach(function () {
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
     cleanupTenantStorage($this->tenant->id);
-    $this->tenant->delete();
 });
 
 it('uploads a document to a task', function () {

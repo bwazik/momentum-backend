@@ -51,7 +51,6 @@ beforeEach(function () {
 afterEach(function () {
     tenancy()->end();
     cleanupTenantDatabase($this->tenant->database_name);
-    $this->tenant->delete();
 });
 
 it('completes stage with AnyAssignee rule and advances to next stage', function () {
@@ -254,14 +253,16 @@ it('completes stage with LeadAssignee rule only when the lead assignee completes
     $task = Task::factory()->create(['blueprint_id' => $blueprint->id, 'priority_id' => $this->priority->id, 'initiator_user_id' => $this->user->id, 'status' => TaskStatus::Draft]);
     $this->withHeaders($this->authHeaders)
         ->postJson("/v1/tasks/{$task->public_id}/launch", [
-            'manual_assignments' => [['blueprint_stage_id' => $stage1->public_id, 'user_ids' => [$nonLeadAssignee->public_id, $leadAssignee->public_id]]],
+            'manual_assignments' => [['blueprint_stage_id' => $stage1->public_id, 'user_ids' => [$leadAssignee->public_id, $nonLeadAssignee->public_id]]],
         ])->assertOk();
 
     $stageInstance = $task->fresh()->stageInstances()->first();
 
-    // Promote one assignee to Lead role
+    // Set roles explicitly: lead=Lead, non-lead=Required
     $stageInstance->assignments()->whereHas('user', fn ($q) => $q->where('public_id', $leadAssignee->public_id))
         ->update(['assignment_role' => AssignmentRole::Lead->value]);
+    $stageInstance->assignments()->whereHas('user', fn ($q) => $q->where('public_id', $nonLeadAssignee->public_id))
+        ->update(['assignment_role' => AssignmentRole::Required->value]);
 
     // Non-lead assignee completes first — stage should NOT complete
     $this->actingAs($nonLeadAssignee)->withHeaders(['X-Tenant' => $this->tenant->public_id])
