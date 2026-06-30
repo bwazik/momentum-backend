@@ -35,6 +35,11 @@ class SearchActivityService
         $this->insert($user, $task, SearchActivityType::StageReturned);
     }
 
+    public function recordCommentAdded(User $user, Task $task): void
+    {
+        $this->insert($user, $task, SearchActivityType::CommentAdded);
+    }
+
     private function insert(User $user, Task $task, SearchActivityType $type): void
     {
         try {

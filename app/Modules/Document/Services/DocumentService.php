@@ -14,6 +14,7 @@ use App\Modules\Document\Exceptions\StorageProviderException;
 use App\Modules\Document\Exceptions\UnsupportedPreviewTypeException;
 use App\Modules\Document\Models\Document;
 use App\Modules\Iam\Services\IamPolicy;
+use App\Modules\Task\Models\Comment;
 use App\Modules\Task\Models\Task;
 use App\Modules\Task\Models\TaskStageInstance;
 use App\Modules\Task\Models\TaskSubStageInstance;
@@ -145,6 +146,13 @@ class DocumentService
             ]);
             throw $e;
         }
+    }
+
+    public function uploadForComment(Comment $comment, array $data, User $uploader): Document
+    {
+        $this->guardTaskVisibility(DocumentEntityType::Comment, $comment->id, $uploader);
+
+        return $this->upload(DocumentEntityType::Comment, $comment->id, $data, $uploader);
     }
 
     public function listForEntity(DocumentEntityType $entityType, int $entityId, User $user, int $perPage = 15): CursorPaginator
@@ -286,7 +294,7 @@ class DocumentService
         return match ($entityType) {
             DocumentEntityType::Task => Task::find($entityId),
             DocumentEntityType::StageOutput => TaskStageInstance::find($entityId)?->task,
-            DocumentEntityType::Comment => null,
+            DocumentEntityType::Comment => Comment::find($entityId)?->task,
             DocumentEntityType::HelpArticle => null,
         };
     }

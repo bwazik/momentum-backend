@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Task\Controllers\CommentController;
 use App\Modules\Task\Controllers\StageLifecycleController;
 use App\Modules\Task\Controllers\TaskController;
 use App\Modules\Task\Controllers\TaskPriorityController;
@@ -49,4 +50,8 @@ Route::middleware(['auth:sanctum'])->prefix('tasks')->group(function () {
     // History & Timeline
     Route::get('{task}/returns', [StageLifecycleController::class, 'returns']);
     Route::get('{task}/timeline', [StageLifecycleController::class, 'timeline']);
+
+    // Comments
+    Route::get('{task}/comments', [CommentController::class, 'index']);
+    Route::post('{task}/comments', [CommentController::class, 'store']);
 });

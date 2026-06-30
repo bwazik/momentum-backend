@@ -9,7 +9,7 @@
 ## Current Focus
 
 **Active Milestone:** M4 — Task Execution & Lifecycle
-**Active Spec:** `013-comments-collaboration`
+**Active Spec:** `014-external-references`
 **Branch:** `main`
 
 Do not implement specs marked ⬜ Not Started unless explicitly instructed.
@@ -49,7 +49,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | `010-follow-up-board` | M6 | Follow-up & tracking API | `006-follow-up-center` | ✅ Done |
 | `011-search-discovery` | M6 | Search | — | ✅ Done |
 | `012-documents-attachments` | M7 | Document | `003-task-details` | ✅ Done |
-| `013-comments-collaboration` | M4 | Comments | `003-task-details` | ⬜ Not Started |
+| `013-comments-collaboration` | M4 | Comments | `003-task-details` | ✅ Done |
 | `014-external-references` | M4 | External refs | `002-task-board` | ⬜ Not Started |
 | `015-audit-trail` | M7 | Audit | `009-system-administration` | ✅ Done |
 | `016-delegation-oof` | M2 | Delegation | — | ⬜ Not Started |
@@ -165,7 +165,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 
 **Status:** 🔄 In Progress · **Blocked by:** M3
 
-**Specs:** `005` ✅, `006` ✅, `013` ⬜, `014` ⬜
+**Specs:** `005` ✅, `006` ✅, `013` ✅, `014` ⬜
 
 **Established by 005:**
 - `task_priorities`, `tasks`, `task_stage_instances`, `task_sub_stage_instances`, `task_stage_assignments` tables
@@ -213,7 +213,30 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 - `completion_note` per-assignment stored on `task_stage_assignments` + last-writer copy on stage instance
 - Routes: all 10 lifecycle routes appended to `routes/api/v1/tasks.php`
 
-**Will establish (remaining):** comments (013), external references (014)
+**Established by 013:**
+- `comments` table with self-referential FK for single-level threading (parent_comment_id), soft deletes, composite indexes on (task_id) and (task_id, parent_comment_id)
+- `Comment` model in the Task module with task/user/parent/replies/documents relationships, extending `TenantModel` with `HasPublicId` and `SoftDeletes`
+- `CommentService` — create (with parent validation: same-task + top-level only) and list (cursor-paginated top-level comments with nested replies as full list)
+- `CommentController` with `HasRateLimiting` — authorize via `TaskVisibilityScope`, `RateLimits::LIST` (60/min) and `RateLimits::MUTATE` (30/min)
+- `CommentResource` — JSON shape with author (public_id, name_ar, name_en), body, parent_comment_id, created_at, attachment_count, nested replies
+- `StoreCommentRequest` — validates body (required, string, max 5000) and optional parent_comment_id (exists:comments,public_id)
+- `CommentCreated` domain event implementing `ShouldDispatchAfterCommit` and `ProvidesAuditData` — auto-recorded by Audit module
+- 2 domain exceptions: `InvalidCommentParentException` (422), `CommentNotFoundException` (404)
+- `InvalidCommentParentException` rendered as 422 with bilingual message from `lang/{en,ar}/task.php`
+- Comment attachments: `POST/GET /api/v1/comments/{comment}/documents` activated via `DocumentService::uploadForComment()` and `DocumentAttachmentController` methods
+- `DocumentService::resolveTask()` updated to handle `DocumentEntityType::Comment` — resolves parent task via `Comment::find($entityId)?->task`
+- `task_search_index` additive migration: `comment_content_ar`, `comment_content_en` columns with generated `tsvector` columns and GIN indexes (PostgreSQL only)
+- `SearchIndexService::upsertForTask()` aggregates all non-deleted comment bodies into `comment_content_ar`/`comment_content_en`
+- `SearchService::searchTasks()` — FTS ranking and WHERE clause include comment vectors; SQLite fallback includes comment content columns
+- 2 queued listeners (ShouldQueue, $tries=3, $backoff=[30,60,120]): `UpdateSearchIndexOnCommentCreated`, `RecordActivityOnCommentCreated`
+- `SearchActivityService::recordCommentAdded()` — writes `SearchActivityType::CommentAdded` to `user_recent_activity`
+- No caching on comment lists (write-heavy, real-time expectation)
+- `CommentFactory` + 19 feature tests (63 assertions): create, reply, nesting validation, task-scope parent validation, ABAC denial, confidential task restriction, cursor pagination, document upload/list, manage capability enforcement, search index update, recent activity, audit event, rate limiting
+- All list endpoints return cursor-paginated `{data, next_cursor, has_more}` shape
+- Routes registered in `routes/api/v1/tasks.php` and `routes/api/v1/documents.php`
+- `task` logging channel used for all comment service operations
+
+**Will establish (remaining):** external references (014)
 
 ---
 

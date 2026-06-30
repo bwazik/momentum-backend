@@ -19,5 +19,7 @@ return [
         'task_not_active' => 'Task is not in active status.',
         'task_already_cancelled' => 'Task is already cancelled.',
         'unresolvable_assignment' => 'Cannot resolve assignee for this stage.',
+        'invalid_comment_parent' => 'Parent must be a top-level comment on the same task.',
+        'comment_not_found' => 'Comment not found.',
     ],
 ];

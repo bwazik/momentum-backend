@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['task_id', 'notes_ar', 'notes_en'])]
+#[Fillable(['task_id', 'notes_ar', 'notes_en', 'comment_content_ar', 'comment_content_en'])]
 class TaskSearchIndex extends Model
 {
     protected $table = 'task_search_index';

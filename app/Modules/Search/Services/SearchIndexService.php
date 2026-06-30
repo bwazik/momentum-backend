@@ -3,6 +3,7 @@
 namespace App\Modules\Search\Services;
 
 use App\Modules\Search\Models\TaskSearchIndex;
+use App\Modules\Task\Models\Comment;
 use App\Modules\Task\Models\Task;
 use App\Modules\Task\Models\TaskStageAssignment;
 use Illuminate\Support\Facades\Log;
@@ -26,11 +27,18 @@ class SearchIndexService
                 ->pluck('completion_note_en')
                 ->implode("\n");
 
+            $commentContent = Comment::where('task_id', $task->id)
+                ->whereNull('deleted_at')
+                ->pluck('body')
+                ->implode("\n");
+
             TaskSearchIndex::updateOrCreate(
                 ['task_id' => $task->id],
                 [
                     'notes_ar' => $notesAr ?: null,
                     'notes_en' => $notesEn ?: null,
+                    'comment_content_ar' => $commentContent ?: null,
+                    'comment_content_en' => $commentContent ?: null,
                 ]
             );
         } catch (\Throwable $e) {

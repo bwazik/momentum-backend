@@ -15,9 +15,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('task-sub-stage-instances/{subStageInstance}/documents', [DocumentAttachmentController::class, 'listForSubStage']);
     Route::post('task-sub-stage-instances/{subStageInstance}/documents', [DocumentAttachmentController::class, 'uploadForSubStage']);
 
-    // Comment attachments — uncomment after Spec 013 creates Comment model
-    // Route::get('comments/{comment}/documents', [DocumentAttachmentController::class, 'listForComment']);
-    // Route::post('comments/{comment}/documents', [DocumentAttachmentController::class, 'uploadForComment']);
+    // Comment attachments
+    Route::get('comments/{comment}/documents', [DocumentAttachmentController::class, 'listForComment']);
+    Route::post('comments/{comment}/documents', [DocumentAttachmentController::class, 'uploadForComment']);
 
     // Generic document operations
     Route::get('documents/{document}', [DocumentController::class, 'show'])->name('documents.show');

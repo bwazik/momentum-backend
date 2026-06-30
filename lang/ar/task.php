@@ -19,5 +19,7 @@ return [
         'task_not_active' => 'المهمة ليست في حالة نشطة.',
         'task_already_cancelled' => 'المهمة ملغاة بالفعل.',
         'unresolvable_assignment' => 'لا يمكن تحديد المفوض لهذه المرحلة.',
+        'invalid_comment_parent' => 'يجب أن يكون التعليق الأصلي تعليقًا رئيسيًا في نفس المهمة.',
+        'comment_not_found' => 'التعليق غير موجود.',
     ],
 ];

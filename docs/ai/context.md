@@ -142,7 +142,7 @@ Spec IDs match `../frontend/specs/` where UI exists. Backend establishes API con
 **Milestone 4 — Task Execution & Lifecycle: 🔄 In Progress**
 - ✅ `005-task-execution` — Task creation, launch, assignment resolution, lifecycle
 - ✅ `006-stage-lifecycle` — Stage/sub-stage progression, return, override, history
-- ⬜ `013-comments-collaboration`
+- ✅ `013-comments-collaboration` — Task-level comments, replies, comment attachments, search indexing, recent activity
 - ⬜ `014-external-references`
 
 **Milestone 5 — SLA, Escalation & Notifications: ✅ Done**

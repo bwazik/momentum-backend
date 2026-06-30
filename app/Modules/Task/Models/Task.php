@@ -78,6 +78,11 @@ class Task extends TenantModel
         return $this->hasMany(TaskStageAssignment::class);
     }
 
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class)->orderBy('id');
+    }
+
     public function isDraft(): bool
     {
         return $this->status === TaskStatus::Draft;
