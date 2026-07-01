@@ -139,11 +139,11 @@ Spec IDs match `../frontend/specs/` where UI exists. Backend establishes API con
 **Milestone 3 — Blueprint Engine: ✅ Done**
 - ✅ `004-blueprint-engine` — Blueprint, stages, sub-stages, transitions, SLA policies
 
-**Milestone 4 — Task Execution & Lifecycle: 🔄 In Progress**
+**Milestone 4 — Task Execution & Lifecycle: ✅ Done**
 - ✅ `005-task-execution` — Task creation, launch, assignment resolution, lifecycle
 - ✅ `006-stage-lifecycle` — Stage/sub-stage progression, return, override, history
 - ✅ `013-comments-collaboration` — Task-level comments, replies, comment attachments, search indexing, recent activity
-- ⬜ `014-external-references`
+- ✅ `014-external-references` — External entity catalog, task external reference linking, search integration
 
 **Milestone 5 — SLA, Escalation & Notifications: ✅ Done**
 - ✅ `007-sla-escalation` — SLA timer engine, warning/breach detection, escalation management

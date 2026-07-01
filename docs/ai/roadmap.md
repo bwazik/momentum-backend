@@ -8,8 +8,8 @@
 
 ## Current Focus
 
-**Active Milestone:** M4 — Task Execution & Lifecycle
-**Active Spec:** `014-external-references`
+**Active Milestone:** M2 — Organization & IAM
+**Active Spec:** `016-delegation-oof`
 **Branch:** `main`
 
 Do not implement specs marked ⬜ Not Started unless explicitly instructed.
@@ -23,10 +23,10 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | M1 | Platform & Core Foundation | ✅ Done | — |
 | M2 | Organization & IAM | 🔄 In Progress | M1 |
 | M3 | Blueprint Engine | ✅ Done | M2 |
-| M4 | Task Execution & Lifecycle | 🔄 In Progress | M3 |
+| M4 | Task Execution & Lifecycle | ✅ Done | M3 |
 | M5 | SLA, Escalation & Notifications | ✅ Done | M4 |
 | M6 | Analytics, Follow-up & Search | ✅ Done | M5 |
-| M7 | Documents, Audit, Onboarding & Help | 🔄 In Progress (2/4 specs done) | M4 |
+| M7 | Documents, Audit, Onboarding & Help | 🔄 In Progress | M4 |
 
 **Legend:** ✅ Done · 🔄 In Progress · ⬜ Not Started · 🚧 Blocked
 
@@ -50,7 +50,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | `011-search-discovery` | M6 | Search | — | ✅ Done |
 | `012-documents-attachments` | M7 | Document | `003-task-details` | ✅ Done |
 | `013-comments-collaboration` | M4 | Comments | `003-task-details` | ✅ Done |
-| `014-external-references` | M4 | External refs | `002-task-board` | ⬜ Not Started |
+| `014-external-references` | M4 | External refs | `002-task-board` | ✅ Done |
 | `015-audit-trail` | M7 | Audit | `009-system-administration` | ✅ Done |
 | `016-delegation-oof` | M2 | Delegation | — | ⬜ Not Started |
 | `017-confidentiality-access` | M2 | Confidential tasks | — | ⬜ Not Started |
@@ -163,9 +163,9 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 
 ## M4 — Task Execution
 
-**Status:** 🔄 In Progress · **Blocked by:** M3
+**Status:** ✅ Done
 
-**Specs:** `005` ✅, `006` ✅, `013` ✅, `014` ⬜
+**Specs:** `005` ✅, `006` ✅, `013` ✅, `014` ✅
 
 **Established by 005:**
 - `task_priorities`, `tasks`, `task_stage_instances`, `task_sub_stage_instances`, `task_stage_assignments` tables
@@ -236,7 +236,27 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 - Routes registered in `routes/api/v1/tasks.php` and `routes/api/v1/documents.php`
 - `task` logging channel used for all comment service operations
 
-**Will establish (remaining):** external references (014)
+**Established by 014:**
+- `external_entities` and `task_external_references` tables (tenant DB, soft deletes, no `tenant_id` columns)
+- 2 enums: `ExternalEntityType` (8 cases), `ExternalReferenceType` (8 cases) — both with `apiValue()` method
+- `ExternalEntity` and `TaskExternalReference` models extending `TenantModel` with `HasFactory` and `SoftDeletes`
+- `ExternalEntityService` — CRUD + deactivate/reactivate with warm-cache active entity list (`{tenant_slug}:task:external_entities:active`, TTL 300s, invalidated on mutations)
+- `TaskExternalReferenceService` — create/update/delete with active-entity validation and cursor-paginated listing
+- `ExternalEntityController` and `TaskExternalReferenceController` with `HasRateLimiting` trait (`LIST` 60/min, `MUTATE` 30/min)
+- 4 Form Requests with `Rule::enum()` validation
+- 2 API Resources (`ExternalEntityResource`, `TaskExternalReferenceResource`) exposing `public_id` and `apiValue()` strings
+- 7 domain events implementing `ShouldDispatchAfterCommit` + `ProvidesAuditData`: `ExternalEntityCreated/Updated/Deactivated/Reactivated`, `ExternalReferenceCreated/Updated/Deleted`
+- 4 domain exceptions: `ExternalEntityNotFoundException` (404), `ExternalEntityInactiveException` (422), `ExternalReferenceNotFoundException` (404), `TaskNotVisibleException` (403) — all extending `DomainException` with bilingual messages
+- `AuditEntityType` extended with `ExternalEntity = 32` and `ExternalReference = 33`
+- `task.manage_external_entities` capability seeded in `CapabilitySeeder`
+- 10 routes under `/api/v1/tasks/` — entities before `{task}` wildcard; references nested under `{task}`
+- Search integration: `ExternalReferenceSearchNotAvailableException` removed, `external_reference` filter eager-loads matched references, `external_references` exposed in `SearchTaskResource`; `q` changed to `required_without:external_reference`
+- Bilingual translations in `lang/{en,ar}/task.php` for all 4 exception messages
+- `ExternalEntityFactory`, `TaskExternalReferenceFactory`
+- 24 feature tests (76 assertions): entity CRUD, reference CRUD, inactive entity rejection, ABAC denial (visibility + mutation), confidential task restriction, search by reference, standalone `external_reference` without `q`, full-text `q` not matching reference numbers, audit event recording, cache invalidation, `name_en` preservation on partial update
+- All service methods use `try/catch` + `Log::channel('task')`
+- No `tenant_id` columns, no cross-module ORM joins, cursor pagination on reference lists, full list on entities
+- `openapi/openapi.json` regenerated with new endpoints
 
 ---
 

@@ -83,6 +83,11 @@ class Task extends TenantModel
         return $this->hasMany(Comment::class)->orderBy('id');
     }
 
+    public function externalReferences(): HasMany
+    {
+        return $this->hasMany(TaskExternalReference::class)->orderBy('id');
+    }
+
     public function isDraft(): bool
     {
         return $this->status === TaskStatus::Draft;

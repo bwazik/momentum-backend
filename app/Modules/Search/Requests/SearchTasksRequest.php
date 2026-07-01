@@ -14,7 +14,7 @@ class SearchTasksRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'q' => ['required', 'string', 'min:2', 'max:200'],
+            'q' => ['required_without:external_reference', 'string', 'min:2', 'max:200'],
             'status' => ['nullable', 'array'],
             'status.*' => ['string', 'in:active,suspended,completed,cancelled'],
             'priority_id' => ['nullable', 'array'],

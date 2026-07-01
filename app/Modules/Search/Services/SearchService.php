@@ -8,7 +8,6 @@ use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Blueprint\Models\BlueprintCategory;
 use App\Modules\Organization\Models\Department;
 use App\Modules\Search\Enums\SearchActivityType;
-use App\Modules\Search\Exceptions\ExternalReferenceSearchNotAvailableException;
 use App\Modules\Search\Exceptions\SearchQueryTooShortException;
 use App\Modules\Task\Enums\StageInstanceStatus;
 use App\Modules\Task\Enums\TaskStatus;
@@ -19,7 +18,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Schema;
 
 class SearchService
 {
@@ -41,45 +39,51 @@ class SearchService
                 ])
                 ->leftJoin('task_search_index', 'task_search_index.task_id', '=', 'tasks.id');
 
-            if (DB::connection()->getDriverName() === 'pgsql') {
-                $tsqueryAr = $this->toTsquery($filters['q'], 'simple');
-                $tsqueryEn = $this->toTsquery($filters['q'], 'english');
+            $hasQuery = ! empty($filters['q']);
 
-                $query->selectRaw("tasks.*, GREATEST(
-                    COALESCE(ts_rank(tasks.search_vector_ar, to_tsquery('simple', ?)), 0),
-                    COALESCE(ts_rank(tasks.search_vector_en, to_tsquery('english', ?)), 0),
-                    COALESCE(ts_rank(task_search_index.search_vector_notes_ar, to_tsquery('simple', ?)), 0),
-                    COALESCE(ts_rank(task_search_index.search_vector_notes_en, to_tsquery('english', ?)), 0),
-                    COALESCE(ts_rank(task_search_index.search_vector_comments_ar, to_tsquery('simple', ?)), 0),
-                    COALESCE(ts_rank(task_search_index.search_vector_comments_en, to_tsquery('english', ?)), 0)
-                ) as combined_rank", [$tsqueryAr, $tsqueryEn, $tsqueryAr, $tsqueryEn, $tsqueryAr, $tsqueryEn])
-                    ->selectRaw("ts_headline('simple', coalesce(tasks.title_ar,'') || ' ' || coalesce(tasks.description_ar,'') || ' ' || coalesce(task_search_index.notes_ar,'') || ' ' || coalesce(task_search_index.comment_content_ar,''), to_tsquery('simple', ?), 'StartSel=<mark>,StopSel=</mark>,MaxWords=35,MinWords=15') as snippet_ar", [$tsqueryAr])
-                    ->selectRaw("ts_headline('english', coalesce(tasks.title_en,'') || ' ' || coalesce(tasks.description_en,'') || ' ' || coalesce(task_search_index.notes_en,'') || ' ' || coalesce(task_search_index.comment_content_en,''), to_tsquery('english', ?), 'StartSel=<mark>,StopSel=</mark>,MaxWords=35,MinWords=15') as snippet_en", [$tsqueryEn])
-                    ->where(function (Builder $q) use ($tsqueryAr, $tsqueryEn, $filters) {
-                        $q->whereRaw('tasks.search_vector_ar @@ to_tsquery(\'simple\', ?)', [$tsqueryAr])
-                            ->orWhereRaw('tasks.search_vector_en @@ to_tsquery(\'english\', ?)', [$tsqueryEn])
-                            ->orWhereRaw('task_search_index.search_vector_notes_ar @@ to_tsquery(\'simple\', ?)', [$tsqueryAr])
-                            ->orWhereRaw('task_search_index.search_vector_notes_en @@ to_tsquery(\'english\', ?)', [$tsqueryEn])
-                            ->orWhereRaw('task_search_index.search_vector_comments_ar @@ to_tsquery(\'simple\', ?)', [$tsqueryAr])
-                            ->orWhereRaw('task_search_index.search_vector_comments_en @@ to_tsquery(\'english\', ?)', [$tsqueryEn])
-                            ->orWhere('tasks.display_id', 'ilike', '%'.$filters['q'].'%');
-                    });
-            } elseif (app()->runningUnitTests()) {
-                $q = $filters['q'];
-                $query->selectRaw('tasks.*, 0 as combined_rank')
-                    ->where(function (Builder $qry) use ($q) {
-                        $qry->where('tasks.title_ar', 'like', '%'.$q.'%')
-                            ->orWhere('tasks.title_en', 'like', '%'.$q.'%')
-                            ->orWhere('tasks.description_ar', 'like', '%'.$q.'%')
-                            ->orWhere('tasks.description_en', 'like', '%'.$q.'%')
-                            ->orWhere('tasks.display_id', 'like', '%'.$q.'%')
-                            ->orWhere('task_search_index.notes_ar', 'like', '%'.$q.'%')
-                            ->orWhere('task_search_index.notes_en', 'like', '%'.$q.'%')
-                            ->orWhere('task_search_index.comment_content_ar', 'like', '%'.$q.'%')
-                            ->orWhere('task_search_index.comment_content_en', 'like', '%'.$q.'%');
-                    });
+            if ($hasQuery) {
+                if (DB::connection()->getDriverName() === 'pgsql') {
+                    $tsqueryAr = $this->toTsquery($filters['q'], 'simple');
+                    $tsqueryEn = $this->toTsquery($filters['q'], 'english');
+
+                    $query->selectRaw("tasks.*, GREATEST(
+                        COALESCE(ts_rank(tasks.search_vector_ar, to_tsquery('simple', ?)), 0),
+                        COALESCE(ts_rank(tasks.search_vector_en, to_tsquery('english', ?)), 0),
+                        COALESCE(ts_rank(task_search_index.search_vector_notes_ar, to_tsquery('simple', ?)), 0),
+                        COALESCE(ts_rank(task_search_index.search_vector_notes_en, to_tsquery('english', ?)), 0),
+                        COALESCE(ts_rank(task_search_index.search_vector_comments_ar, to_tsquery('simple', ?)), 0),
+                        COALESCE(ts_rank(task_search_index.search_vector_comments_en, to_tsquery('english', ?)), 0)
+                    ) as combined_rank", [$tsqueryAr, $tsqueryEn, $tsqueryAr, $tsqueryEn, $tsqueryAr, $tsqueryEn])
+                        ->selectRaw("ts_headline('simple', coalesce(tasks.title_ar,'') || ' ' || coalesce(tasks.description_ar,'') || ' ' || coalesce(task_search_index.notes_ar,'') || ' ' || coalesce(task_search_index.comment_content_ar,''), to_tsquery('simple', ?), 'StartSel=<mark>,StopSel=</mark>,MaxWords=35,MinWords=15') as snippet_ar", [$tsqueryAr])
+                        ->selectRaw("ts_headline('english', coalesce(tasks.title_en,'') || ' ' || coalesce(tasks.description_en,'') || ' ' || coalesce(task_search_index.notes_en,'') || ' ' || coalesce(task_search_index.comment_content_en,''), to_tsquery('english', ?), 'StartSel=<mark>,StopSel=</mark>,MaxWords=35,MinWords=15') as snippet_en", [$tsqueryEn])
+                        ->where(function (Builder $q) use ($tsqueryAr, $tsqueryEn, $filters) {
+                            $q->whereRaw('tasks.search_vector_ar @@ to_tsquery(\'simple\', ?)', [$tsqueryAr])
+                                ->orWhereRaw('tasks.search_vector_en @@ to_tsquery(\'english\', ?)', [$tsqueryEn])
+                                ->orWhereRaw('task_search_index.search_vector_notes_ar @@ to_tsquery(\'simple\', ?)', [$tsqueryAr])
+                                ->orWhereRaw('task_search_index.search_vector_notes_en @@ to_tsquery(\'english\', ?)', [$tsqueryEn])
+                                ->orWhereRaw('task_search_index.search_vector_comments_ar @@ to_tsquery(\'simple\', ?)', [$tsqueryAr])
+                                ->orWhereRaw('task_search_index.search_vector_comments_en @@ to_tsquery(\'english\', ?)', [$tsqueryEn])
+                                ->orWhere('tasks.display_id', 'ilike', '%'.$filters['q'].'%');
+                        });
+                } elseif (app()->runningUnitTests()) {
+                    $q = $filters['q'];
+                    $query->selectRaw('tasks.*, 0 as combined_rank')
+                        ->where(function (Builder $qry) use ($q) {
+                            $qry->where('tasks.title_ar', 'like', '%'.$q.'%')
+                                ->orWhere('tasks.title_en', 'like', '%'.$q.'%')
+                                ->orWhere('tasks.description_ar', 'like', '%'.$q.'%')
+                                ->orWhere('tasks.description_en', 'like', '%'.$q.'%')
+                                ->orWhere('tasks.display_id', 'like', '%'.$q.'%')
+                                ->orWhere('task_search_index.notes_ar', 'like', '%'.$q.'%')
+                                ->orWhere('task_search_index.notes_en', 'like', '%'.$q.'%')
+                                ->orWhere('task_search_index.comment_content_ar', 'like', '%'.$q.'%')
+                                ->orWhere('task_search_index.comment_content_en', 'like', '%'.$q.'%');
+                        });
+                } else {
+                    throw new \RuntimeException('Full-text search requires PostgreSQL.');
+                }
             } else {
-                throw new \RuntimeException('Full-text search requires PostgreSQL.');
+                $query->selectRaw('tasks.*, 0 as combined_rank');
             }
 
             $this->applyStructuredFilters($query, $filters);
@@ -90,7 +94,7 @@ class SearchService
             $perPage = $filters['per_page'] ?? 15;
 
             return $query->cursorPaginate($perPage);
-        } catch (SearchQueryTooShortException|ExternalReferenceSearchNotAvailableException $e) {
+        } catch (SearchQueryTooShortException $e) {
             throw $e;
         } catch (\Throwable $e) {
             Log::channel('search')->error('Failed to search tasks', [
@@ -258,17 +262,18 @@ class SearchService
         }
 
         if (! empty($filters['external_reference'])) {
-            if (! Schema::hasTable('task_external_references')) {
-                throw new ExternalReferenceSearchNotAvailableException;
-            }
-
             $referenceNumber = $filters['external_reference'];
             $query->whereExists(function ($sub) use ($referenceNumber) {
                 $sub->selectRaw('1')
                     ->from('task_external_references')
                     ->whereColumn('task_external_references.task_id', 'tasks.id')
-                    ->where('task_external_references.reference_number', $referenceNumber);
+                    ->where('task_external_references.reference_number', $referenceNumber)
+                    ->whereNull('task_external_references.deleted_at');
             });
+
+            $query->with([
+                'externalReferences' => fn ($q) => $q->where('reference_number', $referenceNumber)->with('externalEntity'),
+            ]);
         }
     }
 }

@@ -21,5 +21,9 @@ return [
         'unresolvable_assignment' => 'Cannot resolve assignee for this stage.',
         'invalid_comment_parent' => 'Parent must be a top-level comment on the same task.',
         'comment_not_found' => 'Comment not found.',
+        'external_entity_not_found' => 'External entity not found.',
+        'external_entity_inactive' => 'External entity is inactive and cannot be used for new references.',
+        'external_reference_not_found' => 'External reference not found.',
+        'task_not_visible' => 'You do not have access to this task.',
     ],
 ];

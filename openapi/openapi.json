@@ -5444,6 +5444,282 @@
                 }
             }
         },
+        "/tasks/external-entities": {
+            "get": {
+                "operationId": "externalEntity.index",
+                "tags": [
+                    "ExternalEntity"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `ExternalEntityResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ExternalEntityResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "externalEntity.store",
+                "tags": [
+                    "ExternalEntity"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreExternalEntityRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`ExternalEntityResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExternalEntityResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/external-entities/{entity}": {
+            "get": {
+                "operationId": "externalEntity.show",
+                "tags": [
+                    "ExternalEntity"
+                ],
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "in": "path",
+                        "required": true,
+                        "description": "The entity public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`ExternalEntityResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExternalEntityResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "put": {
+                "operationId": "externalEntity.update",
+                "tags": [
+                    "ExternalEntity"
+                ],
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "in": "path",
+                        "required": true,
+                        "description": "The entity public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateExternalEntityRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`ExternalEntityResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExternalEntityResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/external-entities/{entity}/deactivate": {
+            "post": {
+                "operationId": "externalEntity.deactivate",
+                "tags": [
+                    "ExternalEntity"
+                ],
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "in": "path",
+                        "required": true,
+                        "description": "The entity public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`ExternalEntityResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExternalEntityResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/tasks/external-entities/{entity}/reactivate": {
+            "post": {
+                "operationId": "externalEntity.reactivate",
+                "tags": [
+                    "ExternalEntity"
+                ],
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "in": "path",
+                        "required": true,
+                        "description": "The entity public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`ExternalEntityResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExternalEntityResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
         "/follow-up/actions": {
             "get": {
                 "operationId": "followUpAction.recent",
@@ -8960,7 +9236,6 @@
                     {
                         "name": "q",
                         "in": "query",
-                        "required": true,
                         "schema": {
                             "type": "string",
                             "minLength": 2,
@@ -11119,6 +11394,249 @@
                 }
             }
         },
+        "/tasks/{task}/external-references": {
+            "get": {
+                "operationId": "taskExternalReference.index",
+                "tags": [
+                    "TaskExternalReference"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TaskExternalReferenceResource"
+                                            }
+                                        },
+                                        "next_cursor": {
+                                            "type": "string"
+                                        },
+                                        "has_more": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "next_cursor",
+                                        "has_more"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "taskExternalReference.store",
+                "tags": [
+                    "TaskExternalReference"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreTaskExternalReferenceRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TaskExternalReferenceResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskExternalReferenceResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/tasks/{task}/external-references/{reference}": {
+            "put": {
+                "operationId": "taskExternalReference.update",
+                "tags": [
+                    "TaskExternalReference"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "reference",
+                        "in": "path",
+                        "required": true,
+                        "description": "The reference public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateTaskExternalReferenceRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TaskExternalReferenceResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskExternalReferenceResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "taskExternalReference.destroy",
+                "tags": [
+                    "TaskExternalReference"
+                ],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "in": "path",
+                        "required": true,
+                        "description": "The task public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "reference",
+                        "in": "path",
+                        "required": true,
+                        "description": "The reference public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
         "/tasks/priorities": {
             "get": {
                 "operationId": "taskPriority.index",
@@ -12459,7 +12977,9 @@
                     28,
                     29,
                     30,
-                    31
+                    31,
+                    32,
+                    33
                 ],
                 "title": "AuditEntityType"
             },
@@ -14021,6 +14541,70 @@
                 ],
                 "title": "ExecutiveSummaryResource"
             },
+            "ExternalEntityResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "name_ar": {
+                        "type": "string"
+                    },
+                    "name_en": {
+                        "type": "string"
+                    },
+                    "entity_type": {
+                        "type": "string"
+                    },
+                    "is_active": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "name_ar",
+                    "name_en",
+                    "entity_type",
+                    "is_active",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "ExternalEntityResource"
+            },
+            "ExternalEntityType": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8
+                ],
+                "title": "ExternalEntityType"
+            },
+            "ExternalReferenceType": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8
+                ],
+                "title": "ExternalReferenceType"
+            },
             "FollowUpActionResource": {
                 "type": "object",
                 "properties": {
@@ -15548,6 +16132,30 @@
                 ],
                 "title": "StoreDepartmentRequest"
             },
+            "StoreExternalEntityRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "entity_type": {
+                        "$ref": "#/components/schemas/ExternalEntityType"
+                    }
+                },
+                "required": [
+                    "name_ar",
+                    "entity_type"
+                ],
+                "title": "StoreExternalEntityRequest"
+            },
             "StoreFollowUpActionRequest": {
                 "type": "object",
                 "properties": {
@@ -15741,6 +16349,37 @@
                     "name_ar"
                 ],
                 "title": "StoreStageTypeRequest"
+            },
+            "StoreTaskExternalReferenceRequest": {
+                "type": "object",
+                "properties": {
+                    "reference_type": {
+                        "$ref": "#/components/schemas/ExternalReferenceType"
+                    },
+                    "reference_number": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "external_entity_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "uuid"
+                    },
+                    "notes": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 2000
+                    }
+                },
+                "required": [
+                    "reference_type",
+                    "reference_number"
+                ],
+                "title": "StoreTaskExternalReferenceRequest"
             },
             "StoreTaskPriorityRequest": {
                 "type": "object",
@@ -16144,6 +16783,37 @@
                     "draft_manual_assignments"
                 ],
                 "title": "TaskDetailResource"
+            },
+            "TaskExternalReferenceResource": {
+                "type": "object",
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "reference_type": {
+                        "type": "string"
+                    },
+                    "reference_number": {
+                        "type": "string"
+                    },
+                    "external_entity": {
+                        "$ref": "#/components/schemas/ExternalEntityResource"
+                    },
+                    "notes": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "public_id",
+                    "reference_type",
+                    "reference_number",
+                    "notes",
+                    "created_at"
+                ],
+                "title": "TaskExternalReferenceResource"
             },
             "TaskListItemResource": {
                 "type": "object",
@@ -17198,6 +17868,26 @@
                 },
                 "title": "UpdateDepartmentRequest"
             },
+            "UpdateExternalEntityRequest": {
+                "type": "object",
+                "properties": {
+                    "name_ar": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "name_en": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "entity_type": {
+                        "$ref": "#/components/schemas/ExternalEntityType"
+                    }
+                },
+                "title": "UpdateExternalEntityRequest"
+            },
             "UpdatePlatformAdminRequest": {
                 "type": "object",
                 "properties": {
@@ -17352,6 +18042,33 @@
                     }
                 },
                 "title": "UpdateStageTypeRequest"
+            },
+            "UpdateTaskExternalReferenceRequest": {
+                "type": "object",
+                "properties": {
+                    "reference_type": {
+                        "$ref": "#/components/schemas/ExternalReferenceType"
+                    },
+                    "reference_number": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "external_entity_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "uuid"
+                    },
+                    "notes": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 2000
+                    }
+                },
+                "title": "UpdateTaskExternalReferenceRequest"
             },
             "UpdateTaskPriorityRequest": {
                 "type": "object",

@@ -3,6 +3,7 @@
 namespace App\Modules\Search\Resources;
 
 use App\Modules\Task\Enums\StageInstanceStatus;
+use App\Modules\Task\Resources\TaskExternalReferenceResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -50,6 +51,10 @@ class SearchTaskResource extends JsonResource
             'created_at' => $task->created_at?->toIso8601String(),
             'snippet_ar' => $task->snippet_ar ?: null,
             'snippet_en' => $task->snippet_en ?: null,
+            'external_references' => $this->when(
+                $task->relationLoaded('externalReferences') && $task->externalReferences->isNotEmpty(),
+                fn () => TaskExternalReferenceResource::collection($task->externalReferences)
+            ),
         ];
     }
 }

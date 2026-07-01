@@ -21,5 +21,9 @@ return [
         'unresolvable_assignment' => 'لا يمكن تحديد المفوض لهذه المرحلة.',
         'invalid_comment_parent' => 'يجب أن يكون التعليق الأصلي تعليقًا رئيسيًا في نفس المهمة.',
         'comment_not_found' => 'التعليق غير موجود.',
+        'external_entity_not_found' => 'الجهة الخارجية غير موجودة.',
+        'external_entity_inactive' => 'الجهة الخارجية غير نشطة ولا يمكن استخدامها للإشارات الجديدة.',
+        'external_reference_not_found' => 'الإشارة الخارجية غير موجودة.',
+        'task_not_visible' => 'ليس لديك حق الوصول إلى هذه المهمة.',
     ],
 ];

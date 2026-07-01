@@ -1,8 +1,10 @@
 <?php
 
 use App\Modules\Task\Controllers\CommentController;
+use App\Modules\Task\Controllers\ExternalEntityController;
 use App\Modules\Task\Controllers\StageLifecycleController;
 use App\Modules\Task\Controllers\TaskController;
+use App\Modules\Task\Controllers\TaskExternalReferenceController;
 use App\Modules\Task\Controllers\TaskPriorityController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +16,16 @@ Route::middleware(['auth:sanctum'])->prefix('tasks')->group(function () {
         Route::put('priorities/{priority}', [TaskPriorityController::class, 'update']);
         Route::post('priorities/{priority}/deactivate', [TaskPriorityController::class, 'deactivate']);
         Route::post('priorities/{priority}/reactivate', [TaskPriorityController::class, 'reactivate']);
+    });
+
+    // External Entities (must come before {task} wildcard)
+    Route::get('external-entities', [ExternalEntityController::class, 'index']);
+    Route::get('external-entities/{entity}', [ExternalEntityController::class, 'show']);
+    Route::middleware(['capability:task.manage_external_entities'])->group(function () {
+        Route::post('external-entities', [ExternalEntityController::class, 'store']);
+        Route::put('external-entities/{entity}', [ExternalEntityController::class, 'update']);
+        Route::post('external-entities/{entity}/deactivate', [ExternalEntityController::class, 'deactivate']);
+        Route::post('external-entities/{entity}/reactivate', [ExternalEntityController::class, 'reactivate']);
     });
 
     // Tasks
@@ -54,4 +66,10 @@ Route::middleware(['auth:sanctum'])->prefix('tasks')->group(function () {
     // Comments
     Route::get('{task}/comments', [CommentController::class, 'index']);
     Route::post('{task}/comments', [CommentController::class, 'store']);
+
+    // Task External References
+    Route::get('{task}/external-references', [TaskExternalReferenceController::class, 'index']);
+    Route::post('{task}/external-references', [TaskExternalReferenceController::class, 'store']);
+    Route::put('{task}/external-references/{reference}', [TaskExternalReferenceController::class, 'update']);
+    Route::delete('{task}/external-references/{reference}', [TaskExternalReferenceController::class, 'destroy']);
 });

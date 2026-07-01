@@ -35,6 +35,8 @@ enum AuditEntityType: int
     case BlueprintStage = 29;
     case BlueprintSubStage = 30;
     case BlueprintTransition = 31;
+    case ExternalEntity = 32;
+    case ExternalReference = 33;
 
     public function name(): string
     {
@@ -70,6 +72,8 @@ enum AuditEntityType: int
             self::BlueprintStage => 'blueprint_stage',
             self::BlueprintSubStage => 'blueprint_sub_stage',
             self::BlueprintTransition => 'blueprint_transition',
+            self::ExternalEntity => 'external_entity',
+            self::ExternalReference => 'external_reference',
         };
     }
 }

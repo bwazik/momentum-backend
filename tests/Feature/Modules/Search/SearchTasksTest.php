@@ -12,7 +12,9 @@ use App\Modules\Search\Models\TaskSearchIndex;
 use App\Modules\Task\Enums\ClassificationLevel;
 use App\Modules\Task\Enums\StageInstanceStatus;
 use App\Modules\Task\Enums\TaskStatus;
+use App\Modules\Task\Models\ExternalEntity;
 use App\Modules\Task\Models\Task;
+use App\Modules\Task\Models\TaskExternalReference;
 use App\Modules\Task\Models\TaskPriority;
 use App\Modules\Task\Models\TaskStageInstance;
 use App\Services\Platform\TenantProvisioningService;
@@ -207,12 +209,34 @@ it('applies blueprint category filter', function () {
         ->assertJsonCount(1, 'data');
 });
 
-it('returns 422 for external reference when 014 not available', function () {
+it('returns empty results for non-matching external reference with q', function () {
     $response = $this->withHeaders(['X-Tenant' => $this->tenant->public_id])
-        ->getJson('/v1/search/tasks?q=test&external_reference=REF-001');
+        ->getJson('/v1/search/tasks?q=test&external_reference=NONEXISTENT');
 
-    $response->assertStatus(422)
-        ->assertJson(['message' => 'External reference search is not yet available.']);
+    $response->assertOk()
+        ->assertJsonCount(0, 'data');
+});
+
+it('does not match reference numbers via full-text q', function () {
+    $priority = TaskPriority::where('is_default', true)->first();
+    $task = Task::factory()->active()->create([
+        'initiator_user_id' => $this->user->id,
+        'priority_id' => $priority->id,
+        'title_ar' => 'مهمة عادية',
+        'title_en' => 'Normal task',
+    ]);
+    $entity = ExternalEntity::factory()->create();
+    TaskExternalReference::factory()->create([
+        'task_id' => $task->id,
+        'reference_number' => 'REF-SECRET-999',
+        'external_entity_id' => $entity->id,
+    ]);
+
+    $response = $this->withHeaders(['X-Tenant' => $this->tenant->public_id])
+        ->getJson('/v1/search/tasks?q=REF-SECRET-999');
+
+    $response->assertOk()
+        ->assertJsonCount(0, 'data');
 });
 
 it('applies priority filter with multiple UUIDs', function () {
