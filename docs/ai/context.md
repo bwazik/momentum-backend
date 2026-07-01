@@ -132,7 +132,7 @@ Spec IDs match `../frontend/specs/` where UI exists. Backend establishes API con
 **Milestone 2 — Organization & IAM: 🔄 In Progress**
 - ✅ `002-organization-structure` — Departments, positions, authority grades, working calendar
 - ✅ `003-iam-abac` — Users, ABAC policy engine, capabilities, delegation, OOO
-- ⬜ `016-delegation-oof` — Delegation supplement
+- ✅ `016-delegation-oof` — Delegation supplement (scoped routing, auto-expiry, active view)
 - ⬜ `017-confidentiality-access` — Confidential task access model
 - ⬜ `018-localization-calendar` — Hijri date helpers, working calendar
 

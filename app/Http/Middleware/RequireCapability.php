@@ -11,7 +11,7 @@ class RequireCapability
 {
     public function __construct(private IamPolicy $policy) {}
 
-    public function handle(Request $request, Closure $next, string $capability): Response
+    public function handle(Request $request, Closure $next, string $capabilities): Response
     {
         $user = $request->user();
 
@@ -23,10 +23,15 @@ class RequireCapability
             return $next($request);
         }
 
-        if (! $this->policy->check($user, $capability)) {
-            abort(403, 'You do not have permission to perform this action.');
+        $caps = explode('|', $capabilities);
+
+        foreach ($caps as $capability) {
+            $capability = trim($capability);
+            if ($this->policy->check($user, $capability)) {
+                return $next($request);
+            }
         }
 
-        return $next($request);
+        abort(403, 'You do not have permission to perform this action.');
     }
 }

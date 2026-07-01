@@ -2,10 +2,14 @@
 
 namespace App\Modules\Iam\Services;
 
+use App\Enums\DelegationScopeType;
 use App\Models\User;
+use App\Modules\Blueprint\Models\BlueprintCategory;
+use App\Modules\Blueprint\Models\StageType;
 use App\Modules\Iam\Events\DelegationCreated;
 use App\Modules\Iam\Events\DelegationRevoked;
 use App\Modules\Iam\Exceptions\CannotDelegateToSelfException;
+use App\Modules\Iam\Exceptions\DelegationScopeMismatchException;
 use App\Modules\Iam\Models\Delegation;
 use App\Traits\AuthenticatedUser;
 use Illuminate\Support\Facades\DB;
@@ -25,14 +29,21 @@ class DelegationService
                     throw new CannotDelegateToSelfException;
                 }
 
+                $scopeType = DelegationScopeType::tryFrom((int) $data['scope_type']);
+                if ($scopeType === null) {
+                    throw new DelegationScopeMismatchException('Invalid scope type.');
+                }
+
+                [$categoryId, $stageTypeId] = $this->validateScopeFields($data, $scopeType);
+
                 $delegation = Delegation::create([
                     'delegator_user_id' => $delegator->id,
                     'delegate_user_id' => $delegate->id,
                     'starts_at' => $data['starts_at'],
                     'ends_at' => $data['ends_at'],
-                    'scope_type' => (int) $data['scope_type'],
-                    'blueprint_category_id' => $data['blueprint_category_id'] ?? null,
-                    'stage_type_id' => $data['stage_type_id'] ?? null,
+                    'scope_type' => $scopeType->value,
+                    'blueprint_category_id' => $categoryId,
+                    'stage_type_id' => $stageTypeId,
                     'is_active' => true,
                 ]);
 
@@ -82,5 +93,54 @@ class DelegationService
             ]);
             throw $e;
         }
+    }
+
+    private function validateScopeFields(array $data, DelegationScopeType $scopeType): array
+    {
+        return match ($scopeType) {
+            DelegationScopeType::ALL => [null, null],
+            DelegationScopeType::BLUEPRINT_CATEGORY => [
+                $this->resolveBlueprintCategoryId($data['blueprint_category_id'] ?? null),
+                null,
+            ],
+            DelegationScopeType::STAGE_TYPE => [
+                null,
+                $this->resolveStageTypeId($data['stage_type_id'] ?? null),
+            ],
+            DelegationScopeType::BLUEPRINT_CATEGORY_AND_STAGE_TYPE => [
+                $this->resolveBlueprintCategoryId($data['blueprint_category_id'] ?? null),
+                $this->resolveStageTypeId($data['stage_type_id'] ?? null),
+            ],
+        };
+    }
+
+    private function resolveBlueprintCategoryId(?string $publicId): ?int
+    {
+        if ($publicId === null) {
+            throw new DelegationScopeMismatchException('blueprint_category_id is required for this scope.');
+        }
+
+        $id = BlueprintCategory::where('public_id', $publicId)->value('id');
+
+        if ($id === null) {
+            throw new DelegationScopeMismatchException('Invalid blueprint_category_id.');
+        }
+
+        return $id;
+    }
+
+    private function resolveStageTypeId(?string $publicId): ?int
+    {
+        if ($publicId === null) {
+            throw new DelegationScopeMismatchException('stage_type_id is required for this scope.');
+        }
+
+        $id = StageType::where('public_id', $publicId)->value('id');
+
+        if ($id === null) {
+            throw new DelegationScopeMismatchException('Invalid stage_type_id.');
+        }
+
+        return $id;
     }
 }

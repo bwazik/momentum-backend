@@ -2840,6 +2840,14 @@
                         }
                     },
                     {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    },
+                    {
                         "name": "delegator_user_id",
                         "in": "query",
                         "schema": {
@@ -2869,10 +2877,36 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/DelegationResource"
-                                    }
+                                    "anyOf": [
+                                        {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/DelegationResource"
+                                            }
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/DelegationResource"
+                                                    }
+                                                },
+                                                "next_cursor": {
+                                                    "type": "string"
+                                                },
+                                                "has_more": {
+                                                    "type": "boolean"
+                                                }
+                                            },
+                                            "required": [
+                                                "data",
+                                                "next_cursor",
+                                                "has_more"
+                                            ]
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -2928,6 +2962,114 @@
                 }
             }
         },
+        "/iam/delegations/active": {
+            "get": {
+                "operationId": "delegation.active",
+                "tags": [
+                    "Delegation"
+                ],
+                "parameters": [
+                    {
+                        "name": "delegator_user_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "delegate_user_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "blueprint_category_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "stage_type_id",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/DelegationResource"
+                                            }
+                                        },
+                                        "next_cursor": {
+                                            "type": "string"
+                                        },
+                                        "has_more": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "next_cursor",
+                                        "has_more"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
         "/iam/delegations/{delegation}": {
             "get": {
                 "operationId": "delegation.show",
@@ -2970,6 +3112,62 @@
                     },
                     "401": {
                         "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "put": {
+                "operationId": "delegation.update",
+                "tags": [
+                    "Delegation"
+                ],
+                "parameters": [
+                    {
+                        "name": "delegation",
+                        "in": "path",
+                        "required": true,
+                        "description": "The delegation public id",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-Tenant",
+                        "in": "header",
+                        "required": true,
+                        "description": "Tenant slug or public ID for multi-tenant resolution.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateDelegationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`DelegationResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DelegationResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
                     }
                 }
             }
@@ -13910,6 +14108,44 @@
                     "scope_type": {
                         "type": "string"
                     },
+                    "blueprint_category": {
+                        "type": "object",
+                        "properties": {
+                            "public_id": {
+                                "type": "string"
+                            },
+                            "name_ar": {
+                                "type": "string"
+                            },
+                            "name_en": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "public_id",
+                            "name_ar",
+                            "name_en"
+                        ]
+                    },
+                    "stage_type": {
+                        "type": "object",
+                        "properties": {
+                            "public_id": {
+                                "type": "string"
+                            },
+                            "name_ar": {
+                                "type": "string"
+                            },
+                            "name_en": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "public_id",
+                            "name_ar",
+                            "name_en"
+                        ]
+                    },
                     "is_active": {
                         "type": "string"
                     },
@@ -16086,13 +16322,13 @@
                     },
                     "blueprint_category_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     },
                     "stage_type_id": {
                         "type": [
-                            "integer",
+                            "string",
                             "null"
                         ]
                     }
@@ -17843,6 +18079,35 @@
                     }
                 },
                 "title": "UpdateCapabilityRequest"
+            },
+            "UpdateDelegationRequest": {
+                "type": "object",
+                "properties": {
+                    "starts_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "ends_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "scope_type": {
+                        "$ref": "#/components/schemas/DelegationScopeType"
+                    },
+                    "blueprint_category_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "stage_type_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                },
+                "title": "UpdateDelegationRequest"
             },
             "UpdateDepartmentRequest": {
                 "type": "object",

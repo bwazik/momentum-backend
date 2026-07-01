@@ -302,7 +302,7 @@ class TaskService
                     throw new BlueprintNotActiveException;
                 }
 
-                $stages = $blueprint->stages()->with('subStages')->orderBy('sequence_order')->get();
+                $stages = $blueprint->stages()->with(['subStages.stage.stageType'])->orderBy('sequence_order')->get();
 
                 if ($stages->isEmpty()) {
                     throw new BlueprintHasNoStagesException;

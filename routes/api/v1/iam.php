@@ -73,10 +73,15 @@ Route::prefix('iam')->group(function () {
         });
 
         // Delegations
-        Route::middleware(['capability:iam.manage_users'])->group(function () {
+        Route::middleware(['capability:iam.manage_users|iam.view_delegations'])->group(function () {
             Route::get('delegations', [DelegationController::class, 'index']);
-            Route::post('delegations', [DelegationController::class, 'store']);
+            Route::get('delegations/active', [DelegationController::class, 'active']);
             Route::get('delegations/{delegation}', [DelegationController::class, 'show']);
+        });
+
+        Route::middleware(['capability:iam.manage_users'])->group(function () {
+            Route::post('delegations', [DelegationController::class, 'store']);
+            Route::put('delegations/{delegation}', [DelegationController::class, 'update']);
             Route::post('delegations/{delegation}/revoke', [DelegationController::class, 'revoke']);
         });
 

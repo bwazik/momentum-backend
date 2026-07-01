@@ -9,7 +9,7 @@
 ## Current Focus
 
 **Active Milestone:** M2 — Organization & IAM
-**Active Spec:** `016-delegation-oof`
+**Active Spec:** `017-confidentiality-access`
 **Branch:** `main`
 
 Do not implement specs marked ⬜ Not Started unless explicitly instructed.
@@ -52,7 +52,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | `013-comments-collaboration` | M4 | Comments | `003-task-details` | ✅ Done |
 | `014-external-references` | M4 | External refs | `002-task-board` | ✅ Done |
 | `015-audit-trail` | M7 | Audit | `009-system-administration` | ✅ Done |
-| `016-delegation-oof` | M2 | Delegation | — | ⬜ Not Started |
+| `016-delegation-oof` | M2 | Delegation | — | ✅ Done |
 | `017-confidentiality-access` | M2 | Confidential tasks | — | ⬜ Not Started |
 | `018-localization-calendar` | M2 | Hijri, working calendar | — | ⬜ Not Started |
 | `019-onboarding-training` | M7 | Onboarding | — | ⬜ Not Started |
@@ -95,7 +95,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 
 **Status:** 🔄 In Progress
 
-**Specs:** `002` ✅, `003` ✅, `016`, `017`, `018`
+**Specs:** `002` ✅, `003` ✅, `016` ✅, `017`, `018`
 
 **Established by 002:**
 - `departments` table (nested hierarchy with adjacency list, soft delete, bilingual names)
@@ -124,7 +124,20 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 - `RequireCapability` middleware replacing `RequireTenantAdmin` on all Organization + IAM routes
 - `IamPolicy` registered as singleton with per-request cache, cleared on terminate
 
-**Remaining M2 specs:** `016` (delegation supplement), `017` (confidentiality), `018` (localization/calendar)
+**Established by 016:**
+- `IamPolicy::resolveDelegateForAssignment()` — scoped delegation resolution (all 4 `DelegationScopeType` cases) with OOF fallback
+- `AssignmentResolutionService` integration — context-aware delegation routing for stage and sub-stage assignments
+- Conditional scope validation on `StoreDelegationRequest` / `UpdateDelegationRequest` (`blueprint_category_id`, `stage_type_id`)
+- `DelegationScopeMismatchException` — 422 for invalid scope field combinations
+- `DelegationExpired` event + `DelegationExpiryService` + `ExpireDelegationsCommand` / `ExpireDelegationsJob` — auto-expiry via scheduler
+- `GET /api/v1/iam/delegations/active` — cursor-paginated active delegation listing with filters
+- `active_now` filter on `GET /api/v1/iam/delegations` — cursor-paginated when active
+- `iam.view_delegations` capability — read-only delegation access
+- `RequireCapability` middleware supports `|`-separated OR logic for multiple capabilities
+- `Delegation` model relationships: `blueprintCategory()`, `stageType()`
+- `DelegationResource` exposes `blueprint_category` and `stage_type` when loaded
+
+**Remaining M2 specs:** `017` (confidentiality), `018` (localization/calendar)
 
 ---
 

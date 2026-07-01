@@ -4,6 +4,8 @@ namespace App\Modules\Iam\Models;
 
 use App\Enums\DelegationScopeType;
 use App\Models\User;
+use App\Modules\Blueprint\Models\BlueprintCategory;
+use App\Modules\Blueprint\Models\StageType;
 use App\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
@@ -41,6 +43,16 @@ class Delegation extends Model
     public function delegate(): BelongsTo
     {
         return $this->belongsTo(User::class, 'delegate_user_id');
+    }
+
+    public function blueprintCategory(): BelongsTo
+    {
+        return $this->belongsTo(BlueprintCategory::class, 'blueprint_category_id');
+    }
+
+    public function stageType(): BelongsTo
+    {
+        return $this->belongsTo(StageType::class, 'stage_type_id');
     }
 
     public function scopeActive($query)

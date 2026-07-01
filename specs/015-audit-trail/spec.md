@@ -183,11 +183,11 @@ Per `coding-standards.md` § Queues & Jobs:
 
 ## Open Questions
 
-- [x] **Synchronous or queued listener?** Synchronous for MVP. Events use `ShouldDispatchAfterCommit` and the audit write is a single lightweight insert. Queue deferred to V2 if load testing shows impact.
-- [x] **Payload content?** Event-specific metadata only. Each event's `auditData()` returns a bounded payload. No queries back to other modules.
-- [x] **Hide IP/UA from non-admins?** `audit.view_system` includes IP/UA; `my-activity` endpoint omits them for privacy.
-- [x] **Events before migration?** Not backfilled. Audit trail starts from module deployment.
-- [x] **Centralized or split listeners?** Centralized via interface. Each event implements `ProvidesAuditData` with an `auditData()` method. A single `RecordAuditEvent` listener (~60 lines) checks the interface and persists. No mapper registry.
+- [x] **Synchronous or queued listener?** Should audit event recording be synchronous or queued? **Resolution:** Synchronous for MVP. Events use `ShouldDispatchAfterCommit` and the audit write is a single lightweight insert. Queue deferred to V2 if load testing shows impact.
+- [x] **Payload content?** What should the audit payload contain? **Resolution:** Event-specific metadata only. Each event's `auditData()` returns a bounded payload. No queries back to other modules.
+- [x] **Hide IP/UA from non-admins?** Should IP and user agent be hidden from non-admin viewers? **Resolution:** `audit.view_system` includes IP/UA; `my-activity` endpoint omits them for privacy.
+- [x] **Events before migration?** Should historical events before the audit module was deployed be backfilled? **Resolution:** Not backfilled. Audit trail starts from module deployment.
+- [x] **Centralized or split listeners?** Should each event type have its own listener or a single centralized listener? **Resolution:** Centralized via interface. Each event implements `ProvidesAuditData` with an `auditData()` method. A single `RecordAuditEvent` listener (~60 lines) checks the interface and persists. No mapper registry.
 
 ---
 

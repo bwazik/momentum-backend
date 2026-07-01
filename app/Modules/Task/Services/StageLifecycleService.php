@@ -790,7 +790,7 @@ class StageLifecycleService
 
         event(new StageInstanceCreated($newStageInstance));
 
-        $nextBlueprintStage->load('subStages');
+        $nextBlueprintStage->load(['subStages.stage.stageType']);
         foreach ($nextBlueprintStage->subStages as $index => $subStage) {
             $subInstance = TaskSubStageInstance::create([
                 'task_id' => $task->id,

@@ -42,6 +42,7 @@ class CapabilitySeeder extends Seeder
         ['key' => 'task.manage_documents', 'name_ar' => 'إدارة مرفقات المهام', 'name_en' => 'Manage Task Documents', 'description' => 'Can upload, replace, and delete attachments on visible tasks.'],
         ['key' => 'task.view_documents', 'name_ar' => 'عرض مرفقات المهام', 'name_en' => 'View Task Documents', 'description' => 'Can view and download attachments for visible tasks.'],
         ['key' => 'task.manage_external_entities', 'name_ar' => 'إدارة الجهات الخارجية', 'name_en' => 'Manage External Entities', 'description' => 'Can create, update, deactivate, and reactivate the external entity catalog.'],
+        ['key' => 'iam.view_delegations', 'name_ar' => 'عرض التفويضات', 'name_en' => 'View Delegations', 'description' => 'Can view active delegations in the organization.'],
     ];
 
     public function run(): void

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Iam\Services;
 
+use App\Enums\DelegationScopeType;
 use App\Enums\ScopeType;
 use App\Models\User;
 use App\Modules\Iam\Models\AuditGrant;
@@ -76,6 +77,53 @@ class IamPolicy
         }
 
         return $user;
+    }
+
+    public function resolveDelegateForAssignment(
+        User $user,
+        ?int $blueprintCategoryId,
+        ?int $stageTypeId,
+    ): ?User {
+        $scopedDelegate = $this->resolveScopedDelegate($user, $blueprintCategoryId, $stageTypeId);
+
+        if ($scopedDelegate !== null) {
+            return $scopedDelegate;
+        }
+
+        return $this->resolveSimpleOutOfOfficeDelegate($user);
+    }
+
+    private function resolveScopedDelegate(
+        User $user,
+        ?int $blueprintCategoryId,
+        ?int $stageTypeId,
+    ): ?User {
+        return Delegation::where('delegator_user_id', $user->id)
+            ->where('is_active', true)
+            ->where('starts_at', '<=', now())
+            ->where('ends_at', '>=', now())
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->get()
+            ->first(function (Delegation $delegation) use ($blueprintCategoryId, $stageTypeId) {
+                return match ($delegation->scope_type) {
+                    DelegationScopeType::ALL => true,
+                    DelegationScopeType::BLUEPRINT_CATEGORY => $delegation->blueprint_category_id === $blueprintCategoryId,
+                    DelegationScopeType::STAGE_TYPE => $delegation->stage_type_id === $stageTypeId,
+                    DelegationScopeType::BLUEPRINT_CATEGORY_AND_STAGE_TYPE => $delegation->blueprint_category_id === $blueprintCategoryId
+                        && $delegation->stage_type_id === $stageTypeId,
+                };
+            })
+            ?->delegate;
+    }
+
+    private function resolveSimpleOutOfOfficeDelegate(User $user): ?User
+    {
+        if ($this->isOutOfOffice($user) && $user->out_of_office_delegate_user_id) {
+            return $user->outOfOfficeDelegate;
+        }
+
+        return null;
     }
 
     public function getActiveDelegate(User $user): ?User

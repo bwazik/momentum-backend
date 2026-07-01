@@ -11,3 +11,5 @@ Artisan::command('inspire', function () {
 Schedule::command('tracking:check-sla-timers')->everyMinute();
 
 Schedule::command('search:prune-recent-activity')->daily();
+
+Schedule::command('iam:expire-delegations')->everyMinute();

@@ -39,8 +39,15 @@ class AssignmentResolutionService
 
             $resolvedUsers = $this->resolveUsers($blueprintStage, $manualAssignments);
 
+            $blueprintCategoryId = $task->blueprint?->category_id;
+            $stageTypeId = $blueprintStage->stage_type_id;
+
             foreach ($resolvedUsers as $i => $resolvedUser) {
-                $effectiveUser = $this->iamPolicy->resolveAssignee($resolvedUser);
+                $effectiveUser = $this->iamPolicy->resolveDelegateForAssignment(
+                    $resolvedUser,
+                    $blueprintCategoryId,
+                    $stageTypeId,
+                ) ?? $resolvedUser;
                 $delegatedFrom = $effectiveUser->id !== $resolvedUser->id ? $resolvedUser->id : null;
                 $positionId = $resolvedUser->currentPositionAssignment?->position_id;
 
@@ -99,8 +106,15 @@ class AssignmentResolutionService
             $assignments = collect();
             $resolvedUsers = $this->resolveUsersForSubStage($blueprintSubStage, $manualAssignments);
 
+            $blueprintCategoryId = $task->blueprint?->category_id;
+            $stageTypeId = $blueprintSubStage->stage->stage_type_id ?? null;
+
             foreach ($resolvedUsers as $i => $resolvedUser) {
-                $effectiveUser = $this->iamPolicy->resolveAssignee($resolvedUser);
+                $effectiveUser = $this->iamPolicy->resolveDelegateForAssignment(
+                    $resolvedUser,
+                    $blueprintCategoryId,
+                    $stageTypeId,
+                ) ?? $resolvedUser;
                 $delegatedFrom = $effectiveUser->id !== $resolvedUser->id ? $resolvedUser->id : null;
                 $positionId = $resolvedUser->currentPositionAssignment?->position_id;
 
