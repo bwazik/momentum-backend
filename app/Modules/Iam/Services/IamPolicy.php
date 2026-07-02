@@ -147,6 +147,24 @@ class IamPolicy
             ->exists();
     }
 
+    /**
+     * @return array<int>|null null = tenant-wide grant; [] = no grant; array = department IDs.
+     */
+    public function getAuditGrantDepartmentIds(User $auditor): ?array
+    {
+        $grants = AuditGrant::where('external_auditor_user_id', $auditor->id)
+            ->whereNull('revoked_at')
+            ->where('date_range_start', '<=', now())
+            ->where('date_range_end', '>=', now())
+            ->get(['department_id']);
+
+        if ($grants->contains(fn ($g) => $g->department_id === null)) {
+            return null;
+        }
+
+        return $grants->pluck('department_id')->filter()->unique()->values()->all();
+    }
+
     public function clearCache(): void
     {
         $this->capabilitiesCache = null;

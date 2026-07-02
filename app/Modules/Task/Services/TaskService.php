@@ -47,6 +47,7 @@ class TaskService
         private AssignmentResolutionService $assignmentResolutionService,
         private TaskVisibilityScope $taskVisibilityScope,
         private IamPolicy $iamPolicy,
+        private ConfidentialAccessService $confidentialAccessService,
     ) {}
 
     public function create(array $data, User $user): Task
@@ -76,9 +77,7 @@ class TaskService
             $classificationLevel = $data['classification_level'] ?? ClassificationLevel::Public->value;
 
             if ((int) $classificationLevel === ClassificationLevel::Confidential->value) {
-                if (! $this->iamPolicy->hasCapability($user, 'task.classify.confidential')) {
-                    abort(403, 'Missing task.classify.confidential capability.');
-                }
+                $this->confidentialAccessService->guardCanClassify($user);
             }
 
             $task = Task::create([
@@ -136,9 +135,7 @@ class TaskService
                     $resolvedLevel === ClassificationLevel::Confidential->value
                     || $task->classification_level?->value === ClassificationLevel::Confidential->value
                 ) {
-                    if (! $this->iamPolicy->hasCapability($user, 'task.classify.confidential')) {
-                        abort(403, 'Missing task.classify.confidential capability.');
-                    }
+                    $this->confidentialAccessService->guardCanClassify($user);
                 }
             }
 

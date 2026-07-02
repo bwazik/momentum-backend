@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'confidential_redacted_title' => 'Confidential Task',
+
     'exceptions' => [
         'manual_assignment_required' => 'Stage \':name\' requires manual assignment but none were provided.',
         'manual_assignment_required_sub' => 'Sub-stage \':name\' requires manual assignment but none were provided.',
@@ -25,5 +27,10 @@ return [
         'external_entity_inactive' => 'External entity is inactive and cannot be used for new references.',
         'external_reference_not_found' => 'External reference not found.',
         'task_not_visible' => 'You do not have access to this task.',
+        'task_not_confidential' => 'This operation requires a confidential task.',
+        'cannot_manage_confidential_participants' => 'You do not have permission to manage confidential participants.',
+        'confidential_access_denied' => 'You do not have access to this confidential task.',
+        'duplicate_confidential_participant' => 'This user is already a confidential participant.',
+        'governance_participant_not_found' => 'Confidential participant record not found.',
     ],
 ];

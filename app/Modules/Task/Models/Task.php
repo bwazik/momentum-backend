@@ -88,6 +88,21 @@ class Task extends TenantModel
         return $this->hasMany(TaskExternalReference::class)->orderBy('id');
     }
 
+    public function confidentialParticipants(): HasMany
+    {
+        return $this->hasMany(TaskConfidentialParticipant::class);
+    }
+
+    public function activeConfidentialParticipants(): HasMany
+    {
+        return $this->hasMany(TaskConfidentialParticipant::class)->whereNull('removed_at');
+    }
+
+    public function confidentialAccessEvents(): HasMany
+    {
+        return $this->hasMany(ConfidentialAccessEvent::class);
+    }
+
     public function isDraft(): bool
     {
         return $this->status === TaskStatus::Draft;

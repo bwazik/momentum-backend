@@ -9,5 +9,6 @@ return [
         'cannot_revoke_system_capability_key' => 'System-defined capability keys cannot be modified.',
         'cannot_delegate_to_self' => 'Cannot delegate authority to yourself.',
         'delegation_scope_mismatch' => 'The delegation scope is missing required fields or contains invalid IDs.',
+        'invalid_governance_scope' => 'Invalid governance scope configuration.',
     ],
 ];

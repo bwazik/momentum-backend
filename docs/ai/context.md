@@ -133,7 +133,7 @@ Spec IDs match `../frontend/specs/` where UI exists. Backend establishes API con
 - ✅ `002-organization-structure` — Departments, positions, authority grades, working calendar
 - ✅ `003-iam-abac` — Users, ABAC policy engine, capabilities, delegation, OOO
 - ✅ `016-delegation-oof` — Delegation supplement (scoped routing, auto-expiry, active view)
-- ⬜ `017-confidentiality-access` — Confidential task access model
+- ✅ `017-confidentiality-access` — Confidential task access model
 - ⬜ `018-localization-calendar` — Hijri date helpers, working calendar
 
 **Milestone 3 — Blueprint Engine: ✅ Done**

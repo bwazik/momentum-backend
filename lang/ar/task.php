@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'confidential_redacted_title' => 'مهمة سرية',
+
     'exceptions' => [
         'manual_assignment_required' => 'المرحلة \':name\' تتطلب تعيينًا يدويًا ولكن لم يتم توفير أي منها.',
         'manual_assignment_required_sub' => 'المرحلة الفرعية \':name\' تتطلب تعيينًا يدويًا ولكن لم يتم توفير أي منها.',
@@ -25,5 +27,10 @@ return [
         'external_entity_inactive' => 'الجهة الخارجية غير نشطة ولا يمكن استخدامها للإشارات الجديدة.',
         'external_reference_not_found' => 'الإشارة الخارجية غير موجودة.',
         'task_not_visible' => 'ليس لديك حق الوصول إلى هذه المهمة.',
+        'task_not_confidential' => 'تتطلب هذه العملية مهمة سرية.',
+        'cannot_manage_confidential_participants' => 'ليس لديك صلاحية إدارة المشاركين السريين.',
+        'confidential_access_denied' => 'ليس لديك حق الوصول إلى هذه المهمة السرية.',
+        'duplicate_confidential_participant' => 'هذا المستخدم مشارك سري بالفعل.',
+        'governance_participant_not_found' => 'سجل المشارك السري غير موجود.',
     ],
 ];

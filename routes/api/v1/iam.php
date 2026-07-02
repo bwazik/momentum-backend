@@ -3,6 +3,7 @@
 use App\Modules\Iam\Controllers\AuditGrantController;
 use App\Modules\Iam\Controllers\AuthController;
 use App\Modules\Iam\Controllers\CapabilityController;
+use App\Modules\Iam\Controllers\ConfidentialGovernanceParticipantController;
 use App\Modules\Iam\Controllers\DelegationController;
 use App\Modules\Iam\Controllers\MonitoringScopeGrantController;
 use App\Modules\Iam\Controllers\PositionAssignmentController;
@@ -95,5 +96,13 @@ Route::prefix('iam')->group(function () {
         // Out-of-office (self or admin)
         Route::post('users/{user}/out-of-office', [UserController::class, 'markOutOfOffice']);
         Route::post('users/{user}/back-in-office', [UserController::class, 'markBackInOffice']);
+
+        // Confidential governance participants
+        Route::middleware(['capability:iam.manage_capabilities'])->group(function () {
+            Route::get('confidential-governance-participants', [ConfidentialGovernanceParticipantController::class, 'index']);
+            Route::post('confidential-governance-participants', [ConfidentialGovernanceParticipantController::class, 'store']);
+            Route::put('confidential-governance-participants/{participant}', [ConfidentialGovernanceParticipantController::class, 'update']);
+            Route::post('confidential-governance-participants/{participant}/revoke', [ConfidentialGovernanceParticipantController::class, 'revoke']);
+        });
     });
 });

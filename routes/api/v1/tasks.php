@@ -1,6 +1,8 @@
 <?php
 
 use App\Modules\Task\Controllers\CommentController;
+use App\Modules\Task\Controllers\ConfidentialAccessController;
+use App\Modules\Task\Controllers\ConfidentialParticipantController;
 use App\Modules\Task\Controllers\ExternalEntityController;
 use App\Modules\Task\Controllers\StageLifecycleController;
 use App\Modules\Task\Controllers\TaskController;
@@ -72,4 +74,14 @@ Route::middleware(['auth:sanctum'])->prefix('tasks')->group(function () {
     Route::post('{task}/external-references', [TaskExternalReferenceController::class, 'store']);
     Route::put('{task}/external-references/{reference}', [TaskExternalReferenceController::class, 'update']);
     Route::delete('{task}/external-references/{reference}', [TaskExternalReferenceController::class, 'destroy']);
+
+    // Confidential participants
+    Route::get('{task}/confidential-participants', [ConfidentialParticipantController::class, 'index']);
+    Route::post('{task}/confidential-participants', [ConfidentialParticipantController::class, 'store']);
+    Route::delete('{task}/confidential-participants/{user}', [ConfidentialParticipantController::class, 'destroy']);
+
+    // Confidential access
+    Route::get('{task}/metadata', [ConfidentialAccessController::class, 'metadata']);
+    Route::post('{task}/access-override', [ConfidentialAccessController::class, 'override']);
+    Route::get('{task}/confidential-access-events', [ConfidentialAccessController::class, 'events']);
 });

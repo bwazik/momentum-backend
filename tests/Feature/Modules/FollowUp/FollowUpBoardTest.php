@@ -548,6 +548,27 @@ it('respects follow_up_scope visibility', function () {
 // --- Confidential ---
 
 it('hides confidential tasks without override capability', function () {
+    $followUpUser = User::factory()->create();
+    $followUpCap = Capability::where('key', 'task.view.follow_up_scope')->first();
+    UserCapabilityGrant::create([
+        'user_id' => $followUpUser->id,
+        'capability_id' => $followUpCap->id,
+        'scope_type' => ScopeType::SPECIFIC_DEPARTMENT,
+        'scope_department_id' => $this->department->id,
+        'granted_by_user_id' => $this->user->id,
+        'granted_at' => now(),
+        'reason' => 'Test',
+    ]);
+    MonitoringScopeGrant::create([
+        'user_id' => $followUpUser->id,
+        'scope_type' => ScopeType::SPECIFIC_DEPARTMENT,
+        'scope_department_id' => $this->department->id,
+        'granted_by_user_id' => $this->user->id,
+        'granted_at' => now(),
+        'reason' => 'Test',
+    ]);
+    $this->actingAs($followUpUser, 'sanctum');
+
     $confidentialTask = Task::factory()->active()->create([
         'initiator_user_id' => User::factory()->create()->id,
         'classification_level' => ClassificationLevel::Confidential,

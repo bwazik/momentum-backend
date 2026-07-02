@@ -9,7 +9,7 @@
 ## Current Focus
 
 **Active Milestone:** M2 — Organization & IAM
-**Active Spec:** `017-confidentiality-access`
+**Active Spec:** `018-localization-calendar`
 **Branch:** `main`
 
 Do not implement specs marked ⬜ Not Started unless explicitly instructed.
@@ -53,7 +53,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 | `014-external-references` | M4 | External refs | `002-task-board` | ✅ Done |
 | `015-audit-trail` | M7 | Audit | `009-system-administration` | ✅ Done |
 | `016-delegation-oof` | M2 | Delegation | — | ✅ Done |
-| `017-confidentiality-access` | M2 | Confidential tasks | — | ⬜ Not Started |
+| `017-confidentiality-access` | M2 | Confidential tasks | — | ✅ Done |
 | `018-localization-calendar` | M2 | Hijri, working calendar | — | ⬜ Not Started |
 | `019-onboarding-training` | M7 | Onboarding | — | ⬜ Not Started |
 | `020-help-center` | M7 | Help Center | `010-help-center` | ⬜ Not Started |
@@ -95,7 +95,7 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 
 **Status:** 🔄 In Progress
 
-**Specs:** `002` ✅, `003` ✅, `016` ✅, `017`, `018`
+**Specs:** `002` ✅, `003` ✅, `016` ✅, `017` ✅, `018`
 
 **Established by 002:**
 - `departments` table (nested hierarchy with adjacency list, soft delete, bilingual names)
@@ -137,7 +137,26 @@ Do not implement specs marked ⬜ Not Started unless explicitly instructed.
 - `Delegation` model relationships: `blueprintCategory()`, `stageType()`
 - `DelegationResource` exposes `blueprint_category` and `stage_type` when loaded
 
-**Remaining M2 specs:** `017` (confidentiality), `018` (localization/calendar)
+**Established by 017:**
+- `task_confidential_participants` table — named participant model with `removed_at` for history
+- `confidential_governance_participants` table — automatic governance participant configuration (position-based, scoped by department/category)
+- `confidential_access_events` table — append-only log of all confidential access events (metadata views, overrides, participant changes)
+- `ConfidentialAccessEventType` enum — 4 cases: `MetadataView`, `ContentOverride`, `ParticipantAdded`, `ParticipantRemoved`
+- `TaskVisibilityScope` updated — full classification enforcement: `public` (unchanged), `internal` (blocks lateral uninvolved), `confidential` (strict allow-list: tenant admin, initiator, assignee, named participant, governance participant, external auditor, override)
+- Classification rules enforced at the database layer via `TaskVisibilityScope` — reused by Task, Search, Analytics, FollowUp, Comment, Document, and Stage History without per-module changes
+- Named participant management API (`POST/GET/DELETE /api/v1/tasks/{task}/confidential-participants`)
+- Governance participant config API (`POST/GET/PUT /api/v1/iam/confidential-governance-participants`, `POST .../revoke`)
+- Redacted metadata view (`GET /api/v1/tasks/{task}/metadata`) — requires `task.confidential.view_metadata`
+- Audited content override (`POST /api/v1/tasks/{task}/access-override`) — requires `task.confidential.view_override` + mandatory reason
+- Cached governance config at `{tenant_slug}:iam:confidential_governance_participants:all` (300s TTL, invalidated on mutations)
+- 7 domain events implementing `ShouldDispatchAfterCommit` + `ProvidesAuditData` — auto-recorded by Audit module
+- 6 domain exceptions extending `DomainException` (rendered by base handler)
+- `IamPolicy::getAuditGrantDepartmentIds()` — external auditor department resolution for confidential task access
+- Bilingual translations in `lang/{en,ar}/{task,iam}.php` for all exception messages
+- Tenant settings `settings.confidentiality.initiator_can_manage_participants` and `settings.confidentiality.metadata_show_actual_title` with safe defaults
+- 33 feature tests (83 assertions): participant CRUD, metadata/view/override happy paths, governance config lifecycle, scoping validation, visibility enforcement, cursor pagination
+
+**Remaining M2 specs:** `018` (localization/calendar)
 
 ---
 

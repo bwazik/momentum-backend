@@ -135,10 +135,9 @@ it('excludes confidential tasks from users without confidential view metadata ca
         ->assertJsonPath('active', 1);
 });
 
-it('includes confidential metadata for users with confidential view metadata capability', function () {
+it('hides confidential tasks from analytics without explicit access', function () {
     grantCapability($this->user, 'analytics.view.organization');
     grantCapability($this->user, 'task.view.organization');
-    grantCapability($this->user, 'task.confidential.view_metadata');
 
     $otherUser = User::factory()->create();
 
@@ -156,7 +155,7 @@ it('includes confidential metadata for users with confidential view metadata cap
         ->getJson('/v1/analytics/executive/summary');
 
     $response->assertOk()
-        ->assertJsonPath('active', 2);
+        ->assertJsonPath('active', 1);
 });
 
 it('restricts department performance to scoped department', function () {
